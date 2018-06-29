@@ -4,7 +4,7 @@
  */
 
 
-type mixed = any;
+type mixed = any; // tslint:disable-line no-any
 
 
 /** Subscription to modules' states changes. */
@@ -139,7 +139,9 @@ export class Store {
    *
    * @returns {string} The new combiner's hash.
    *
-   * @throws {Error} If one of the specified mapped hash does not correspond to a registered module.
+   * @throws {Error} If a combiner with the same hash already exists.
+   *
+   * @throws {Error} If one of the mapped hash does not correspond to a registered module.
    */
   public combine(hash : string, mapper : Mapper) : string;
 
@@ -151,9 +153,11 @@ export class Store {
    *
    * @returns {void}
    *
+   * @throws {Error} If there is no combiner created with the given hash.
+   *
    * @throws {Error} If the given hash corresponds to a default combiner.
    *
-   * @throws {Error} If there is no combiner created with the given hash.
+   * @throws {Error} If combiner still has subscriptions.
    */
   public uncombine(hash : string) : void;
 
@@ -195,6 +199,8 @@ export class Store {
    * @returns {void}
    *
    * @throws {Error} If there is no module registered with the given hash.
+   *
+   * @throws {Error} If module's mutator did not return an object.
    */
   public mutate(hash : string, mutation : mixed) : void;
 
