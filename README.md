@@ -12,9 +12,7 @@ yarn add diox
 
 ## Motivations
 
-This framework is deeply inspired by Redux and Vuex, which I used for some time. Compared to them,
-Diox has several advantages :
-
+This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, Diox has several advantages :
 - Standalone (no dependency)
 - Extremely light (~300 lines of code, 5Kb uncompressed)
 - Fast and optimized by design
