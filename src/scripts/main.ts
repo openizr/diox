@@ -4,7 +4,7 @@
  */
 
 
-import { Store } from './Store';
+import { Mapper, Module, Store } from './Store';
 
 
-export { Store };
+export { Mapper, Module, Store };
