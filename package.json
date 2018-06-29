@@ -1,12 +1,26 @@
 {
   "name": "diox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The ultimate state management, for both front and back ends",
   "repository": "https://github.com/matthieujabbour/diox",
   "bugs": "https://github.com/matthieujabbour/diox/issues",
-  "main": "./scripts/main.js",
+  "main": "./main.js",
   "private": true,
-  "keywords": [],
+  "keywords": [
+    "state",
+    "management",
+    "react",
+    "vuejs",
+    "vuejs2",
+    "reactjs",
+    "typescript",
+    "javascript",
+    "frontend",
+    "backend",
+    "global",
+    "ui",
+    "flux"
+  ],
   "license": "UNLICENSED",
   "devDependencies": {
     "typescript-dev-kit": "^0.0.19"
