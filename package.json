@@ -1,0 +1,22 @@
+{
+  "name": "diox",
+  "version": "0.0.1",
+  "description": "The ultimate state management, for both front and back ends",
+  "repository": "https://github.com/matthieujabbour/diox",
+  "bugs": "https://github.com/matthieujabbour/diox/issues",
+  "main": "./scripts/main.js",
+  "private": true,
+  "keywords": [],
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "typescript-dev-kit": "^0.0.19"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+    "start": "cd node_modules/typescript-dev-kit/ && node scripts/start",
+    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build",
+    "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
+    "doc": "node_modules/.bin/typedoc --out ./doc/ src/ --exclude \"**/__+(tests|mocks)__/**\""
+  }
+}
