@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store combine correctly creates combiner if all mapped hashes exist 1`] = `
+Store {
+  "combiners": Object {
+    "combiner": Object {
+      "mapper": Object {
+        "module_a": [MockFunction],
+        "module_b": [MockFunction],
+      },
+      "subscriptions": Array [],
+    },
+    "module_a": Object {
+      "mapper": Object {
+        "module_a": [Function],
+      },
+      "subscriptions": Array [],
+    },
+    "module_b": Object {
+      "mapper": Object {
+        "module_b": [Function],
+      },
+      "subscriptions": Array [],
+    },
+  },
+  "middlewares": Array [],
+  "modules": Object {
+    "module_a": Object {
+      "combiners": Array [
+        "module_a",
+        "combiner",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+    "module_b": Object {
+      "combiners": Array [
+        "module_b",
+        "combiner",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 5,
+      },
+    },
+  },
+}
+`;
+
+exports[`Store constructor always correctly instanciates 1`] = `
+Store {
+  "combiners": Object {},
+  "middlewares": Array [],
+  "modules": Object {},
+}
+`;
+
+exports[`Store register correctly registers module if hash is not already used 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "mapper": Object {
+        "module": [Function],
+      },
+      "subscriptions": Array [],
+    },
+  },
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "combiners": Array [
+        "module",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+  },
+}
+`;
+
+exports[`Store subscribe correctly subscribes to the given combiner if it exists 1`] = `
+Store {
+  "combiners": Object {
+    "combiner": Object {
+      "mapper": Object {
+        "module_a": [Function],
+        "module_b": [Function],
+      },
+      "subscriptions": Array [
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "a": 0,
+                "b": Object {
+                  "test": 5,
+                },
+              },
+            ],
+          ],
+          "results": Array [],
+        },
+      ],
+    },
+    "module_a": Object {
+      "mapper": Object {
+        "module_a": [Function],
+      },
+      "subscriptions": Array [],
+    },
+    "module_b": Object {
+      "mapper": Object {
+        "module_b": [Function],
+      },
+      "subscriptions": Array [],
+    },
+  },
+  "middlewares": Array [],
+  "modules": Object {
+    "module_a": Object {
+      "combiners": Array [
+        "module_a",
+        "combiner",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+    "module_b": Object {
+      "combiners": Array [
+        "module_b",
+        "combiner",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 5,
+      },
+    },
+  },
+}
+`;
+
+exports[`Store uncombine correctly uncombines the user-defined combiner if it has no more subscriptions 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "mapper": Object {
+        "module": [Function],
+      },
+      "subscriptions": Array [],
+    },
+  },
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "combiners": Array [
+        "module",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+  },
+}
+`;
+
+exports[`Store unregister correctly unregisters if module does not have related user-defined combiners 1`] = `
+Store {
+  "combiners": Object {},
+  "middlewares": Array [],
+  "modules": Object {},
+}
+`;
+
+exports[`Store unsubscribe correctly unsubscribes from the given combiner if it exists 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "mapper": Object {
+        "module": [Function],
+      },
+      "subscriptions": Array [],
+    },
+  },
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "combiners": Array [
+        "module",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+  },
+}
+`;

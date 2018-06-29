@@ -119,12 +119,12 @@ export class Store {
   public register(hash : string, module : Module) : string {
     if (this.modules[hash] !== undefined) {
       throw new Error(
-        `Could not register module with hash "${hash}" :` +
+        `Could not register module with hash "${hash}" : ` +
         'another module with the same hash already exists.',
       );
     }
     this.modules[hash] = {
-      state: {},
+      state: undefined,
       mutator : module.mutator,
       dispatcher: module.dispatcher || (() => null),
       // Storing associated combiners' hashes makes it easier to notify them after mutating module.
@@ -132,6 +132,7 @@ export class Store {
     };
     // A default combiner with the same hash as the module is always created first.
     this.combine(hash, { [hash]: newState => newState });
+    this.mutate(hash, { type: 'DIOX_INITIALIZE' });
     return hash;
   }
 
@@ -149,7 +150,10 @@ export class Store {
    */
   public unregister(hash : string) : void {
     if (this.modules[hash] === undefined) {
-      throw new Error(`Module with hash "${hash}" does not exist`);
+      throw new Error(
+        `Could not unregister module with hash "${hash}" : ` +
+        'module does not exist.',
+      );
     }
     if (this.modules[hash].combiners.length > 1) {
       throw new Error(
@@ -157,8 +161,9 @@ export class Store {
         'all the related user-defined combiners must be uncombined first.',
       );
     }
-    // Deleting module...
+    // Deleting module and related default combiner...
     delete(this.modules[hash]);
+    delete(this.combiners[hash]);
   }
 
 
@@ -175,9 +180,17 @@ export class Store {
    *
    * @returns {string} The new combiner's hash.
    *
-   * @throws {Error} If one of the specified mapped hash does not correspond to a registered module.
+   * @throws {Error} If a combiner with the same hash already exists.
+   *
+   * @throws {Error} If one of the mapped hash does not correspond to a registered module.
    */
   public combine(hash : string, mapper : Mapper) : string {
+    if (this.combiners[hash] !== undefined) {
+      throw new Error(
+        `Could not create combiner with hash "${hash}" : ` +
+        'another combiner with the same hash already exists.',
+      );
+    }
     Object.keys(mapper).forEach((moduleHash) => {
       if (this.modules[moduleHash] === undefined) {
         throw new Error(
@@ -202,11 +215,19 @@ export class Store {
    *
    * @returns {void}
    *
+   * @throws {Error} If there is no combiner created with the given hash.
+   *
    * @throws {Error} If the given hash corresponds to a default combiner.
    *
-   * @throws {Error} If there is no combiner created with the given hash.
+   * @throws {Error} If combiner still has subscriptions.
    */
   public uncombine(hash : string) : void {
+    if (this.combiners[hash] === undefined) {
+      throw new Error(
+        `Could not uncombine combiner with hash "${hash}" : ` +
+        'combiner does not exist.',
+      );
+    }
     if (this.modules[hash] !== undefined) {
       throw new Error(
         `Could not uncombine combiner with hash "${hash}" : ` +
@@ -244,7 +265,7 @@ export class Store {
     if (combiner === undefined) {
       throw new Error(
         `Could not subscribe to combiner with hash "${hash}" : ` +
-        `combiner with hash "${hash}" does not exist.`,
+        `combiner does not exist.`,
       );
     }
     combiner.subscriptions.push(handler);
@@ -274,7 +295,7 @@ export class Store {
     if (combiner === undefined) {
       throw new Error(
         `Could not unsubscribe from combiner with hash "${hash}" : ` +
-        `combiner with hash "${hash}" does not exist.`,
+        `combiner does not exist.`,
       );
     }
     combiner.subscriptions.splice(handlerId, 1);
@@ -291,17 +312,29 @@ export class Store {
    * @returns {void}
    *
    * @throws {Error} If there is no module registered with the given hash.
+   *
+   * @throws {Error} If module's mutator did not return an object.
    */
   public mutate(hash : string, mutation : mixed) : void {
     const registeredModule : RegisteredModule = this.modules[hash];
     if (registeredModule === undefined) {
-      throw new Error(`Module with hash "${hash}" does not exist`);
+      throw new Error(
+        `Could not perform mutation on module with hash "${hash}" : ` +
+        'module does not exist.',
+      );
     }
     const newState : mixed = registeredModule.mutator({
       hash,
       state: this.modules[hash].state,
       mutate: this.mutate.bind(this),
     }, mutation);
+
+    if (typeof newState !== 'object') {
+      throw new Error(
+        `Could not perform mutation on module with hash "${hash}" : ` +
+        'new state must be an object.',
+      );
+    }
     registeredModule.state = newState;
 
     // Notifying all the middlewares of the changes...
@@ -337,7 +370,10 @@ export class Store {
   public dispatch(hash : string, action : mixed) : void {
     const registeredModule : RegisteredModule = this.modules[hash];
     if (registeredModule === undefined) {
-      throw new Error(`Module with hash "${hash}" does not exist`);
+      throw new Error(
+        `Could not dispatch action to module with hash "${hash}" : ` +
+        'module does not exist.',
+      );
     }
     registeredModule.dispatcher({
       hash,
