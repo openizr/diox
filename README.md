@@ -27,7 +27,7 @@ Diox has several advantages :
 
 ```typescript
 
-import { Module, Store } from './Store';
+import { Module, Store } from 'diox';
 
 
 // Defining a first module with no dispatcher...
