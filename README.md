@@ -2,6 +2,8 @@
 
 The ultimate state management for both front and back ends.
 
+![logo](https://github.com/matthieujabbour/diox/blob/master/logo.png)
+
 
 ## Installation
 
