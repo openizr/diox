@@ -8,21 +8,22 @@ Store {
         "module_a": [MockFunction],
         "module_b": [MockFunction],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
     "module_a": Object {
       "mapper": Object {
         "module_a": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
     "module_b": Object {
       "mapper": Object {
         "module_b": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
   },
+  "index": 0,
   "middlewares": Array [],
   "modules": Object {
     "module_a": Object {
@@ -54,6 +55,7 @@ Store {
 exports[`Store constructor always correctly instanciates 1`] = `
 Store {
   "combiners": Object {},
+  "index": 0,
   "middlewares": Array [],
   "modules": Object {},
 }
@@ -66,9 +68,10 @@ Store {
       "mapper": Object {
         "module": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
   },
+  "index": 0,
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
@@ -93,8 +96,8 @@ Store {
         "module_a": [Function],
         "module_b": [Function],
       },
-      "subscriptions": Array [
-        [MockFunction] {
+      "subscriptions": Object {
+        "641676f1d7d8a": [MockFunction] {
           "calls": Array [
             Array [
               Object {
@@ -107,21 +110,22 @@ Store {
           ],
           "results": Array [],
         },
-      ],
+      },
     },
     "module_a": Object {
       "mapper": Object {
         "module_a": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
     "module_b": Object {
       "mapper": Object {
         "module_b": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
   },
+  "index": 1,
   "middlewares": Array [],
   "modules": Object {
     "module_a": Object {
@@ -157,9 +161,10 @@ Store {
       "mapper": Object {
         "module": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
   },
+  "index": 1,
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
@@ -179,6 +184,7 @@ Store {
 exports[`Store unregister correctly unregisters if module does not have related user-defined combiners 1`] = `
 Store {
   "combiners": Object {},
+  "index": 0,
   "middlewares": Array [],
   "modules": Object {},
 }
@@ -191,9 +197,37 @@ Store {
       "mapper": Object {
         "module": [Function],
       },
-      "subscriptions": Array [],
+      "subscriptions": Object {},
     },
   },
+  "index": 1,
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "combiners": Array [
+        "module",
+      ],
+      "dispatcher": [Function],
+      "mutator": [Function],
+      "state": Object {
+        "test": 0,
+      },
+    },
+  },
+}
+`;
+
+exports[`Store unsubscribe correctly unsubscribes several listeners from the given combiner in any order 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "mapper": Object {
+        "module": [Function],
+      },
+      "subscriptions": Object {},
+    },
+  },
+  "index": 2,
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
