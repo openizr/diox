@@ -295,7 +295,7 @@ export class Store {
    *
    * @throws {Error} If there is no combiner created with the given hash.
    *
-   * @throws {Error} If handler id does not exist.
+   * @throws {Error} If subscription id does not exist.
    */
   public unsubscribe(hash : string, subscriptionId : string) : void {
     const combiner : Combiner = this.combiners[hash];
