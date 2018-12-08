@@ -7,6 +7,9 @@
 import { Module, Store } from '../Store';
 
 
+Date.now = jest.fn(() => 1543757462922);
+
+
 describe('Store', () => {
   let store : Store;
   const moduleA : Module = {
@@ -66,7 +69,7 @@ describe('Store', () => {
       expect(() => {
         store.register('module', moduleB);
       }).toThrow(
-        'Could not register module with hash "module" : ' +
+        'Could not register module with hash "module": ' +
         'another module with the same hash already exists.',
       );
     });
@@ -81,7 +84,7 @@ describe('Store', () => {
       expect(() => {
         store.unregister('module');
       }).toThrow(
-        `Could not unregister module with hash "module" : ` +
+        `Could not unregister module with hash "module": ` +
         'module does not exist.',
       );
     });
@@ -93,7 +96,7 @@ describe('Store', () => {
       expect(() => {
         store.unregister('module');
       }).toThrow(
-        `Could not unregister module with hash "module" : ` +
+        `Could not unregister module with hash "module": ` +
         'all the related user-defined combiners must be uncombined first.',
       );
     });
@@ -110,7 +113,7 @@ describe('Store', () => {
       expect(() => {
         store.combine('module', { module: jest.fn() });
       }).toThrow(
-        'Could not create combiner with hash "module" : ' +
+        'Could not create combiner with hash "module": ' +
         'another combiner with the same hash already exists.',
       );
     });
@@ -118,7 +121,7 @@ describe('Store', () => {
       expect(() => {
         store.combine('combiner', { module: jest.fn() });
       }).toThrow(
-        'Could not create combiner with hash "combiner" : ' +
+        'Could not create combiner with hash "combiner": ' +
         'mapped module with hash "module" does not exist.',
       );
     });
@@ -138,7 +141,7 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('combiner');
       }).toThrow(
-        'Could not uncombine combiner with hash "combiner" : ' +
+        'Could not uncombine combiner with hash "combiner": ' +
         'combiner does not exist.',
       );
     });
@@ -147,7 +150,7 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('module');
       }).toThrow(
-        'Could not uncombine combiner with hash "module" : ' +
+        'Could not uncombine combiner with hash "module": ' +
         'default combiners cannot be uncombined.',
       );
     });
@@ -158,7 +161,7 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('combiner');
       }).toThrow(
-        'Could not uncombine combiner with hash "combiner" : ' +
+        'Could not uncombine combiner with hash "combiner": ' +
         'all the related subscriptions must be unsubscribed first.',
       );
     });
@@ -176,7 +179,7 @@ describe('Store', () => {
       expect(() => {
         store.subscribe('module', () => null);
       }).toThrow(
-        'Could not subscribe to combiner with hash "module" : ' +
+        'Could not subscribe to combiner with hash "module": ' +
         'combiner does not exist.',
       );
     });
@@ -198,22 +201,40 @@ describe('Store', () => {
         module_a: newState => ({ a: newState.test }),
         module_b: newState => ({ b: newState }),
       });
-      expect(store.subscribe('combiner', handler)).toBe(0);
+      expect(store.subscribe('combiner', handler)).toBe('641676f1d7d8a');
     });
   });
 
   describe('unsubscribe', () => {
     test('throws an error if hash does not exist', () => {
       expect(() => {
-        store.unsubscribe('module', 0);
+        store.unsubscribe('module', 'abcde13256');
       }).toThrow(
-        'Could not unsubscribe from combiner with hash "module" : ' +
+        'Could not unsubscribe from combiner with hash "module": ' +
         'combiner does not exist.',
+      );
+    });
+    test('throws an error if subscription id does not exist', () => {
+      expect(() => {
+        store.register('module', moduleA);
+        store.unsubscribe('module', 'abcde13256');
+      }).toThrow(
+        'Could not unsubscribe from combiner with hash "module": ' +
+        'subscription id "abcde13256" does not exist.',
       );
     });
     test('correctly unsubscribes from the given combiner if it exists', () => {
       store.register('module', moduleA);
       store.unsubscribe('module', (store.subscribe('module', jest.fn())));
+      expect(store).toMatchSnapshot();
+    });
+    // Issue #1 (https://github.com/matthieujabbour/diox/issues/1).
+    test('correctly unsubscribes several listeners from the given combiner in any order', () => {
+      store.register('module', moduleA);
+      const firstID : string = store.subscribe('module', jest.fn());
+      const secondID : string = store.subscribe('module', jest.fn());
+      store.unsubscribe('module', firstID);
+      store.unsubscribe('module', secondID);
       expect(store).toMatchSnapshot();
     });
   });
@@ -223,7 +244,7 @@ describe('Store', () => {
       expect(() => {
         store.mutate('module', 'ADD');
       }).toThrow(
-        'Could not perform mutation on module with hash "module" : ' +
+        'Could not perform mutation on module with hash "module": ' +
         'module does not exist.',
       );
     });
@@ -231,7 +252,7 @@ describe('Store', () => {
       expect(() => {
         store.register('module', moduleC);
       }).toThrow(
-        'Could not perform mutation on module with hash "module" : ' +
+        'Could not perform mutation on module with hash "module": ' +
         'new state must be an object.',
       );
     });
@@ -254,7 +275,7 @@ describe('Store', () => {
       expect(() => {
         store.dispatch('module', 'ADD');
       }).toThrow(
-        'Could not dispatch action to module with hash "module" : ' +
+        'Could not dispatch action to module with hash "module": ' +
         'module does not exist.',
       );
     });

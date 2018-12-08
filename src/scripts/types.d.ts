@@ -44,7 +44,7 @@ interface RegisteredModule {
 interface Combiner {
   mapper : Mapper;
   // User-defined subscriptions.
-  subscriptions : ((newState : mixed) => void)[];
+  subscriptions : { [id : string] : ((newState : mixed) => void) };
 }
 
 
@@ -87,6 +87,9 @@ export class Store {
 
   /** Global modules register. */
   private modules : RegisteredModules;
+
+  /** Unique index used for subscriptions ids generation. */
+  private index : number;
 
 
   /**
@@ -169,24 +172,26 @@ export class Store {
    *
    * @param {subscription} handler Callback to execute each time combiner notifies changes.
    *
-   * @returns {number} The subscription id, used to unsubscribe handler.
+   * @returns {string} The subscription id, used to unsubscribe handler.
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe(hash : string, handler : subscription) : number;
+  public subscribe(hash : string, handler : subscription) : string;
 
 
   /**
    * Unsubscribes from a combiner changes.
    * @param {string} hash Hash of the combiner to unsubscribe from.
    *
-   * @param {number} handlerId Id of the subscribed handler.
+   * @param {string} subscriptionId Id of the subscription.
    *
    * @returns {void}
    *
    * @throws {Error} If there is no combiner created with the given hash.
+   *
+   * @throws {Error} If subscription id does not exist.
    */
-  public unsubscribe(hash : string, handlerId : number) : void;
+  public unsubscribe(hash : string, subscriptionId : string) : void;
 
 
   /**
@@ -227,5 +232,13 @@ export class Store {
    * @returns {void}
    */
   public use(middleware : subscription) : void;
+
+
+  /**
+   * Generates a unique subscription id.
+   *
+   * @returns {string} The generated subscription id.
+   */
+  private generateSubscriptionId() : string;
 
 }

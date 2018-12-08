@@ -47,7 +47,7 @@ interface RegisteredModule {
 interface Combiner {
   mapper : Mapper;
   // User-defined subscriptions.
-  subscriptions : ((newState : mixed) => void)[];
+  subscriptions : { [id : string] : ((newState : mixed) => void) };
 }
 
 
@@ -91,6 +91,9 @@ export class Store {
   /** Global modules register. */
   private modules : RegisteredModules;
 
+  /** Unique index used for subscriptions ids generation. */
+  private index : number;
+
 
   /**
    * Class constructor.
@@ -101,6 +104,7 @@ export class Store {
     this.modules = {};
     this.combiners = {};
     this.middlewares = [];
+    this.index = 0;
   }
 
 
@@ -119,7 +123,7 @@ export class Store {
   public register(hash : string, module : Module) : string {
     if (this.modules[hash] !== undefined) {
       throw new Error(
-        `Could not register module with hash "${hash}" : ` +
+        `Could not register module with hash "${hash}": ` +
         'another module with the same hash already exists.',
       );
     }
@@ -132,7 +136,7 @@ export class Store {
     };
     // A default combiner with the same hash as the module is always created first.
     this.combine(hash, { [hash]: newState => newState });
-    this.mutate(hash, { type: 'DIOX_INITIALIZE' });
+    this.mutate(hash, 'DIOX_INITIALIZE');
     return hash;
   }
 
@@ -151,13 +155,13 @@ export class Store {
   public unregister(hash : string) : void {
     if (this.modules[hash] === undefined) {
       throw new Error(
-        `Could not unregister module with hash "${hash}" : ` +
+        `Could not unregister module with hash "${hash}": ` +
         'module does not exist.',
       );
     }
     if (this.modules[hash].combiners.length > 1) {
       throw new Error(
-        `Could not unregister module with hash "${hash}" : ` +
+        `Could not unregister module with hash "${hash}": ` +
         'all the related user-defined combiners must be uncombined first.',
       );
     }
@@ -187,14 +191,14 @@ export class Store {
   public combine(hash : string, mapper : Mapper) : string {
     if (this.combiners[hash] !== undefined) {
       throw new Error(
-        `Could not create combiner with hash "${hash}" : ` +
+        `Could not create combiner with hash "${hash}": ` +
         'another combiner with the same hash already exists.',
       );
     }
     Object.keys(mapper).forEach((moduleHash) => {
       if (this.modules[moduleHash] === undefined) {
         throw new Error(
-          `Could not create combiner with hash "${hash}" : ` +
+          `Could not create combiner with hash "${hash}": ` +
           `mapped module with hash "${moduleHash}" does not exist.`,
         );
       }
@@ -202,7 +206,7 @@ export class Store {
     });
     this.combiners[hash] = {
       mapper,
-      subscriptions: [],
+      subscriptions: {},
     };
     return hash;
   }
@@ -224,19 +228,19 @@ export class Store {
   public uncombine(hash : string) : void {
     if (this.combiners[hash] === undefined) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}" : ` +
+        `Could not uncombine combiner with hash "${hash}": ` +
         'combiner does not exist.',
       );
     }
     if (this.modules[hash] !== undefined) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}" : ` +
+        `Could not uncombine combiner with hash "${hash}": ` +
         'default combiners cannot be uncombined.',
       );
     }
-    if (this.combiners[hash].subscriptions.length > 0) {
+    if (Object.keys(this.combiners[hash].subscriptions).length > 0) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}" : ` +
+        `Could not uncombine combiner with hash "${hash}": ` +
         'all the related subscriptions must be unsubscribed first.',
       );
     }
@@ -256,19 +260,20 @@ export class Store {
    *
    * @param {subscription} handler Callback to execute each time combiner notifies changes.
    *
-   * @returns {number} The subscription id, used to unsubscribe handler.
+   * @returns {string} The subscription id, used to unsubscribe handler.
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe(hash : string, handler : subscription) : number {
+  public subscribe(hash : string, handler : subscription) : string {
     const combiner : Combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
-        `Could not subscribe to combiner with hash "${hash}" : ` +
+        `Could not subscribe to combiner with hash "${hash}": ` +
         `combiner does not exist.`,
       );
     }
-    combiner.subscriptions.push(handler);
+    const subscriptionId : string = this.generateSubscriptionId();
+    combiner.subscriptions[subscriptionId] = handler;
     // We trigger the notification a first time with "initial" states.
     const mappedModules : string[] = Object.keys(combiner.mapper);
     const combinedState : mixed = mappedModules.reduce((state, moduleHash) => {
@@ -276,7 +281,7 @@ export class Store {
       return Object.assign(state, combiner.mapper[moduleHash](moduleState));
     }, {});
     handler(combinedState);
-    return combiner.subscriptions.length - 1;
+    return subscriptionId;
   }
 
 
@@ -284,21 +289,29 @@ export class Store {
    * Unsubscribes from a combiner changes.
    * @param {string} hash Hash of the combiner to unsubscribe from.
    *
-   * @param {number} handlerId Id of the subscribed handler.
+   * @param {string} subscriptionId Id of the subscription.
    *
    * @returns {void}
    *
    * @throws {Error} If there is no combiner created with the given hash.
+   *
+   * @throws {Error} If subscription id does not exist.
    */
-  public unsubscribe(hash : string, handlerId : number) : void {
+  public unsubscribe(hash : string, subscriptionId : string) : void {
     const combiner : Combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
-        `Could not unsubscribe from combiner with hash "${hash}" : ` +
+        `Could not unsubscribe from combiner with hash "${hash}": ` +
         `combiner does not exist.`,
       );
     }
-    combiner.subscriptions.splice(handlerId, 1);
+    if (combiner.subscriptions[subscriptionId] === undefined) {
+      throw new Error(
+        `Could not unsubscribe from combiner with hash "${hash}": ` +
+        `subscription id "${subscriptionId}" does not exist.`,
+      );
+    }
+    delete(combiner.subscriptions[subscriptionId]);
   }
 
 
@@ -319,7 +332,7 @@ export class Store {
     const registeredModule : RegisteredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
-        `Could not perform mutation on module with hash "${hash}" : ` +
+        `Could not perform mutation on module with hash "${hash}": ` +
         'module does not exist.',
       );
     }
@@ -331,7 +344,7 @@ export class Store {
 
     if (typeof newState !== 'object') {
       throw new Error(
-        `Could not perform mutation on module with hash "${hash}" : ` +
+        `Could not perform mutation on module with hash "${hash}": ` +
         'new state must be an object.',
       );
     }
@@ -349,8 +362,8 @@ export class Store {
         const moduleState : mixed = this.modules[moduleHash].state;
         return Object.assign(state, this.combiners[combiner].mapper[moduleHash](moduleState));
       }, {});
-      this.combiners[combiner].subscriptions.forEach((handler) => {
-        handler(combinedState);
+      Object.keys(this.combiners[combiner].subscriptions).forEach((subscriptionId) => {
+        this.combiners[combiner].subscriptions[subscriptionId](combinedState);
       });
     });
   }
@@ -371,7 +384,7 @@ export class Store {
     const registeredModule : RegisteredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
-        `Could not dispatch action to module with hash "${hash}" : ` +
+        `Could not dispatch action to module with hash "${hash}": ` +
         'module does not exist.',
       );
     }
@@ -396,6 +409,16 @@ export class Store {
    */
   public use(middleware : subscription) : void {
     this.middlewares.push(middleware);
+  }
+
+
+  /**
+   * Generates a unique subscription id.
+   *
+   * @returns {string} The generated subscription id.
+   */
+  private generateSubscriptionId() : string {
+    return ((this.index += 1) * 100).toString(16) + Date.now().toString(16);
   }
 
 }
