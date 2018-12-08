@@ -1,6 +1,6 @@
 {
   "name": "diox",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The ultimate state management, for both front and back ends",
   "repository": "https://github.com/matthieujabbour/diox",
   "bugs": "https://github.com/matthieujabbour/diox/issues",
