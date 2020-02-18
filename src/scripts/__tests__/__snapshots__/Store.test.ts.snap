@@ -5,20 +5,20 @@ Store {
   "combiners": Object {
     "combiner": Object {
       "mapper": Object {
-        "module_a": [MockFunction],
-        "module_b": [MockFunction],
+        "moduleA": [MockFunction],
+        "moduleB": [MockFunction],
       },
       "subscriptions": Object {},
     },
-    "module_a": Object {
+    "moduleA": Object {
       "mapper": Object {
-        "module_a": [Function],
+        "moduleA": [Function],
       },
       "subscriptions": Object {},
     },
-    "module_b": Object {
+    "moduleB": Object {
       "mapper": Object {
-        "module_b": [Function],
+        "moduleB": [Function],
       },
       "subscriptions": Object {},
     },
@@ -26,9 +26,9 @@ Store {
   "index": 0,
   "middlewares": Array [],
   "modules": Object {
-    "module_a": Object {
+    "moduleA": Object {
       "combiners": Array [
-        "module_a",
+        "moduleA",
         "combiner",
       ],
       "dispatcher": [Function],
@@ -37,9 +37,9 @@ Store {
         "test": 0,
       },
     },
-    "module_b": Object {
+    "moduleB": Object {
       "combiners": Array [
-        "module_b",
+        "moduleB",
         "combiner",
       ],
       "dispatcher": [Function],
@@ -93,8 +93,8 @@ Store {
   "combiners": Object {
     "combiner": Object {
       "mapper": Object {
-        "module_a": [Function],
-        "module_b": [Function],
+        "moduleA": [Function],
+        "moduleB": [Function],
       },
       "subscriptions": Object {
         "641676f1d7d8a": [MockFunction] {
@@ -108,19 +108,24 @@ Store {
               },
             ],
           ],
-          "results": Array [],
+          "results": Array [
+            Object {
+              "type": "incomplete",
+              "value": undefined,
+            },
+          ],
         },
       },
     },
-    "module_a": Object {
+    "moduleA": Object {
       "mapper": Object {
-        "module_a": [Function],
+        "moduleA": [Function],
       },
       "subscriptions": Object {},
     },
-    "module_b": Object {
+    "moduleB": Object {
       "mapper": Object {
-        "module_b": [Function],
+        "moduleB": [Function],
       },
       "subscriptions": Object {},
     },
@@ -128,9 +133,9 @@ Store {
   "index": 1,
   "middlewares": Array [],
   "modules": Object {
-    "module_a": Object {
+    "moduleA": Object {
       "combiners": Array [
-        "module_a",
+        "moduleA",
         "combiner",
       ],
       "dispatcher": [Function],
@@ -139,9 +144,9 @@ Store {
         "test": 0,
       },
     },
-    "module_b": Object {
+    "moduleB": Object {
       "combiners": Array [
-        "module_b",
+        "moduleB",
         "combiner",
       ],
       "dispatcher": [Function],

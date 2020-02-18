@@ -4,15 +4,15 @@
  */
 
 
-import { Module, Store } from '../Store';
+import { Module, Store } from 'scripts/Store';
 
 
 Date.now = jest.fn(() => 1543757462922);
 
 
 describe('Store', () => {
-  let store : Store;
-  const moduleA : Module = {
+  let store: Store;
+  const moduleA: Module = {
     mutator: ({ state }, mutation) => {
       switch (mutation) {
         case 'ADD':
@@ -26,7 +26,7 @@ describe('Store', () => {
       }
     },
   };
-  const moduleB : Module = {
+  const moduleB: Module = {
     mutator: ({ state }, mutation) => {
       switch (mutation) {
         case 'ADD':
@@ -49,7 +49,7 @@ describe('Store', () => {
       }
     },
   };
-  const moduleC : Module = {
+  const moduleC: Module = {
     mutator: ({ state }) => state || 0,
   };
 
@@ -69,8 +69,8 @@ describe('Store', () => {
       expect(() => {
         store.register('module', moduleB);
       }).toThrow(
-        'Could not register module with hash "module": ' +
-        'another module with the same hash already exists.',
+        'Could not register module with hash "module": '
+        + 'another module with the same hash already exists.',
       );
     });
     test('correctly registers module if hash is not already used', () => {
@@ -84,8 +84,8 @@ describe('Store', () => {
       expect(() => {
         store.unregister('module');
       }).toThrow(
-        `Could not unregister module with hash "module": ` +
-        'module does not exist.',
+        'Could not unregister module with hash "module": '
+        + 'module does not exist.',
       );
     });
     test('throws an error if module has still related user-defined combiners', () => {
@@ -96,8 +96,8 @@ describe('Store', () => {
       expect(() => {
         store.unregister('module');
       }).toThrow(
-        `Could not unregister module with hash "module": ` +
-        'all the related user-defined combiners must be uncombined first.',
+        'Could not unregister module with hash "module": '
+        + 'all the related user-defined combiners must be uncombined first.',
       );
     });
     test('correctly unregisters if module does not have related user-defined combiners', () => {
@@ -113,24 +113,24 @@ describe('Store', () => {
       expect(() => {
         store.combine('module', { module: jest.fn() });
       }).toThrow(
-        'Could not create combiner with hash "module": ' +
-        'another combiner with the same hash already exists.',
+        'Could not create combiner with hash "module": '
+        + 'another combiner with the same hash already exists.',
       );
     });
     test('throws an error if one of the mapped hash does not correspond to a registered module', () => {
       expect(() => {
         store.combine('combiner', { module: jest.fn() });
       }).toThrow(
-        'Could not create combiner with hash "combiner": ' +
-        'mapped module with hash "module" does not exist.',
+        'Could not create combiner with hash "combiner": '
+        + 'mapped module with hash "module" does not exist.',
       );
     });
     test('correctly creates combiner if all mapped hashes exist', () => {
-      store.register('module_a', moduleA);
-      store.register('module_b', moduleB);
+      store.register('moduleA', moduleA);
+      store.register('moduleB', moduleB);
       store.combine('combiner', {
-        module_a: jest.fn(),
-        module_b: jest.fn(),
+        moduleA: jest.fn(),
+        moduleB: jest.fn(),
       });
       expect(store).toMatchSnapshot();
     });
@@ -141,8 +141,8 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('combiner');
       }).toThrow(
-        'Could not uncombine combiner with hash "combiner": ' +
-        'combiner does not exist.',
+        'Could not uncombine combiner with hash "combiner": '
+        + 'combiner does not exist.',
       );
     });
     test('throws an error if the given hash corresponds to a default combiner', () => {
@@ -150,8 +150,8 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('module');
       }).toThrow(
-        'Could not uncombine combiner with hash "module": ' +
-        'default combiners cannot be uncombined.',
+        'Could not uncombine combiner with hash "module": '
+        + 'default combiners cannot be uncombined.',
       );
     });
     test('throws an error if the given hash corresponds to a default combiner', () => {
@@ -161,13 +161,13 @@ describe('Store', () => {
       expect(() => {
         store.uncombine('combiner');
       }).toThrow(
-        'Could not uncombine combiner with hash "combiner": ' +
-        'all the related subscriptions must be unsubscribed first.',
+        'Could not uncombine combiner with hash "combiner": '
+        + 'all the related subscriptions must be unsubscribed first.',
       );
     });
     test('correctly uncombines the user-defined combiner if it has no more subscriptions', () => {
       store.register('module', moduleA);
-      store.combine('combiner', { module: newState => newState });
+      store.combine('combiner', { module: (newState) => newState });
       store.unsubscribe('combiner', store.subscribe('combiner', jest.fn()));
       store.uncombine('combiner');
       expect(store).toMatchSnapshot();
@@ -179,12 +179,12 @@ describe('Store', () => {
       expect(() => {
         store.subscribe('module', () => null);
       }).toThrow(
-        'Could not subscribe to combiner with hash "module": ' +
-        'combiner does not exist.',
+        'Could not subscribe to combiner with hash "module": '
+        + 'combiner does not exist.',
       );
     });
     test('correctly subscribes to the given combiner if it exists', (done) => {
-      const handler : jest.Mock = jest.fn().mockImplementationOnce(() => {
+      const handler: jest.Mock = jest.fn().mockImplementationOnce(() => {
         expect(store).toMatchSnapshot();
         expect(handler).toHaveBeenCalledTimes(1);
         expect(handler).toHaveBeenCalledWith({
@@ -195,11 +195,11 @@ describe('Store', () => {
         });
         done();
       });
-      store.register('module_a', moduleA);
-      store.register('module_b', moduleB);
+      store.register('moduleA', moduleA);
+      store.register('moduleB', moduleB);
       store.combine('combiner', {
-        module_a: newState => ({ a: newState.test }),
-        module_b: newState => ({ b: newState }),
+        moduleA: (newState) => ({ a: newState.test }),
+        moduleB: (newState) => ({ b: newState }),
       });
       expect(store.subscribe('combiner', handler)).toBe('641676f1d7d8a');
     });
@@ -210,8 +210,8 @@ describe('Store', () => {
       expect(() => {
         store.unsubscribe('module', 'abcde13256');
       }).toThrow(
-        'Could not unsubscribe from combiner with hash "module": ' +
-        'combiner does not exist.',
+        'Could not unsubscribe from combiner with hash "module": '
+        + 'combiner does not exist.',
       );
     });
     test('throws an error if subscription id does not exist', () => {
@@ -219,8 +219,8 @@ describe('Store', () => {
         store.register('module', moduleA);
         store.unsubscribe('module', 'abcde13256');
       }).toThrow(
-        'Could not unsubscribe from combiner with hash "module": ' +
-        'subscription id "abcde13256" does not exist.',
+        'Could not unsubscribe from combiner with hash "module": '
+        + 'subscription id "abcde13256" does not exist.',
       );
     });
     test('correctly unsubscribes from the given combiner if it exists', () => {
@@ -231,8 +231,8 @@ describe('Store', () => {
     // Issue #1 (https://github.com/matthieujabbour/diox/issues/1).
     test('correctly unsubscribes several listeners from the given combiner in any order', () => {
       store.register('module', moduleA);
-      const firstID : string = store.subscribe('module', jest.fn());
-      const secondID : string = store.subscribe('module', jest.fn());
+      const firstID: string = store.subscribe('module', jest.fn());
+      const secondID: string = store.subscribe('module', jest.fn());
       store.unsubscribe('module', firstID);
       store.unsubscribe('module', secondID);
       expect(store).toMatchSnapshot();
@@ -244,20 +244,20 @@ describe('Store', () => {
       expect(() => {
         store.mutate('module', 'ADD');
       }).toThrow(
-        'Could not perform mutation on module with hash "module": ' +
-        'module does not exist.',
+        'Could not perform mutation on module with hash "module": '
+        + 'module does not exist.',
       );
     });
     test('throws an error if module\'s mutator does not return an object', () => {
       expect(() => {
         store.register('module', moduleC);
       }).toThrow(
-        'Could not perform mutation on module with hash "module": ' +
-        'new state must be an object.',
+        'Could not perform mutation on module with hash "module": '
+        + 'new state must be an object.',
       );
     });
     test('correctly performs mutation on the given module if it exists', (done) => {
-      const handler : jest.Mock = jest.fn().mockImplementationOnce(() => {
+      const handler: jest.Mock = jest.fn().mockImplementationOnce(() => {
         expect(handler).toHaveBeenCalledWith({ test: 0 });
       }).mockImplementationOnce(() => {
         expect(handler).toHaveBeenCalledTimes(2);
@@ -275,12 +275,12 @@ describe('Store', () => {
       expect(() => {
         store.dispatch('module', 'ADD');
       }).toThrow(
-        'Could not dispatch action to module with hash "module": ' +
-        'module does not exist.',
+        'Could not dispatch action to module with hash "module": '
+        + 'module does not exist.',
       );
     });
     test('correctly dispatches default action on the given module if it exists', () => {
-      const handler : jest.Mock = jest.fn();
+      const handler: jest.Mock = jest.fn();
       store.register('module', moduleA);
       store.subscribe('module', handler);
       store.dispatch('module', 'ADD');
@@ -290,12 +290,11 @@ describe('Store', () => {
 
   describe('use', () => {
     test('correctly applies middleware to store', () => {
-      const middleware : jest.Mock = jest.fn();
+      const middleware: jest.Mock = jest.fn();
       store.use(middleware);
       store.register('module', moduleA);
       expect(middleware).toHaveBeenCalledTimes(1);
       expect(middleware).toHaveBeenCalledWith({ test: 0 });
     });
   });
-
 });

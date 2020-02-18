@@ -1,11 +1,17 @@
 {
   "name": "diox",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The ultimate state management, for both front and back ends",
   "repository": "https://github.com/matthieujabbour/diox",
   "bugs": "https://github.com/matthieujabbour/diox/issues",
   "main": "./main.js",
-  "private": true,
+  "contributors": [
+    {
+      "name": "Matthieu Jabbour",
+      "email": "matthieu.jabbour@gmail.com",
+      "homepage": "https://github.com/matthieujabbour"
+    }
+  ],
   "keywords": [
     "state",
     "management",
@@ -21,11 +27,32 @@
     "ui",
     "flux"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "devDependencies": {
-    "typescript-dev-kit": "^0.0.19"
+    "typescript-dev-kit": "^1.1.1"
   },
-  "dependencies": {
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/typescript-dev-kit/main.js"
+    ]
+  },
+  "dependencies": {},
+  "tsDevKitConfig": {
+    "target": "node",
+    "entry": {
+      "main": "./scripts/main.ts"
+    },
+    "srcPath": "src",
+    "distPath": "dist",
+    "banner": "/*!\n * Copyright © 2018 - present, Matthieu Jabbour <matthieu.jabbour@gmail.com>.\n * All rights reserved.\n */",
+    "env": {
+      "development": {
+        "NODE_ENV": "\"development\""
+      },
+      "production": {
+        "NODE_ENV": "\"production\""
+      }
+    }
   },
   "scripts": {
     "start": "cd node_modules/typescript-dev-kit/ && node scripts/start",
