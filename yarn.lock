@@ -8583,10 +8583,10 @@ typedoc@^0.16.10:
     typedoc-default-themes "^0.7.2"
     typescript "3.7.x"
 
-typescript-dev-kit@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-1.1.1.tgz#ff3f626b062360b7ab2f5a3e8478554ab77e34c5"
-  integrity sha512-W1OwxAm3i0MUDUVH32Dubbis+QvRzcAEDCHFSqf0J3eg14plJkLZjnjwTEnVAKi3PgwmXTCqwPy29GC/a/RQFw==
+typescript-dev-kit@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-1.1.2.tgz#ce00d3240bcb0cfa7d7053bd0a14f563bab312cb"
+  integrity sha512-vOQDq3JOQKZnq9kaFzPKtdlr4M1Ayl7H1Qt2go5lC8tUv++LftJ9fJ8pRdKa33bTDAQXtT1RGL2f6W0BTY16Mw==
   dependencies:
     "@babel/core" "^7.8.4"
     "@babel/plugin-syntax-dynamic-import" "^7.8.3"
