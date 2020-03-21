@@ -56,7 +56,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1> diox</h1>
+			<h1>diox</h1>
 		</div>
 	</div>
 </header>
@@ -64,26 +64,34 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="diox">Diox</h1>
-				<p>The ultimate state management for both front and back ends.</p>
+				<a href="#diox" id="diox" style="color: inherit; text-decoration: none;">
+					<h1>Diox</h1>
+				</a>
+				<p>Complete state management for both front and back ends.</p>
 				<p><img src="https://github.com/matthieujabbour/diox/blob/master/logo.png" alt=""></p>
-				<h2 id="installation">Installation</h2>
-				<pre><code class="lang-bash">yarn add diox
-</code></pre>
-				<h2 id="motivations">Motivations</h2>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<pre><code class="language-bash">yarn add diox</code></pre>
+				<a href="#motivations" id="motivations" style="color: inherit; text-decoration: none;">
+					<h2>Motivations</h2>
+				</a>
 				<p>This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, Diox has several advantages :</p>
 				<ul>
 					<li>Standalone (no dependency)</li>
-					<li>Extremely light (~300 lines of code, 5Kb uncompressed)</li>
+					<li>Extremely light (~300 lines of code, 1.7Kb gzipped)</li>
 					<li>Fast and optimized by design</li>
 					<li>Scalable out of the box without using any additional NPM module</li>
 					<li>Compatible with any front-end library such as React or VueJS</li>
 					<li>Easy to use, with a very small learning curve and simple concepts</li>
+					<li>You can &quot;observe&quot; state changes (run callbacks each time a change on state is done), which is not possible in Vuex</li>
 				</ul>
-				<h2 id="getting-started">Getting started</h2>
-				<pre><code class="lang-typescript">
+				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
+					<h2>Getting started</h2>
+				</a>
+				<p>Example in diox:</p>
+				<pre><code class="language-typescript">
 <span class="hljs-keyword">import</span> { Module, Store } <span class="hljs-keyword">from</span> <span class="hljs-string">'diox'</span>;
-
 
 <span class="hljs-comment">// Defining a first module with no dispatcher...</span>
 <span class="hljs-keyword">const</span> moduleA : Module = {
@@ -94,13 +102,15 @@
           increment: state.increment + <span class="hljs-number">1</span>,
         };
       <span class="hljs-keyword">default</span>:
-        <span class="hljs-keyword">return</span> state || {
+        <span class="hljs-comment">// If no change need to be done, we juste return a copy of the current state.</span>
+        <span class="hljs-comment">// If this is the very first time mutator is called, internal state has not been defined yet</span>
+        <span class="hljs-comment">// and we must return its initial value.</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state || {
           increment: <span class="hljs-number">0</span>,
-        };
+        });
     }
   },
 };
-
 
 <span class="hljs-comment">// Defining a second module with user-defined dispatcher...</span>
 <span class="hljs-keyword">const</span> moduleB : Module = {
@@ -111,9 +121,12 @@
           decrement: state.decrement - <span class="hljs-number">1</span>,
         };
       <span class="hljs-keyword">default</span>:
-        <span class="hljs-keyword">return</span> state || {
+        <span class="hljs-comment">// If no change need to be done, we juste return a copy of the current state.</span>
+        <span class="hljs-comment">// If this is the very first time mutator is called, internal state has not been defined yet</span>
+        <span class="hljs-comment">// and we must return its initial value.</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state || {
           decrement: <span class="hljs-number">1000</span>,
-        };
+        }};
     }
   },
   dispatcher: <span class="hljs-function">(<span class="hljs-params">{ mutate, hash }, action</span>) =&gt;</span> {
@@ -129,21 +142,17 @@
   },
 };
 
-
 <span class="hljs-comment">// Instanciating store...</span>
 <span class="hljs-keyword">const</span> store : Store = <span class="hljs-keyword">new</span> Store();
-
 
 <span class="hljs-comment">// Adding a global middleware...</span>
 store.use(<span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, newState);
 });
 
-
 <span class="hljs-comment">// Registering modules...</span>
 store.register(<span class="hljs-string">'/a'</span>, moduleA);
 store.register(<span class="hljs-string">'/b'</span>, moduleB);
-
 
 <span class="hljs-comment">// Creating a combiner which mixes `/a` and `/b` modules...</span>
 store.combine(<span class="hljs-string">'/c'</span>, {
@@ -151,26 +160,76 @@ store.combine(<span class="hljs-string">'/c'</span>, {
   <span class="hljs-string">'/b'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ b: newState }),
 });
 
-
 <span class="hljs-comment">// Subscribing to the `/a` default combiner...</span>
 store.subscribe(<span class="hljs-string">'/a'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, newState);
 });
-
 
 <span class="hljs-comment">// Subscribing to the `/c` user-defined combiner...</span>
 store.subscribe(<span class="hljs-string">'/c'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, newState);
 });
 
-
 <span class="hljs-comment">// Performing sync mutations and async actions...</span>
 store.mutate(<span class="hljs-string">'/a'</span>, <span class="hljs-string">'ADD'</span>);
 store.dispatch(<span class="hljs-string">'/b'</span>, <span class="hljs-string">'ASYNC_SUB'</span>);
-
 </code></pre>
-				<p>The above example will display in console :</p>
-				<pre><code class="lang-bash">New state ! { increment: 0 }
+				<p>The equivalent in Vuex is:</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> Vuex <span class="hljs-keyword">from</span> <span class="hljs-string">'vuex'</span>;
+
+<span class="hljs-keyword">const</span> moduleA = {
+  state: {
+    increment: <span class="hljs-number">0</span>,
+  },
+  mutations: {
+    ADD (state) {
+      state.increment++;
+    },
+  },
+};
+
+<span class="hljs-keyword">const</span> moduleB = {
+  state: {
+    decrement: <span class="hljs-number">100</span>,
+  },
+  mutations: {
+    SUB (state) {
+      state.increment++;
+    },
+  },
+  actions: {
+    ASYNC_SUB ({ commit }) {
+      setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        commit(<span class="hljs-string">'SUB'</span>);
+      }, <span class="hljs-number">1000</span>);
+    },
+  },
+};
+
+<span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Vuex.Store({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+});
+
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.b);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+storeA.commit(<span class="hljs-string">'ADD'</span>)
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+store.dispatch(<span class="hljs-string">'ASYNC_SUB'</span>);
+setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.b);
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+}, <span class="hljs-number">2000</span>);
+</code></pre>
+				<p>The above examples will display in console :</p>
+				<pre><code class="language-bash">New state ! { increment: 0 }
 New state ! { decrement: 1000 }
 New state from /a ! { increment: 0 }
 New state from /c ! { a: 0, b: { decrement: 1000 } }
@@ -178,11 +237,60 @@ New state ! { increment: 1 }
 New state from /a ! { increment: 1 }
 New state from /c ! { a: 1, b: { decrement: 1000 } }
 New state ! { decrement: 999 }
-New state from /c ! { a: 1, b: { decrement: 999 } }
-</code></pre>
-				<h2 id="api-documentation">API documentation</h2>
-				<p>You can find the full documentation <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/matthieujabbour/diox/master/doc/index.html">here</a></p>
-				<h2 id="license">License</h2>
+New state from /c ! { a: 1, b: { decrement: 999 } }</code></pre>
+				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
+					<h2>Concepts</h2>
+				</a>
+				<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
+					<h3>Modules</h3>
+				</a>
+				<p>Modules represent the very basis of diox. Each module contains a small part of your app&#39;s global state, dealing with a specific concern (e.g. list of users, list of blog articles, app statuses, ...). By registering several modules to the Store, or combining them, you can build large-scale, complex and evolutive apps, where your global state is scalable by design. Each module is composed of a Mutator and a Dispatcher (see below).</p>
+				<a href="#mutators" id="mutators" style="color: inherit; text-decoration: none;">
+					<h3>Mutators</h3>
+				</a>
+				<p>Mutators are pure functions that allow user to perform synchronous changes (mutations) on module&#39;s internal state, depending on given parameters. It must always return a new copy of module&#39;s internal state with desired changes.</p>
+				<a href="#dispatchers" id="dispatchers" style="color: inherit; text-decoration: none;">
+					<h3>Dispatchers</h3>
+				</a>
+				<p>Dispatchers are also pure functions that allow user to perform asynchronous operations on module&#39;s internal state, depending on given parameters. Dispatchers cannot change state on their own, they must use modules mutators instead. Dispatcher can call their own module&#39;s mutator, but also any other defined module&#39;s mutator, just by specifying its hash.</p>
+				<a href="#subscriptions" id="subscriptions" style="color: inherit; text-decoration: none;">
+					<h3>Subscriptions</h3>
+				</a>
+				<p>Subscriptions are function called each time a change has been performed on a module&#39;s internal state. You can then choose to do anything with that new state (display it, perform further operations, ...). Any number of subscriptions can be defined on the same module.</p>
+				<a href="#combiners" id="combiners" style="color: inherit; text-decoration: none;">
+					<h3>Combiners</h3>
+				</a>
+				<p>You can mix the result of several module&#39;s changes by using a Combiner. It is a pure function that listens to changes on one or several modules&#39; states, and returns a mix of those states for easier processing. For instance, imagine you have a module containing all the articles of a blog, and another one containing the list of article&#39;s authors. Instead of subscibing to both modules, you can create a combiner that will generate a proper structure with all info (articles + authors) so you just have to subscribe to this combiner and forget about handling several sources of data.</p>
+				<a href="#middlewares" id="middlewares" style="color: inherit; text-decoration: none;">
+					<h3>Middlewares</h3>
+				</a>
+				<p>Middlewares can be useful in some situations where you want to listen to all states changes on all modules and trigger similar processing on all of them. For instance, you may want to implement a &quot;time-travel&quot; tool, keeping a complete history of states changes over time to revert them if needed.</p>
+				<a href="#store" id="store" style="color: inherit; text-decoration: none;">
+					<h3>Store</h3>
+				</a>
+				<p>Store is the entity that ties everything together. Modules are registered to the Store, using a unique identifier (so-called &quot;hash&quot;). Once modules have been registered to the store, you can declare subscriptions to them, combine them, apply middlewares, ...</p>
+				<a href="#integrations-with-ui-frameworks" id="integrations-with-ui-frameworks" style="color: inherit; text-decoration: none;">
+					<h2>Integrations with UI frameworks</h2>
+				</a>
+				<p>Several official connectors are available for most common UI frameworks:</p>
+				<ul>
+					<li>React: <a href="https://github.com/matthieujabbour/diox-react">diox-react</a></li>
+					<li>VueJS: <a href="https://github.com/matthieujabbour/diox-vue">diox-vue</a></li>
+				</ul>
+				<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">
+					<h2>API documentation</h2>
+				</a>
+				<p>You can find the full API documentation <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/matthieujabbour/diox/master/doc/index.html">here</a></p>
+				<a href="#maintenance" id="maintenance" style="color: inherit; text-decoration: none;">
+					<h2>Maintenance</h2>
+				</a>
+				<p>In order to keep this package up-to-date, dependencies updates should be checked and updated regularily, using the <code>yarn outdated</code> and <code>yarn upgrade-interactive --latest</code> commands. Here is the list of repositories changelogs to watch for updates:</p>
+				<ul>
+					<li><a href="https://github.com/matthieujabbour/typescript-dev-kit/releases">typescript-dev-kit</a></li>
+				</ul>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
 				<p><a href="https://github.com/matthieujabbour/diox/blob/master/LICENSE">MIT</a></p>
 				<p>Copyright (c) 2018 - present, Matthieu Jabbour.</p>
 			</div>
@@ -193,11 +301,8 @@ New state from /c ! { a: 1, b: { decrement: 999 } }
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_store_.html">"<wbr>Store"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_main_.html">"main"</a>
+					<li class=" tsd-kind-module">
+						<a href="modules/_store_.html">&quot;<wbr>Store&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -212,63 +317,11 @@ New state from /c ! { a: 1, b: { decrement: 999 } }
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
 		</div>
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
