@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - 12
+
+jobs:
+  include:
+    - stage: Coverage
+      node_js: 12
+      script: ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info && rm -rf ./coverage
