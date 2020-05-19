@@ -4,7 +4,14 @@ node_js:
 
 jobs:
   include:
-    - stage: test
-      script: yarn run test
-    - stage: coverage
-      script: ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info && rm -rf ./coverage
+    - stage: test and coverage
+      script: yarn run test \
+        && sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info \
+        && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info \
+        && rm -rf ./coverage
+
+deploy:
+  provider: script
+  script: echo "DEPLOY"
+  on:
+    tags: true
