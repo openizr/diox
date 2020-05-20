@@ -1,6 +1,6 @@
 {
   "name": "diox",
-  "version": "1.0.5",
+  "version": "TRAVIS_TAG",
   "description": "The ultimate state management, for both front and back ends",
   "repository": "https://github.com/matthieujabbour/diox",
   "bugs": "https://github.com/matthieujabbour/diox/issues",
@@ -29,7 +29,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "typescript-dev-kit": "^2.0.1"
+    "coveralls": "^3.1.0",
+    "typescript-dev-kit": "^2.0.2"
   },
   "eslintConfig": {
     "extends": [
