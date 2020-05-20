@@ -2,7 +2,10 @@
 
 Complete state management for both front and back ends.
 
-![](https://github.com/matthieujabbour/diox/blob/master/logo.png)
+[![Build Status](https://travis-ci.org/matthieujabbour/diox.svg?branch=master)](https://travis-ci.org/matthieujabbour/diox)
+[![Coverage Status](https://coveralls.io/repos/github/matthieujabbour/diox/badge.svg)](https://coveralls.io/github/matthieujabbour/diox)
+[![npm version](https://badge.fury.io/js/diox.svg)](https://badge.fury.io/js/diox)
+[![Downloads](https://img.shields.io/npm/dm/diox.svg)](https://www.npmjs.com/package/diox)
 
 
 ## Installation
