@@ -9,6 +9,6 @@ jobs:
 
 deploy:
   provider: script
-  script: echo "DEPLOY"
+  script: sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
   on:
     tags: true
