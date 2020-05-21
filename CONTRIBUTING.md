@@ -160,10 +160,18 @@ To technically contribute to this project, here are the software you will need:
 git clone git@github.com:matthieujabbour/diox.git
 cd diox
 yarn install
-yarn run start    # Compile your changes in real time
+yarn run dev    # Compile your changes in real time
 yarn run test -w  # Run an interactive test watcher
 yarn run doc      # Generate documentation
 ```
+
+
+## Maintenance
+
+In order to keep project up-to-date, dependencies updates should be checked and updated regularily,
+using the `yarn outdated` and `yarn upgrade-interactive --latest` commands. Here is the list of
+repositories changelogs to watch for updates:
+- [typescript-dev-kit](https://github.com/matthieujabbour/typescript-dev-kit/releases)
 
 
 ## Build & Deployment

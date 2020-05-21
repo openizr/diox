@@ -229,17 +229,17 @@ Several official connectors are available for most common UI frameworks:
 - React: [diox-react](https://github.com/matthieujabbour/diox-react)
 - VueJS: [diox-vue](https://github.com/matthieujabbour/diox-vue)
 
+In addition, the [diox-cloner](https://github.com/matthieujabbour/diox-cloner) package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.
+
 
 ## API documentation
 
-You can find the full API documentation [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matthieujabbour/diox/master/doc/index.html)
+You can find the full API documentation [here](https://matthieujabbour.github.io/diox)
 
 
-## Maintenance
+## Contributing
 
-In order to keep this package up-to-date, dependencies updates should be checked and updated regularily, using the `yarn outdated` and `yarn upgrade-interactive --latest` commands. Here is the list of repositories changelogs to watch for updates:
-
-- [typescript-dev-kit](https://github.com/matthieujabbour/typescript-dev-kit/releases)
+See the [Contribution guide](https://github.com/matthieujabbour/diox/blob/master/CONTRIBUTING.md)
 
 
 ## License
