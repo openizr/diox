@@ -166,6 +166,14 @@ yarn run doc      # Generate documentation
 ```
 
 
+## Maintenance
+
+In order to keep project up-to-date, dependencies updates should be checked and updated regularily,
+using the `yarn outdated` and `yarn upgrade-interactive --latest` commands. Here is the list of
+repositories changelogs to watch for updates:
+- [typescript-dev-kit](https://github.com/matthieujabbour/typescript-dev-kit/releases)
+
+
 ## Build & Deployment
 
 You don't have to worry about deploying the code and publishing it on `npm`, the CI/CD system does
