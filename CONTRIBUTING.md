@@ -160,7 +160,7 @@ To technically contribute to this project, here are the software you will need:
 git clone git@github.com:matthieujabbour/diox.git
 cd diox
 yarn install
-yarn run start    # Compile your changes in real time
+yarn run dev    # Compile your changes in real time
 yarn run test -w  # Run an interactive test watcher
 yarn run doc      # Generate documentation
 ```
