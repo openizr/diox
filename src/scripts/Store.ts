@@ -5,26 +5,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// TODO : runtime type checking
-
-
+/** Any valid JavaScript primitive. */
 type mixed = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
 
 /** Subscription to modules' states changes. */
 type subscription = (newState: mixed) => void;
 
-
-/** Global state's exposed API as argument. */
-interface MutateExposedAPI {
+/** Mutator's exposed API as argument. */
+interface MutatorExposedAPI {
   hash: string;
   state: mixed;
   mutate: (hash: string, mutation: mixed) => void;
 }
 
-
-/** Global state's exposed API as argument. */
-interface DispatchExposedAPI {
+/** Dispatcher's exposed API as argument. */
+interface DispatcherExposedAPI {
   hash: string;
   mutate: (hash: string, mutation: mixed) => void;
   dispatch: (hash: string, action: mixed) => void;
@@ -34,43 +29,28 @@ interface DispatchExposedAPI {
   uncombine: (hash: string) => void;
 }
 
-
-/** Global state's registered module type declaration. */
+/** Registered module. */
 interface RegisteredModule {
   state: mixed;
-  mutator: (exposedAPI: MutateExposedAPI, mutation: mixed) => mixed;
-  dispatcher: (exposedAPI: DispatchExposedAPI, action: mixed) => void;
+  mutator: (exposedAPI: MutatorExposedAPI, mutation: mixed) => mixed;
+  dispatcher: (exposedAPI: DispatcherExposedAPI, action: mixed) => void;
   combiners: string[];
 }
 
-
-/** Combiner type declaration. */
+/** Combiner. */
 interface Combiner {
   mapper: Mapper;
   // User-defined subscriptions.
   subscriptions: { [id: string]: ((newState: mixed) => void) };
 }
 
-
-/** Store's combiners list, indexed by their hash. */
-interface Combiners {
-  [hash: string]: Combiner;
-}
-
-/** Store's modules list, indexed by their hash. */
-interface RegisteredModules {
-  [hash: string]: RegisteredModule;
-}
-
-
-/** Global state's module type declaration. */
+/** Module. */
 export interface Module {
-  mutator: (exposedAPI: MutateExposedAPI, mutation: mixed) => mixed;
-  dispatcher?: (exposedAPI: DispatchExposedAPI, action: mixed) => void;
+  mutator: (exposedAPI: MutatorExposedAPI, mutation: mixed) => mixed;
+  dispatcher?: (exposedAPI: DispatcherExposedAPI, action: mixed) => void;
 }
 
-
-/** Combiner's mapper type declaration. */
+/** Combiner's mapper. */
 export interface Mapper {
   // Hash of each combined module, along with a function of its state.
   [key: string]: (newState: mixed) => mixed;
@@ -85,15 +65,28 @@ export class Store {
   /** List of store middlewares. */
   private middlewares: subscription[];
 
-  /** List of store combiners. */
-  private combiners: Combiners;
-
-  /** Global modules register. */
-  private modules: RegisteredModules;
-
   /** Unique index used for subscriptions ids generation. */
   private index: number;
 
+  /** List of store combiners. */
+  private combiners: {
+    [hash: string]: Combiner;
+  };
+
+  /** Global modules registry. */
+  private modules: {
+    [hash: string]: RegisteredModule;
+  };
+
+  /**
+   * Generates a unique subscription id.
+   *
+   * @returns {string} The generated subscription id.
+   */
+  private generateSubscriptionId(): string {
+    const subscriptionId = ((this.index += 1) * 100).toString(16) + Date.now().toString(16);
+    return subscriptionId;
+  }
 
   /**
    * Class constructor.
@@ -107,18 +100,17 @@ export class Store {
     this.index = 0;
   }
 
-
   /**
-   * Registers a new module into the global state register.
+   * Registers a new module into the store registry.
    *
-   * @param {string} hash Hash uniquely identifying module to register. Can be any string, although
-   * it is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
+   * @param {string} hash Module's unique identifier in registry. Can be any string, although it
+   * is recommended to follow a tree-structure pattern, like `/my_app/module_a/module_b`.
    *
-   * @param {Module} module New module to register.
+   * @param {Module} module Module to register.
    *
-   * @returns {string} The newly registered module's hash.
+   * @returns {string} Module's hash.
    *
-   * @throws {Error} If a module with the same hash is already registered.
+   * @throws {Error} If a module with the same hash already exists in registry.
    */
   public register(hash: string, module: Module): string {
     if (this.modules[hash] !== undefined) {
@@ -131,7 +123,7 @@ export class Store {
       state: undefined,
       mutator: module.mutator,
       dispatcher: module.dispatcher || ((): null => null),
-      // Storing associated combiners' hashes makes it easier to notify them after mutating module.
+      // Storing related combiners' hashes makes it easier to notify them after mutating module.
       combiners: [],
     };
     // A default combiner with the same hash as the module is always created first.
@@ -140,9 +132,8 @@ export class Store {
     return hash;
   }
 
-
   /**
-   * Unregisters a module from the global modules register.
+   * Unregisters a module from the global modules registry.
    *
    * @param {string} hash Hash of the module to unregister.
    *
@@ -170,23 +161,22 @@ export class Store {
     delete (this.combiners[hash]);
   }
 
-
   /**
    * Combines one or several modules to allow subscriptions on that combination.
    *
-   * @param {string} hash Hash uniquely identifying the combiner. Can be any string, although
-   * it is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
+   * @param {string} hash Combiner's unique identifier in registry. Can be any string, although it
+   * is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
    *
    * @param {Mapper} mapper Contains transformation functions, indexed by their related module hash.
    * Each transformation function is called with a `newState` parameter, which contains the current
    * module's state. For instance :
    * { '/my_app/my_module': (newState) => ({ prop: newState.prop }) }
    *
-   * @returns {string} The new combiner's hash.
+   * @returns {string} Combiner's hash.
    *
-   * @throws {Error} If a combiner with the same hash already exists.
+   * @throws {Error} If a combiner with the same hash already exists in registry.
    *
-   * @throws {Error} If one of the mapped hash does not correspond to a registered module.
+   * @throws {Error} If one of the mapped hashes does not correspond to a registered module.
    */
   public combine(hash: string, mapper: Mapper): string {
     if (this.combiners[hash] !== undefined) {
@@ -210,7 +200,6 @@ export class Store {
     };
     return hash;
   }
-
 
   /**
    * Uncombines a user-defined combiner.
@@ -252,7 +241,6 @@ export class Store {
     delete (this.combiners[hash]);
   }
 
-
   /**
    * Subscribes to changes on a combiner.
    *
@@ -284,9 +272,9 @@ export class Store {
     return subscriptionId;
   }
 
-
   /**
    * Unsubscribes from a combiner changes.
+   *
    * @param {string} hash Hash of the combiner to unsubscribe from.
    *
    * @param {string} subscriptionId Id of the subscription.
@@ -313,7 +301,6 @@ export class Store {
     }
     delete (combiner.subscriptions[subscriptionId]);
   }
-
 
   /**
    * Performs a state mutation on a module.
@@ -368,7 +355,6 @@ export class Store {
     });
   }
 
-
   /**
    * Dispatches an asynchronous action to a registered module.
    *
@@ -409,16 +395,5 @@ export class Store {
    */
   public use(middleware: subscription): void {
     this.middlewares.push(middleware);
-  }
-
-
-  /**
-   * Generates a unique subscription id.
-   *
-   * @returns {string} The generated subscription id.
-   */
-  private generateSubscriptionId(): string {
-    const subscriptionId = ((this.index += 1) * 100).toString(16) + Date.now().toString(16);
-    return subscriptionId;
   }
 }

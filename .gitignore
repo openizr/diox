@@ -1,20 +1,3 @@
-# dependencies
-node_modules
-
-# testing
-coverage
-
-# production
-build
-dev
-dist
-
-# misc
-rsync.sh
-.awcache
-
-
-
 # Created by https://www.gitignore.io/api/composer,node,vim,sublimetext,phpstorm,linux,macos,notepadpp,windows
 
 ### Composer ###
@@ -256,3 +239,8 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/composer,node,vim,sublimetext,phpstorm,linux,macos,notepadpp,windows
 
+# Additional files
+dist
+*.d.ts
+rsync.sh
+.awcache
