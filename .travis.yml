@@ -22,4 +22,4 @@ deploy:
       branch: master
 before_deploy:
   - yarn run doc
-  - touch doc/.nojekyll
+  - touch docs/.nojekyll
