@@ -10,6 +10,7 @@ jobs:
 deploy:
   # Deploys package on NPM
   - provider: script
+    skip_cleanup: true
     script: sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
     on:
       tags: true
