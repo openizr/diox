@@ -4,11 +4,8 @@ node_js:
 
 jobs:
   include:
-    - stage: test
-      skip_cleanup: true
-      script: yarn run test
-    - stage: code coverage
-      script: sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
+    - stage: tests and code coverage
+      script: yarn run test & sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
 
 deploy:
   # Deploys package on NPM
@@ -18,7 +15,7 @@ deploy:
       tags: true
   # Generates documentation
   - provider: pages
-    skip_cleanup: true
+    cleanup: false
     keep_history: true
     github_token: $GITHUB_TOKEN
     on:
