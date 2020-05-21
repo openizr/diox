@@ -8922,10 +8922,10 @@ typedoc@^0.17.1:
     shelljs "^0.8.3"
     typedoc-default-themes "^0.8.0"
 
-typescript-dev-kit@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-2.0.2.tgz#581efd01ef3c2fc1a3f4126cebe0c751fbee9f63"
-  integrity sha512-jgTaptz26v4ZgVSXRL82z5i4eO+MjAm4eHabUU1vlwS1dCVFz8LKmGkVJSm7PHvRgZu5kAf//4anh87Pt4Oi1w==
+typescript-dev-kit@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-2.1.0.tgz#9d97ffd0133e0b148c040ed433deb50f14e401a5"
+  integrity sha512-lJk34fvBUegWrbYnK2wpnOCpHVZxx10XrF0gk7LEuvkw9Umi+8PWIPH1ijoRB1/nKmDIT5//gntApF37Byn9Gg==
   dependencies:
     "@babel/core" "^7.9.0"
     "@babel/plugin-syntax-dynamic-import" "^7.8.3"
@@ -8936,6 +8936,7 @@ typescript-dev-kit@^2.0.2:
     "@typescript-eslint/parser" "^2.24.0"
     autoprefixer "^9.7.4"
     awesome-typescript-loader "^5.0.0"
+    coveralls "^3.1.0"
     css-loader "^3.4.2"
     dts-generator "^3.0.0"
     eslint "^6.8.0"
