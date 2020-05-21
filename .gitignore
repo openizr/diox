@@ -244,3 +244,4 @@ dist
 *.d.ts
 rsync.sh
 .awcache
+.npmrc

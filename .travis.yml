@@ -11,7 +11,7 @@ deploy:
   # Deploys package on NPM
   - provider: script
     skip_cleanup: true
-    script: sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
+    script: yarn run build && npm publish ./dist && mv package.json.bkp package.json
     on:
       tags: true
   # Generates documentation
@@ -22,7 +22,9 @@ deploy:
     github_token: $GITHUB_TOKEN
     on:
       tags: true
+
 before_deploy:
+  - cp package.json package.json.bkp && sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json
   - yarn run doc
   - touch docs/.nojekyll
   - echo $'always-auth=true\n//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' > .npmrc
