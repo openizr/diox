@@ -4,11 +4,22 @@ node_js:
 
 jobs:
   include:
-    - stage: test and coverage
-      script: yarn run test && sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info && rm -rf ./coverage
+    - stage: tests and code coverage
+      script: yarn run test && sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
 
 deploy:
-  provider: script
-  script: sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
-  on:
-    tags: true
+  # Deploys package on NPM
+  - provider: script
+    script: sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
+    on:
+      tags: true
+  # Generates documentation
+  - provider: pages
+    cleanup: false
+    keep_history: true
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+before_deploy:
+  - yarn run doc
+  - touch doc/.nojekyll

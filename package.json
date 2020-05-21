@@ -59,6 +59,6 @@
     "start": "cd node_modules/typescript-dev-kit/ && node scripts/start",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ./doc/ src/ --exclude \"**/__+(tests|mocks)__/**\""
+    "doc": "node_modules/.bin/typedoc --out ./docs/ src/ --exclude \"**/__+(tests|mocks)__/**\""
   }
 }
