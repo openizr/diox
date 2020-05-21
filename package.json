@@ -1,7 +1,7 @@
 {
   "name": "diox",
   "version": "TRAVIS_TAG",
-  "description": "The ultimate state management, for both front and back ends",
+  "description": "Complete state management for both front and back ends",
   "repository": "https://github.com/matthieujabbour/diox",
   "bugs": "https://github.com/matthieujabbour/diox/issues",
   "main": "./main.js",
@@ -45,7 +45,7 @@
     },
     "srcPath": "src",
     "distPath": "dist",
-    "banner": "/*!\n * Copyright © 2018 - present, Matthieu Jabbour <matthieu.jabbour@gmail.com>.\n * All rights reserved.\n */",
+    "banner": "/**\n * Copyright (c) Matthieu Jabbour.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
     "env": {
       "development": {
         "NODE_ENV": "\"development\""
