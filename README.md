@@ -18,7 +18,7 @@ yarn add diox
 ## Motivations
 
 This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, Diox has several advantages :
-- Standalone (no dependency)
+- 100% standalone (no dependency)
 - Extremely light (~300 lines of code, 1.7Kb gzipped)
 - Fast and optimized by design
 - Scalable out of the box without using any additional NPM module
@@ -246,4 +246,4 @@ In order to keep this package up-to-date, dependencies updates should be checked
 
 [MIT](https://github.com/matthieujabbour/diox/blob/master/LICENSE)
 
-Copyright (c) 2018 - present, Matthieu Jabbour.
+Copyright (c) Matthieu Jabbour.

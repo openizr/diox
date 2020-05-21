@@ -1,75 +1,76 @@
 /**
- * Copyright 2018 - present, Matthieu Jabbour <matthieu.jabbour@gmail.com>.
- * All rights reserved.
+ * Copyright (c) Matthieu Jabbour.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
-
 
 type mixed = any; // tslint:disable-line no-any
 
 
 /** Subscription to modules' states changes. */
-type subscription = (newState : mixed) => void;
+type subscription = (newState: mixed) => void;
 
 
 /** Global state's exposed API as argument. */
 interface MutateExposedAPI {
-  hash : string;
-  state : mixed;
-  mutate : (hash : string, mutation : mixed) => void;
+  hash: string;
+  state: mixed;
+  mutate: (hash: string, mutation: mixed) => void;
 }
 
 
 /** Global state's exposed API as argument. */
 interface DispatchExposedAPI {
-  hash : string;
-  mutate : (hash : string, mutation : mixed) => void;
-  dispatch : (hash : string, action : mixed) => void;
-  register : (module : Module) => string;
-  unregister : (hash : string) => void;
-  combine : (hash : string, mapper : Mapper) => string;
-  uncombine : (hash : string) => void;
+  hash: string;
+  mutate: (hash: string, mutation: mixed) => void;
+  dispatch: (hash: string, action: mixed) => void;
+  register: (module: Module) => string;
+  unregister: (hash: string) => void;
+  combine: (hash: string, mapper: Mapper) => string;
+  uncombine: (hash: string) => void;
 }
 
 
 /** Global state's registered module type declaration. */
 interface RegisteredModule {
-  state : mixed;
-  mutator : (exposedAPI : MutateExposedAPI, mutation : mixed) => mixed;
-  dispatcher : (exposedAPI : DispatchExposedAPI, action : mixed) => void;
-  combiners : string[];
+  state: mixed;
+  mutator: (exposedAPI: MutateExposedAPI, mutation: mixed) => mixed;
+  dispatcher: (exposedAPI: DispatchExposedAPI, action: mixed) => void;
+  combiners: string[];
 }
 
 
 /** Combiner type declaration. */
 interface Combiner {
-  mapper : Mapper;
+  mapper: Mapper;
   // User-defined subscriptions.
-  subscriptions : { [id : string] : ((newState : mixed) => void) };
+  subscriptions: { [id: string]: ((newState: mixed) => void) };
 }
 
 
 /** Store's combiners list, indexed by their hash. */
 interface Combiners {
-  [hash : string] : Combiner;
+  [hash: string]: Combiner;
 }
 
 /** Store's modules list, indexed by their hash. */
 interface RegisteredModules {
-  [hash : string] : RegisteredModule;
+  [hash: string]: RegisteredModule;
 }
 
 
 /** Global state's module type declaration. */
 export interface Module {
-  mutator : (exposedAPI : MutateExposedAPI, mutation : mixed) => mixed;
-  dispatcher? : (exposedAPI : DispatchExposedAPI, action : mixed) => void;
+  mutator: (exposedAPI: MutateExposedAPI, mutation: mixed) => mixed;
+  dispatcher?: (exposedAPI: DispatchExposedAPI, action: mixed) => void;
 }
 
 
 /** Combiner's mapper type declaration. */
 export interface Mapper {
   // Hash of each combined module, along with a function of its state.
-  [key : string] : (newState : mixed) => mixed;
+  [key: string]: (newState: mixed) => mixed;
 }
 
 
@@ -80,16 +81,16 @@ export interface Mapper {
 export class Store {
 
   /** List of store middlewares. */
-  private middlewares : subscription[];
+  private middlewares: subscription[];
 
   /** List of store combiners. */
-  private combiners : Combiners;
+  private combiners: Combiners;
 
   /** Global modules register. */
-  private modules : RegisteredModules;
+  private modules: RegisteredModules;
 
   /** Unique index used for subscriptions ids generation. */
-  private index : number;
+  private index: number;
 
 
   /**
@@ -112,7 +113,7 @@ export class Store {
    *
    * @throws {Error} If a module with the same hash is already registered.
    */
-  public register(hash : string, module : Module) : string;
+  public register(hash: string, module: Module): string;
 
 
   /**
@@ -126,7 +127,7 @@ export class Store {
    *
    * @throws {Error} If module still has related user-defined combiners.
    */
-  public unregister(hash : string) : void;
+  public unregister(hash: string): void;
 
 
   /**
@@ -146,7 +147,7 @@ export class Store {
    *
    * @throws {Error} If one of the mapped hash does not correspond to a registered module.
    */
-  public combine(hash : string, mapper : Mapper) : string;
+  public combine(hash: string, mapper: Mapper): string;
 
 
   /**
@@ -162,7 +163,7 @@ export class Store {
    *
    * @throws {Error} If combiner still has subscriptions.
    */
-  public uncombine(hash : string) : void;
+  public uncombine(hash: string): void;
 
 
   /**
@@ -176,7 +177,7 @@ export class Store {
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe(hash : string, handler : subscription) : string;
+  public subscribe(hash: string, handler: subscription): string;
 
 
   /**
@@ -191,7 +192,7 @@ export class Store {
    *
    * @throws {Error} If subscription id does not exist.
    */
-  public unsubscribe(hash : string, subscriptionId : string) : void;
+  public unsubscribe(hash: string, subscriptionId: string): void;
 
 
   /**
@@ -207,7 +208,7 @@ export class Store {
    *
    * @throws {Error} If module's mutator did not return an object.
    */
-  public mutate(hash : string, mutation : mixed) : void;
+  public mutate(hash: string, mutation: mixed): void;
 
 
   /**
@@ -221,7 +222,7 @@ export class Store {
    *
    * @throws {Error} If there is no module registered with the given hash.
    */
-  public dispatch(hash : string, action : mixed) : void;
+  public dispatch(hash: string, action: mixed): void;
 
 
   /**
@@ -231,7 +232,7 @@ export class Store {
    *
    * @returns {void}
    */
-  public use(middleware : subscription) : void;
+  public use(middleware: subscription): void;
 
 
   /**
@@ -239,6 +240,6 @@ export class Store {
    *
    * @returns {string} The generated subscription id.
    */
-  private generateSubscriptionId() : string;
+  private generateSubscriptionId(): string;
 
 }
