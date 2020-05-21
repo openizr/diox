@@ -20,9 +20,7 @@ deploy:
     target_branch: master
     github_token: $GITHUB_TOKEN
     on:
-      tags: true
-
+      branch: master
 before_deploy:
   - yarn run doc
   - touch docs/.nojekyll
-  - echo $'always-auth=true\n//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' > .npmrc

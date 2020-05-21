@@ -29,7 +29,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "typescript-dev-kit": "^2.1.0"
+    "coveralls": "^3.1.0",
+    "typescript-dev-kit": "^2.0.2"
   },
   "eslintConfig": {
     "extends": [
