@@ -1,4 +1,4 @@
-# Diox
+# diox
 
 Complete state management for both front and back ends.
 
@@ -17,7 +17,7 @@ yarn add diox
 
 ## Motivations
 
-This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, Diox has several advantages :
+This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, diox has several advantages :
 - 100% standalone (no dependency)
 - Extremely light (~300 lines of code, 1.7Kb gzipped)
 - Fast and optimized by design

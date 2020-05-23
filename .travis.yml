@@ -11,7 +11,7 @@ deploy:
   # Deploys package on NPM
   - provider: script
     skip_cleanup: true
-    script: yarn run build && npm publish ./dist && mv package.json.bkp package.json
+    script: yarn run build && npm publish ./dist
     on:
       tags: true
   # Generates documentation
@@ -28,3 +28,6 @@ before_deploy:
   - yarn run doc
   - touch docs/.nojekyll
   - echo $'always-auth=true\n//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' > .npmrc
+
+after_deploy:
+  - mv package.json.bkp package.json
