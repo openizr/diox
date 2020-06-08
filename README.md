@@ -17,104 +17,216 @@ yarn add diox
 
 ## Motivations
 
-This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, diox has several advantages :
+This framework is a mix between Redux and Vuex. Both of them have some drawbacks which makes
+development of large-scale applications more and more complex over time. diox brings significant
+improvements:
+
 - 100% standalone (no dependency)
 - Extremely light (~300 lines of code, 1.7Kb gzipped)
 - Fast and optimized by design
-- Scalable out of the box without using any additional NPM module
-- Compatible with any front-end library such as React or VueJS
+- Scalable out of the box without using any additional NPM module, thanks to the concept of Modules
+- Compatible with any front-end library such as React or VueJS, using a unified syntax
 - Easy to use, with a very small learning curve and simple concepts
-- You can "observe" state changes (run callbacks each time a change on state is done), which is not possible in Vuex
+- Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)
 
 
-## Getting started
+## Integrations with UI frameworks
 
-Example in diox:
+Several official connectors are available for most common UI frameworks:
+
+- React: [diox-react](https://github.com/matthieujabbour/diox-react)
+- VueJS: [diox-vue](https://github.com/matthieujabbour/diox-vue)
+
+In addition, the [diox-cloner](https://github.com/matthieujabbour/diox-cloner) package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.
+
+
+## Concepts
+
+### Subscription
+
+A subscription is a [pure function](https://en.wikipedia.org/wiki/Pure_function) that takes an
+object in parameter (the state) and performs any operation with it. Subscriptions are called each
+time a change happens on the state.
 
 ```typescript
 
-import { Module, Store } from 'diox';
-
-// Defining a first module with no dispatcher...
-const moduleA : Module = {
-  mutator: ({ state }, mutation) => {
-    switch (mutation) {
-      case 'ADD':
-        return {
-          increment: state.increment + 1,
-        };
-      default:
-        // If no change need to be done, we juste return a copy of the current state.
-        // If this is the very first time mutator is called, internal state has not been defined yet
-        // and we must return its initial value.
-        return Object.assign({}, state || {
-          increment: 0,
-        });
-    }
-  },
+const subscription = (newState) => {
+  console.log('State has changed!', newState);
 };
 
-// Defining a second module with user-defined dispatcher...
-const moduleB : Module = {
-  mutator: ({ state }, mutation) => {
-    switch (mutation) {
-      case 'SUB':
-        return {
-          decrement: state.decrement - 1,
-        };
-      default:
-        // If no change need to be done, we juste return a copy of the current state.
-        // If this is the very first time mutator is called, internal state has not been defined yet
-        // and we must return its initial value.
-        return Object.assign({}, state || {
-          decrement: 1000,
-        }};
-    }
-  },
-  dispatcher: ({ mutate, hash }, action) => {
-    switch (action) {
-      case 'ASYNC_SUB':
-        setTimeout(() => {
-          mutate(hash, 'SUB');
-        }, 1000);
-        break;
-      default:
-        break;
-    }
-  },
+```
+
+### Mutators
+
+A mutator is also a pure function that returns a copy of an object (the state) depending on the
+desired type of change (mutation). In diox, mutators are in charge of performing synchronous changes
+on the internal state.
+
+```typescript
+
+const myMutator = ({ state }, mutation) => {
+  if (mutation === 'ADD') {
+    return {
+      count: state.count + 1,
+    };
+  }
+  // If this is the very first time mutator is called, state has not been defined yet and we must
+  // return an initial value.
+  if (state === undefined) {
+    return {
+      count: 0,
+    };
+  }
+  // By default, just return a copy of the current state.
+  return Object.assign({}, state);
 };
+
+```
+
+### Dispatchers
+
+A dispatcher is a function that performs one or several calls to mutators depending on the desired
+type of action. Dispatchers cannot update state directly as it's the mutators' job.
+
+```typescript
+
+const myDispatcher = ({ mutate, hash }, action) => {
+  if (action === 'ASYNC_ADD') {
+    // `hash` tells diox which mutator should be called with the given mutation (see Modules).
+    setTimeout(() => mutate(hash, 'ADD'), 500);
+  }
+};
+
+```
+
+### Modules
+
+A module contains a part of your app's global state, managing a specific concern (e.g. list of users,
+list of blog articles, app status, ...). By creating several modules, and combining them, you can
+build complex, evolutive, infinitely scalable apps without worrying about performance. Each module
+is composed of a Mutator and optionally a Dispatcher.
+
+```typescript
+
+const myModule = {
+  mutator: myMutator,
+  dispatcher: myDispatcher,
+};
+
+```
+
+### Store
+
+The Store is the entity that ties everything together. Modules are registered into the Store,
+using a unique identifier (so-called "hash"). You can subscribe to changes on registered modules,
+combine modules, or apply middlewares to achieve more complex goals.
+
+```typescript
 
 // Instanciating store...
-const store : Store = new Store();
+const store = new Store();
 
-// Adding a global middleware...
+// Adding a global middleware triggered at each state change on any module...
 store.use((newState) => {
   console.log('New state !', newState);
 });
 
 // Registering modules...
-store.register('/a', moduleA);
-store.register('/b', moduleB);
+store.register('a', moduleA);
+store.register('b', moduleB);
 
-// Creating a combiner which mixes `/a` and `/b` modules...
-store.combine('/c', {
-  '/a': newState => ({ a: newState.increment }),
-  '/b': newState => ({ b: newState }),
+// Creating a combiner which mixes `a` and `b` modules...
+store.combine('c', {
+  'a': newState => ({ a: newState.increment }),
+  'b': newState => ({ b: newState }),
 });
 
-// Subscribing to the `/a` default combiner...
-store.subscribe('/a', (newState) => {
-  console.log('New state from /a !', newState);
+// Subscribing to the combination of `a`  and `b` modules...
+store.subscribe('c', (newState) => {
+  console.log('New mixed state!', newState.a, newState.b);
 });
 
-// Subscribing to the `/c` user-defined combiner...
-store.subscribe('/c', (newState) => {
-  console.log('New state from /c !', newState);
+
+```
+
+### Combiners
+
+You can mix the result of several module's changes by using a Combiner. It is a pure function that
+listens to changes on one or several modules, and returns a mix of their states for easier processing.
+For instance, imagine you have a module containing all the articles of a blog, and another one
+containing the list of article's authors. Instead of subscibing to both modules, you can create a
+combiner that will generate a proper structure with all info (articles + authors) so you just have
+to subscribe to this combiner and forget about managing several sources of data.
+
+### Middlewares
+
+Middlewares can be useful in some situations where you want to listen to all states changes on all
+modules and trigger similar processing on all of them. For instance, you may want to implement a
+"time-travel" tool, keeping a complete history of states changes over time to revert them if necessary.
+
+### Complete example
+
+Example in diox:
+
+```typescript
+
+import { Store } from 'diox';
+
+const moduleA = {
+  mutator: ({ state }, mutation) => {
+    if (mutation === 'ADD') {
+      return {
+        increment: state.increment + 1,
+      };
+    }
+    return (state === undefined)
+      ? { increment: 0 }
+      : Object.assign({}, state);
+  },
+};
+
+const moduleB = {
+  mutator: ({ state }, mutation) => {
+    if (mutation === 'SUB') {
+      return {
+        decrement: state.decrement - 1,
+      };
+    }
+    return (state === undefined)
+      ? { decrement: 1000 }
+      : Object.assign({}, state);
+  },
+  dispatcher: ({ mutate, hash }, action) => {
+    if (action === 'ASYNC_SUB') {
+      setTimeout(() => { mutate(hash, 'SUB'); }, 1000);
+    }
+  },
+};
+
+const store : Store = new Store();
+
+store.use((newState) => {
+  console.log('New state !', newState);
 });
 
-// Performing sync mutations and async actions...
-store.mutate('/a', 'ADD');
-store.dispatch('/b', 'ASYNC_SUB');
+store.register('a', moduleA);
+store.register('b', moduleB);
+
+store.combine('c', {
+  'a': newState => ({ a: newState.increment }),
+  'b': newState => ({ b: newState }),
+});
+
+store.subscribe('a', (newState) => {
+  console.log('New state from a !', newState);
+});
+
+store.subscribe('c', (newState) => {
+  console.log('New state from c !', newState);
+});
+
+store.mutate('a', 'ADD');
+store.dispatch('b', 'ASYNC_SUB');
 
 ```
 
@@ -162,16 +274,16 @@ const store = new Vuex.Store({
 
 console.log('New state !', store.state.a);
 console.log('New state !', store.state.b);
-console.log('New state from /a !', store.state.a);
-console.log('New state from /c !', store.state);
+console.log('New state from a !', store.state.a);
+console.log('New state from c !', store.state);
 storeA.commit('ADD')
 console.log('New state !', store.state.a);
-console.log('New state from /a !', store.state.a);
-console.log('New state from /c !', store.state);
+console.log('New state from a !', store.state.a);
+console.log('New state from c !', store.state);
 store.dispatch('ASYNC_SUB');
 setTimeout(() => {
   console.log('New state !', store.state.b);
-  console.log('New state from /c !', store.state);
+  console.log('New state from c !', store.state);
 }, 2000);
 
 ```
@@ -181,60 +293,19 @@ The above examples will display in console :
 ```bash
 New state ! { increment: 0 }
 New state ! { decrement: 1000 }
-New state from /a ! { increment: 0 }
-New state from /c ! { a: 0, b: { decrement: 1000 } }
+New state from a ! { increment: 0 }
+New state from c ! { a: 0, b: { decrement: 1000 } }
 New state ! { increment: 1 }
-New state from /a ! { increment: 1 }
-New state from /c ! { a: 1, b: { decrement: 1000 } }
+New state from a ! { increment: 1 }
+New state from c ! { a: 1, b: { decrement: 1000 } }
 New state ! { decrement: 999 }
-New state from /c ! { a: 1, b: { decrement: 999 } }
+New state from c ! { a: 1, b: { decrement: 999 } }
 ```
-
-
-## Concepts
-
-### Modules
-
-Modules represent the very basis of diox. Each module contains a small part of your app's global state, dealing with a specific concern (e.g. list of users, list of blog articles, app statuses, ...). By registering several modules to the Store, or combining them, you can build large-scale, complex and evolutive apps, where your global state is scalable by design. Each module is composed of a Mutator and a Dispatcher (see below).
-
-### Mutators
-
-Mutators are pure functions that allow user to perform synchronous changes (mutations) on module's internal state, depending on given parameters. It must always return a new copy of module's internal state with desired changes.
-
-### Dispatchers
-
-Dispatchers are also pure functions that allow user to perform asynchronous operations on module's internal state, depending on given parameters. Dispatchers cannot change state on their own, they must use modules mutators instead. Dispatcher can call their own module's mutator, but also any other defined module's mutator, just by specifying its hash.
-
-### Subscriptions
-
-Subscriptions are function called each time a change has been performed on a module's internal state. You can then choose to do anything with that new state (display it, perform further operations, ...). Any number of subscriptions can be defined on the same module.
-
-### Combiners
-
-You can mix the result of several module's changes by using a Combiner. It is a pure function that listens to changes on one or several modules' states, and returns a mix of those states for easier processing. For instance, imagine you have a module containing all the articles of a blog, and another one containing the list of article's authors. Instead of subscibing to both modules, you can create a combiner that will generate a proper structure with all info (articles + authors) so you just have to subscribe to this combiner and forget about handling several sources of data.
-
-### Middlewares
-
-Middlewares can be useful in some situations where you want to listen to all states changes on all modules and trigger similar processing on all of them. For instance, you may want to implement a "time-travel" tool, keeping a complete history of states changes over time to revert them if needed.
-
-### Store
-
-Store is the entity that ties everything together. Modules are registered to the Store, using a unique identifier (so-called "hash"). Once modules have been registered to the store, you can declare subscriptions to them, combine them, apply middlewares, ...
-
-
-## Integrations with UI frameworks
-
-Several official connectors are available for most common UI frameworks:
-
-- React: [diox-react](https://github.com/matthieujabbour/diox-react)
-- VueJS: [diox-vue](https://github.com/matthieujabbour/diox-vue)
-
-In addition, the [diox-cloner](https://github.com/matthieujabbour/diox-cloner) package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.
 
 
 ## API documentation
 
-You can find the full API documentation [here](https://matthieujabbour.github.io/diox)
+The complete API documentation is available [here](https://matthieujabbour.github.io/diox)
 
 
 ## Contributing

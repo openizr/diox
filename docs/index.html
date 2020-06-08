@@ -65,7 +65,7 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<a href="#diox" id="diox" style="color: inherit; text-decoration: none;">
-					<h1>Diox</h1>
+					<h1>diox</h1>
 				</a>
 				<p>Complete state management for both front and back ends.</p>
 				<p><a href="https://travis-ci.org/matthieujabbour/diox"><img src="https://travis-ci.org/matthieujabbour/diox.svg?branch=master" alt="Build Status"></a>
@@ -79,103 +79,199 @@
 				<a href="#motivations" id="motivations" style="color: inherit; text-decoration: none;">
 					<h2>Motivations</h2>
 				</a>
-				<p>This framework is deeply inspired by Redux and Vuex, which I used for some time. To me, both of them have drawbacks that make them complex to manage in large-scale applications. I tried to mix their concepts to get the best of two worlds. Compared to them, Diox has several advantages :</p>
+				<p>This framework is a mix between Redux and Vuex. Both of them have some drawbacks which makes
+					development of large-scale applications more and more complex over time. diox brings significant
+				improvements:</p>
 				<ul>
 					<li>100% standalone (no dependency)</li>
 					<li>Extremely light (~300 lines of code, 1.7Kb gzipped)</li>
 					<li>Fast and optimized by design</li>
-					<li>Scalable out of the box without using any additional NPM module</li>
-					<li>Compatible with any front-end library such as React or VueJS</li>
+					<li>Scalable out of the box without using any additional NPM module, thanks to the concept of Modules</li>
+					<li>Compatible with any front-end library such as React or VueJS, using a unified syntax</li>
 					<li>Easy to use, with a very small learning curve and simple concepts</li>
-					<li>You can &quot;observe&quot; state changes (run callbacks each time a change on state is done), which is not possible in Vuex</li>
+					<li>Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)</li>
 				</ul>
-				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
-					<h2>Getting started</h2>
+				<a href="#integrations-with-ui-frameworks" id="integrations-with-ui-frameworks" style="color: inherit; text-decoration: none;">
+					<h2>Integrations with UI frameworks</h2>
 				</a>
-				<p>Example in diox:</p>
+				<p>Several official connectors are available for most common UI frameworks:</p>
+				<ul>
+					<li>React: <a href="https://github.com/matthieujabbour/diox-react">diox-react</a></li>
+					<li>VueJS: <a href="https://github.com/matthieujabbour/diox-vue">diox-vue</a></li>
+				</ul>
+				<p>In addition, the <a href="https://github.com/matthieujabbour/diox-cloner">diox-cloner</a> package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.</p>
+				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
+					<h2>Concepts</h2>
+				</a>
+				<a href="#subscription" id="subscription" style="color: inherit; text-decoration: none;">
+					<h3>Subscription</h3>
+				</a>
+				<p>A subscription is a <a href="https://en.wikipedia.org/wiki/Pure_function">pure function</a> that takes an
+					object in parameter (the state) and performs any operation with it. Subscriptions are called each
+				time a change happens on the state.</p>
 				<pre><code class="language-typescript">
-<span class="hljs-keyword">import</span> { Module, Store } <span class="hljs-keyword">from</span> <span class="hljs-string">'diox'</span>;
-
-<span class="hljs-comment">// Defining a first module with no dispatcher...</span>
-<span class="hljs-keyword">const</span> moduleA : Module = {
-  mutator: <span class="hljs-function">(<span class="hljs-params">{ state }, mutation</span>) =&gt;</span> {
-    <span class="hljs-keyword">switch</span> (mutation) {
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'ADD'</span>:
-        <span class="hljs-keyword">return</span> {
-          increment: state.increment + <span class="hljs-number">1</span>,
-        };
-      <span class="hljs-keyword">default</span>:
-        <span class="hljs-comment">// If no change need to be done, we juste return a copy of the current state.</span>
-        <span class="hljs-comment">// If this is the very first time mutator is called, internal state has not been defined yet</span>
-        <span class="hljs-comment">// and we must return its initial value.</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state || {
-          increment: <span class="hljs-number">0</span>,
-        });
-    }
-  },
+<span class="hljs-keyword">const</span> subscription = <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'State has changed!'</span>, newState);
 };
-
-<span class="hljs-comment">// Defining a second module with user-defined dispatcher...</span>
-<span class="hljs-keyword">const</span> moduleB : Module = {
-  mutator: <span class="hljs-function">(<span class="hljs-params">{ state }, mutation</span>) =&gt;</span> {
-    <span class="hljs-keyword">switch</span> (mutation) {
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'SUB'</span>:
-        <span class="hljs-keyword">return</span> {
-          decrement: state.decrement - <span class="hljs-number">1</span>,
-        };
-      <span class="hljs-keyword">default</span>:
-        <span class="hljs-comment">// If no change need to be done, we juste return a copy of the current state.</span>
-        <span class="hljs-comment">// If this is the very first time mutator is called, internal state has not been defined yet</span>
-        <span class="hljs-comment">// and we must return its initial value.</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state || {
-          decrement: <span class="hljs-number">1000</span>,
-        }};
-    }
-  },
-  dispatcher: <span class="hljs-function">(<span class="hljs-params">{ mutate, hash }, action</span>) =&gt;</span> {
-    <span class="hljs-keyword">switch</span> (action) {
-      <span class="hljs-keyword">case</span> <span class="hljs-string">'ASYNC_SUB'</span>:
-        setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-          mutate(hash, <span class="hljs-string">'SUB'</span>);
-        }, <span class="hljs-number">1000</span>);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">default</span>:
-        <span class="hljs-keyword">break</span>;
-    }
-  },
+</code></pre>
+				<a href="#mutators" id="mutators" style="color: inherit; text-decoration: none;">
+					<h3>Mutators</h3>
+				</a>
+				<p>A mutator is also a pure function that returns a copy of an object (the state) depending on the
+					desired type of change (mutation). In diox, mutators are in charge of performing synchronous changes
+				on the internal state.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">const</span> myMutator = <span class="hljs-function">(<span class="hljs-params">{ state }, mutation</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (mutation === <span class="hljs-string">'ADD'</span>) {
+    <span class="hljs-keyword">return</span> {
+      count: state.count + <span class="hljs-number">1</span>,
+    };
+  }
+  <span class="hljs-comment">// If this is the very first time mutator is called, state has not been defined yet and we must</span>
+  <span class="hljs-comment">// return an initial value.</span>
+  <span class="hljs-keyword">if</span> (state === <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">return</span> {
+      count: <span class="hljs-number">0</span>,
+    };
+  }
+  <span class="hljs-comment">// By default, just return a copy of the current state.</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state);
 };
-
+</code></pre>
+				<a href="#dispatchers" id="dispatchers" style="color: inherit; text-decoration: none;">
+					<h3>Dispatchers</h3>
+				</a>
+				<p>A dispatcher is a function that performs one or several calls to mutators depending on the desired
+				type of action. Dispatchers cannot update state directly as it&#39;s the mutators&#39; job.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">const</span> myDispatcher = <span class="hljs-function">(<span class="hljs-params">{ mutate, hash }, action</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'ASYNC_ADD'</span>) {
+    <span class="hljs-comment">// `hash` tells diox which mutator should be called with the given mutation (see Modules).</span>
+    setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> mutate(hash, <span class="hljs-string">'ADD'</span>), <span class="hljs-number">500</span>);
+  }
+};
+</code></pre>
+				<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
+					<h3>Modules</h3>
+				</a>
+				<p>A module contains a part of your app&#39;s global state, managing a specific concern (e.g. list of users,
+					list of blog articles, app status, ...). By creating several modules, and combining them, you can
+					build complex, evolutive, infinitely scalable apps without worrying about performance. Each module
+				is composed of a Mutator and optionally a Dispatcher.</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">const</span> myModule = {
+  mutator: myMutator,
+  dispatcher: myDispatcher,
+};
+</code></pre>
+				<a href="#store" id="store" style="color: inherit; text-decoration: none;">
+					<h3>Store</h3>
+				</a>
+				<p>The Store is the entity that ties everything together. Modules are registered into the Store,
+					using a unique identifier (so-called &quot;hash&quot;). You can subscribe to changes on registered modules,
+				combine modules, or apply middlewares to achieve more complex goals.</p>
+				<pre><code class="language-typescript">
 <span class="hljs-comment">// Instanciating store...</span>
-<span class="hljs-keyword">const</span> store : Store = <span class="hljs-keyword">new</span> Store();
+<span class="hljs-keyword">const</span> store = <span class="hljs-keyword">new</span> Store();
 
-<span class="hljs-comment">// Adding a global middleware...</span>
+<span class="hljs-comment">// Adding a global middleware triggered at each state change on any module...</span>
 store.use(<span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, newState);
 });
 
 <span class="hljs-comment">// Registering modules...</span>
-store.register(<span class="hljs-string">'/a'</span>, moduleA);
-store.register(<span class="hljs-string">'/b'</span>, moduleB);
+store.register(<span class="hljs-string">'a'</span>, moduleA);
+store.register(<span class="hljs-string">'b'</span>, moduleB);
 
-<span class="hljs-comment">// Creating a combiner which mixes `/a` and `/b` modules...</span>
-store.combine(<span class="hljs-string">'/c'</span>, {
-  <span class="hljs-string">'/a'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ a: newState.increment }),
-  <span class="hljs-string">'/b'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ b: newState }),
+<span class="hljs-comment">// Creating a combiner which mixes `a` and `b` modules...</span>
+store.combine(<span class="hljs-string">'c'</span>, {
+  <span class="hljs-string">'a'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ a: newState.increment }),
+  <span class="hljs-string">'b'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ b: newState }),
 });
 
-<span class="hljs-comment">// Subscribing to the `/a` default combiner...</span>
-store.subscribe(<span class="hljs-string">'/a'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, newState);
+<span class="hljs-comment">// Subscribing to the combination of `a`  and `b` modules...</span>
+store.subscribe(<span class="hljs-string">'c'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New mixed state!'</span>, newState.a, newState.b);
 });
 
-<span class="hljs-comment">// Subscribing to the `/c` user-defined combiner...</span>
-store.subscribe(<span class="hljs-string">'/c'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, newState);
+</code></pre>
+				<a href="#combiners" id="combiners" style="color: inherit; text-decoration: none;">
+					<h3>Combiners</h3>
+				</a>
+				<p>You can mix the result of several module&#39;s changes by using a Combiner. It is a pure function that
+					listens to changes on one or several modules, and returns a mix of their states for easier processing.
+					For instance, imagine you have a module containing all the articles of a blog, and another one
+					containing the list of article&#39;s authors. Instead of subscibing to both modules, you can create a
+					combiner that will generate a proper structure with all info (articles + authors) so you just have
+				to subscribe to this combiner and forget about managing several sources of data.</p>
+				<a href="#middlewares" id="middlewares" style="color: inherit; text-decoration: none;">
+					<h3>Middlewares</h3>
+				</a>
+				<p>Middlewares can be useful in some situations where you want to listen to all states changes on all
+					modules and trigger similar processing on all of them. For instance, you may want to implement a
+				&quot;time-travel&quot; tool, keeping a complete history of states changes over time to revert them if necessary.</p>
+				<a href="#complete-example" id="complete-example" style="color: inherit; text-decoration: none;">
+					<h3>Complete example</h3>
+				</a>
+				<p>Example in diox:</p>
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Store } <span class="hljs-keyword">from</span> <span class="hljs-string">'diox'</span>;
+
+<span class="hljs-keyword">const</span> moduleA = {
+  mutator: <span class="hljs-function">(<span class="hljs-params">{ state }, mutation</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (mutation === <span class="hljs-string">'ADD'</span>) {
+      <span class="hljs-keyword">return</span> {
+        increment: state.increment + <span class="hljs-number">1</span>,
+      };
+    }
+    <span class="hljs-keyword">return</span> (state === <span class="hljs-literal">undefined</span>)
+      ? { increment: <span class="hljs-number">0</span> }
+      : <span class="hljs-built_in">Object</span>.assign({}, state);
+  },
+};
+
+<span class="hljs-keyword">const</span> moduleB = {
+  mutator: <span class="hljs-function">(<span class="hljs-params">{ state }, mutation</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (mutation === <span class="hljs-string">'SUB'</span>) {
+      <span class="hljs-keyword">return</span> {
+        decrement: state.decrement - <span class="hljs-number">1</span>,
+      };
+    }
+    <span class="hljs-keyword">return</span> (state === <span class="hljs-literal">undefined</span>)
+      ? { decrement: <span class="hljs-number">1000</span> }
+      : <span class="hljs-built_in">Object</span>.assign({}, state);
+  },
+  dispatcher: <span class="hljs-function">(<span class="hljs-params">{ mutate, hash }, action</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'ASYNC_SUB'</span>) {
+      setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { mutate(hash, <span class="hljs-string">'SUB'</span>); }, <span class="hljs-number">1000</span>);
+    }
+  },
+};
+
+<span class="hljs-keyword">const</span> store : Store = <span class="hljs-keyword">new</span> Store();
+
+store.use(<span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, newState);
 });
 
-<span class="hljs-comment">// Performing sync mutations and async actions...</span>
-store.mutate(<span class="hljs-string">'/a'</span>, <span class="hljs-string">'ADD'</span>);
-store.dispatch(<span class="hljs-string">'/b'</span>, <span class="hljs-string">'ASYNC_SUB'</span>);
+store.register(<span class="hljs-string">'a'</span>, moduleA);
+store.register(<span class="hljs-string">'b'</span>, moduleB);
+
+store.combine(<span class="hljs-string">'c'</span>, {
+  <span class="hljs-string">'a'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ a: newState.increment }),
+  <span class="hljs-string">'b'</span>: <span class="hljs-function"><span class="hljs-params">newState</span> =&gt;</span> ({ b: newState }),
+});
+
+store.subscribe(<span class="hljs-string">'a'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from a !'</span>, newState);
+});
+
+store.subscribe(<span class="hljs-string">'c'</span>, <span class="hljs-function">(<span class="hljs-params">newState</span>) =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from c !'</span>, newState);
+});
+
+store.mutate(<span class="hljs-string">'a'</span>, <span class="hljs-string">'ADD'</span>);
+store.dispatch(<span class="hljs-string">'b'</span>, <span class="hljs-string">'ASYNC_SUB'</span>);
 </code></pre>
 				<p>The equivalent in Vuex is:</p>
 				<pre><code class="language-typescript">
@@ -219,72 +315,32 @@ store.dispatch(<span class="hljs-string">'/b'</span>, <span class="hljs-string">
 
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.a);
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.b);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, store.state.a);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from a !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from c !'</span>, store.state);
 storeA.commit(<span class="hljs-string">'ADD'</span>)
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.a);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /a !'</span>, store.state.a);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from a !'</span>, store.state.a);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from c !'</span>, store.state);
 store.dispatch(<span class="hljs-string">'ASYNC_SUB'</span>);
 setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state !'</span>, store.state.b);
-  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from /c !'</span>, store.state);
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'New state from c !'</span>, store.state);
 }, <span class="hljs-number">2000</span>);
 </code></pre>
 				<p>The above examples will display in console :</p>
 				<pre><code class="language-bash">New state ! { increment: 0 }
 New state ! { decrement: 1000 }
-New state from /a ! { increment: 0 }
-New state from /c ! { a: 0, b: { decrement: 1000 } }
+New state from a ! { increment: 0 }
+New state from c ! { a: 0, b: { decrement: 1000 } }
 New state ! { increment: 1 }
-New state from /a ! { increment: 1 }
-New state from /c ! { a: 1, b: { decrement: 1000 } }
+New state from a ! { increment: 1 }
+New state from c ! { a: 1, b: { decrement: 1000 } }
 New state ! { decrement: 999 }
-New state from /c ! { a: 1, b: { decrement: 999 } }</code></pre>
-				<a href="#concepts" id="concepts" style="color: inherit; text-decoration: none;">
-					<h2>Concepts</h2>
-				</a>
-				<a href="#modules" id="modules" style="color: inherit; text-decoration: none;">
-					<h3>Modules</h3>
-				</a>
-				<p>Modules represent the very basis of diox. Each module contains a small part of your app&#39;s global state, dealing with a specific concern (e.g. list of users, list of blog articles, app statuses, ...). By registering several modules to the Store, or combining them, you can build large-scale, complex and evolutive apps, where your global state is scalable by design. Each module is composed of a Mutator and a Dispatcher (see below).</p>
-				<a href="#mutators" id="mutators" style="color: inherit; text-decoration: none;">
-					<h3>Mutators</h3>
-				</a>
-				<p>Mutators are pure functions that allow user to perform synchronous changes (mutations) on module&#39;s internal state, depending on given parameters. It must always return a new copy of module&#39;s internal state with desired changes.</p>
-				<a href="#dispatchers" id="dispatchers" style="color: inherit; text-decoration: none;">
-					<h3>Dispatchers</h3>
-				</a>
-				<p>Dispatchers are also pure functions that allow user to perform asynchronous operations on module&#39;s internal state, depending on given parameters. Dispatchers cannot change state on their own, they must use modules mutators instead. Dispatcher can call their own module&#39;s mutator, but also any other defined module&#39;s mutator, just by specifying its hash.</p>
-				<a href="#subscriptions" id="subscriptions" style="color: inherit; text-decoration: none;">
-					<h3>Subscriptions</h3>
-				</a>
-				<p>Subscriptions are function called each time a change has been performed on a module&#39;s internal state. You can then choose to do anything with that new state (display it, perform further operations, ...). Any number of subscriptions can be defined on the same module.</p>
-				<a href="#combiners" id="combiners" style="color: inherit; text-decoration: none;">
-					<h3>Combiners</h3>
-				</a>
-				<p>You can mix the result of several module&#39;s changes by using a Combiner. It is a pure function that listens to changes on one or several modules&#39; states, and returns a mix of those states for easier processing. For instance, imagine you have a module containing all the articles of a blog, and another one containing the list of article&#39;s authors. Instead of subscibing to both modules, you can create a combiner that will generate a proper structure with all info (articles + authors) so you just have to subscribe to this combiner and forget about handling several sources of data.</p>
-				<a href="#middlewares" id="middlewares" style="color: inherit; text-decoration: none;">
-					<h3>Middlewares</h3>
-				</a>
-				<p>Middlewares can be useful in some situations where you want to listen to all states changes on all modules and trigger similar processing on all of them. For instance, you may want to implement a &quot;time-travel&quot; tool, keeping a complete history of states changes over time to revert them if needed.</p>
-				<a href="#store" id="store" style="color: inherit; text-decoration: none;">
-					<h3>Store</h3>
-				</a>
-				<p>Store is the entity that ties everything together. Modules are registered to the Store, using a unique identifier (so-called &quot;hash&quot;). Once modules have been registered to the store, you can declare subscriptions to them, combine them, apply middlewares, ...</p>
-				<a href="#integrations-with-ui-frameworks" id="integrations-with-ui-frameworks" style="color: inherit; text-decoration: none;">
-					<h2>Integrations with UI frameworks</h2>
-				</a>
-				<p>Several official connectors are available for most common UI frameworks:</p>
-				<ul>
-					<li>React: <a href="https://github.com/matthieujabbour/diox-react">diox-react</a></li>
-					<li>VueJS: <a href="https://github.com/matthieujabbour/diox-vue">diox-vue</a></li>
-				</ul>
-				<p>In addition, the <a href="https://github.com/matthieujabbour/diox-cloner">diox-cloner</a> package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.</p>
+New state from c ! { a: 1, b: { decrement: 999 } }</code></pre>
 				<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">
 					<h2>API documentation</h2>
 				</a>
-				<p>You can find the full API documentation <a href="https://matthieujabbour.github.io/diox">here</a></p>
+				<p>The complete API documentation is available <a href="https://matthieujabbour.github.io/diox">here</a></p>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
 					<h2>Contributing</h2>
 				</a>
