@@ -25,7 +25,7 @@ improvements:
 - Extremely light (~300 lines of code, 1.7Kb gzipped)
 - Fast and optimized by design
 - Scalable out of the box without using any additional NPM module, thanks to the concept of Modules
-- Compatible with any front-end library such as React or VueJS, using a unified syntax
+- Compatible with any front-end library such as React or VueJS
 - Easy to use, with a very small learning curve and simple concepts
 - Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)
 
@@ -317,4 +317,4 @@ See the [Contribution guide](https://github.com/matthieujabbour/diox/blob/master
 
 [MIT](https://github.com/matthieujabbour/diox/blob/master/LICENSE)
 
-Copyright (c) Matthieu Jabbour.
+Copyright (c) Matthieu Jabbour. All Rights Reserved.

@@ -209,4 +209,4 @@ Project is structured as follow:
 
 [MIT](https://github.com/matthieujabbour/diox/blob/master/LICENSE)
 
-Copyright (c) Matthieu Jabbour.
+Copyright (c) Matthieu Jabbour. All Rights Reserved.

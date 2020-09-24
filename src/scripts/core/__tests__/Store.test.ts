@@ -1,55 +1,45 @@
 /**
- * Copyright (c) Matthieu Jabbour.
+ * Copyright (c) Matthieu Jabbour. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
  */
 
-import { Module, Store } from 'scripts/Store';
+import Store from 'scripts/core/Store';
+import { mixed, Module } from 'scripts/types';
 
 Date.now = jest.fn(() => 1543757462922);
 
-describe('Store', () => {
+describe('core/Store', () => {
   let store: Store;
   const moduleA: Module = {
-    mutator: ({ state }, mutation) => {
-      switch (mutation) {
-        case 'ADD':
-          return {
-            test: state.test + 1,
-          };
-        default:
-          return state || {
-            test: 0,
-          };
-      }
+    state: {
+      test: 0,
+    },
+    mutations: {
+      ADD({ state }): mixed {
+        return {
+          test: state.test + 1,
+        };
+      },
+      BAD({ state }): mixed {
+        return Object.assign(state, { test: 10 });
+      },
     },
   };
   const moduleB: Module = {
-    mutator: ({ state }, mutation) => {
-      switch (mutation) {
-        case 'ADD':
-          return {
-            test: state.test + 1,
-          };
-        default:
-          return state || {
-            test: 5,
-          };
-      }
+    state: {
+      test: 5,
     },
-    dispatcher: ({ hash, mutate }, action) => {
-      switch (action) {
-        case 'ADD':
-          mutate(hash, action);
-          break;
-        default:
-          break;
-      }
+    mutations: {
+      ADD: ({ state }): Record<string, mixed> => ({ test: state.test + 1 }),
     },
-  };
-  const moduleC: Module = {
-    mutator: ({ state }) => state || 0,
+    actions: {
+      ADD({ mutate, hash }): void {
+        mutate(hash, 'ADD');
+      },
+    },
   };
 
   beforeEach(() => {
@@ -183,7 +173,7 @@ describe('Store', () => {
       );
     });
     test('correctly subscribes to the given combiner if it exists', (done) => {
-      const handler: jest.Mock = jest.fn().mockImplementationOnce(() => {
+      const handler = jest.fn().mockImplementationOnce(() => {
         expect(store).toMatchSnapshot();
         expect(handler).toHaveBeenCalledTimes(1);
         expect(handler).toHaveBeenCalledWith({
@@ -247,16 +237,26 @@ describe('Store', () => {
         + 'module does not exist.',
       );
     });
-    test('throws an error if module\'s mutator does not return an object', () => {
+    test('throws an error if mutation does not exist in module', () => {
       expect(() => {
-        store.register('module', moduleC);
+        store.register('module', moduleA);
+        store.mutate('module', 'SUB');
       }).toThrow(
         'Could not perform mutation on module with hash "module": '
-        + 'new state must be an object.',
+        + 'mutation "SUB" does not exist.',
+      );
+    });
+    test('throws an error if module\'s mutation is not a pure function', () => {
+      expect(() => {
+        store.register('module', moduleA);
+        store.mutate('module', 'BAD');
+      }).toThrow(
+        'Could not perform mutation on module with hash "module": '
+        + 'new state must be a deep copy of module\'s state.',
       );
     });
     test('correctly performs mutation on the given module if it exists', (done) => {
-      const handler: jest.Mock = jest.fn().mockImplementationOnce(() => {
+      const handler = jest.fn().mockImplementationOnce(() => {
         expect(handler).toHaveBeenCalledWith({ test: 0 });
       }).mockImplementationOnce(() => {
         expect(handler).toHaveBeenCalledTimes(2);
@@ -278,18 +278,27 @@ describe('Store', () => {
         + 'module does not exist.',
       );
     });
-    test('correctly dispatches default action on the given module if it exists', () => {
-      const handler: jest.Mock = jest.fn();
-      store.register('module', moduleA);
+    test('throws an error if action does not exist in module', () => {
+      expect(() => {
+        store.register('module', moduleA);
+        store.dispatch('module', 'ADD');
+      }).toThrow(
+        'Could not dispatch action to module with hash "module": '
+        + 'action "ADD" does not exist.',
+      );
+    });
+    test('correctly dispatches action on the given module if it exists', () => {
+      const handler = jest.fn();
+      store.register('module', moduleB);
       store.subscribe('module', handler);
       store.dispatch('module', 'ADD');
-      expect(handler).toHaveBeenCalledTimes(1);
+      expect(handler).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('use', () => {
     test('correctly applies middleware to store', () => {
-      const middleware: jest.Mock = jest.fn();
+      const middleware = jest.fn();
       store.use(middleware);
       store.register('module', moduleA);
       expect(middleware).toHaveBeenCalledTimes(1);
