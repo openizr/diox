@@ -30,7 +30,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "typescript-dev-kit": "^2.2.3"
+    "typescript-dev-kit": "^2.2.4"
   },
   "eslintConfig": {
     "extends": [
@@ -44,7 +44,6 @@
     "react": "^16.13.1",
     "vue": "^2.6.12"
   },
-  "dependencies": {},
   "tsDevKitConfig": {
     "target": "node",
     "entry": {
