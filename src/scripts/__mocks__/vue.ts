@@ -6,10 +6,9 @@
  *
  */
 
-/* istanbul ignore file */
-
-import Store from 'scripts/core/Store';
-import { Mapper, Module } from 'scripts/types';
-
-export { Mapper, Module };
-export default Store;
+export default {
+  extend: jest.fn((firstObject) => ({
+    ...firstObject.mixins[0],
+    ...firstObject.mixins[1],
+  })),
+};

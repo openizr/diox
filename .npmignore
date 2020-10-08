@@ -255,6 +255,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/composer,node,vim,sublimetext,phpstorm,linux,macos,notepadpp,windows
-
-# Additional rules
-*.d.ts

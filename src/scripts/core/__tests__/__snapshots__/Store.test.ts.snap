@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Store combine correctly creates combiner if all mapped hashes exist 1`] = `
+exports[`core/Store combine correctly creates combiner if all mapped hashes exist 1`] = `
 Store {
   "combiners": Object {
     "combiner": Object {
@@ -27,23 +27,32 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "moduleA": Object {
+      "actions": Object {},
       "combiners": Array [
         "moduleA",
         "combiner",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },
     },
     "moduleB": Object {
+      "actions": Object {
+        "ADD": [Function],
+      },
       "combiners": Array [
         "moduleB",
         "combiner",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 5,
       },
@@ -52,7 +61,7 @@ Store {
 }
 `;
 
-exports[`Store constructor always correctly instanciates 1`] = `
+exports[`core/Store constructor always correctly instanciates 1`] = `
 Store {
   "combiners": Object {},
   "index": 0,
@@ -61,7 +70,7 @@ Store {
 }
 `;
 
-exports[`Store register correctly registers module if hash is not already used 1`] = `
+exports[`core/Store register correctly registers module if hash is not already used 1`] = `
 Store {
   "combiners": Object {
     "module": Object {
@@ -75,11 +84,15 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
+      "actions": Object {},
       "combiners": Array [
         "module",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },
@@ -88,7 +101,7 @@ Store {
 }
 `;
 
-exports[`Store subscribe correctly subscribes to the given combiner if it exists 1`] = `
+exports[`core/Store subscribe correctly subscribes to the given combiner if it exists 1`] = `
 Store {
   "combiners": Object {
     "combiner": Object {
@@ -134,23 +147,32 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "moduleA": Object {
+      "actions": Object {},
       "combiners": Array [
         "moduleA",
         "combiner",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },
     },
     "moduleB": Object {
+      "actions": Object {
+        "ADD": [Function],
+      },
       "combiners": Array [
         "moduleB",
         "combiner",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 5,
       },
@@ -159,7 +181,7 @@ Store {
 }
 `;
 
-exports[`Store uncombine correctly uncombines the user-defined combiner if it has no more subscriptions 1`] = `
+exports[`core/Store uncombine correctly uncombines the user-defined combiner if it has no more subscriptions 1`] = `
 Store {
   "combiners": Object {
     "module": Object {
@@ -173,11 +195,15 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
+      "actions": Object {},
       "combiners": Array [
         "module",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },
@@ -186,7 +212,7 @@ Store {
 }
 `;
 
-exports[`Store unregister correctly unregisters if module does not have related user-defined combiners 1`] = `
+exports[`core/Store unregister correctly unregisters if module does not have related user-defined combiners 1`] = `
 Store {
   "combiners": Object {},
   "index": 0,
@@ -195,7 +221,7 @@ Store {
 }
 `;
 
-exports[`Store unsubscribe correctly unsubscribes from the given combiner if it exists 1`] = `
+exports[`core/Store unsubscribe correctly unsubscribes from the given combiner if it exists 1`] = `
 Store {
   "combiners": Object {
     "module": Object {
@@ -209,11 +235,15 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
+      "actions": Object {},
       "combiners": Array [
         "module",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },
@@ -222,7 +252,7 @@ Store {
 }
 `;
 
-exports[`Store unsubscribe correctly unsubscribes several listeners from the given combiner in any order 1`] = `
+exports[`core/Store unsubscribe correctly unsubscribes several listeners from the given combiner in any order 1`] = `
 Store {
   "combiners": Object {
     "module": Object {
@@ -236,11 +266,15 @@ Store {
   "middlewares": Array [],
   "modules": Object {
     "module": Object {
+      "actions": Object {},
       "combiners": Array [
         "module",
       ],
-      "dispatcher": [Function],
-      "mutator": [Function],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
       "state": Object {
         "test": 0,
       },

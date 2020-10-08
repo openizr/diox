@@ -1,67 +1,25 @@
 /**
- * Copyright (c) Matthieu Jabbour.
+ * Copyright (c) Matthieu Jabbour. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
  */
 
-/** Any valid JavaScript primitive. */
-type mixed = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-/** Subscription to modules' states changes. */
-type subscription = (newState: mixed) => void;
-
-/** Mutator's exposed API as argument. */
-interface MutatorExposedAPI {
-  hash: string;
-  state: mixed;
-  mutate: (hash: string, mutation: mixed) => void;
-}
-
-/** Dispatcher's exposed API as argument. */
-interface DispatcherExposedAPI {
-  hash: string;
-  mutate: (hash: string, mutation: mixed) => void;
-  dispatch: (hash: string, action: mixed) => void;
-  register: (hash: string, module: Module) => string;
-  unregister: (hash: string) => void;
-  combine: (hash: string, mapper: Mapper) => string;
-  uncombine: (hash: string) => void;
-}
-
-/** Registered module. */
-interface RegisteredModule {
-  state: mixed;
-  mutator: (exposedAPI: MutatorExposedAPI, mutation: mixed) => mixed;
-  dispatcher: (exposedAPI: DispatcherExposedAPI, action: mixed) => void;
-  combiners: string[];
-}
-
-/** Combiner. */
-interface Combiner {
-  mapper: Mapper;
-  // User-defined subscriptions.
-  subscriptions: { [id: string]: ((newState: mixed) => void) };
-}
-
-/** Module. */
-export interface Module {
-  mutator: (exposedAPI: MutatorExposedAPI, mutation: mixed) => mixed;
-  dispatcher?: (exposedAPI: DispatcherExposedAPI, action: mixed) => void;
-}
-
-/** Combiner's mapper. */
-export interface Mapper {
-  // Hash of each combined module, along with a function of its state.
-  [key: string]: (newState: mixed) => mixed;
-}
-
+import {
+  mixed,
+  Module,
+  Mapper,
+  Combiner,
+  subscription,
+  RegisteredModule,
+} from 'scripts/types';
 
 /**
  * Global state manager.
  * Contains all the sub-states, combiners and their subscriptions.
  */
-export class Store {
+export default class Store {
   /** List of store middlewares. */
   private middlewares: subscription[];
 
@@ -120,9 +78,12 @@ export class Store {
       );
     }
     this.modules[hash] = {
-      state: undefined,
-      mutator: module.mutator,
-      dispatcher: module.dispatcher || ((): null => null),
+      state: { ...module.state },
+      mutations: {
+        ...module.mutations,
+        DIOX_INITIALIZE: ({ state }): Record<string, mixed> => ({ ...state }),
+      },
+      actions: module.actions || {},
       // Storing related combiners' hashes makes it easier to notify them after mutating module.
       combiners: [],
     };
@@ -235,7 +196,7 @@ export class Store {
     }
     // Removing all the references to this combiner in modules...
     Object.keys(this.combiners[hash].mapper).forEach((moduleHash) => {
-      const index: number = this.modules[moduleHash].combiners.indexOf(hash);
+      const index = this.modules[moduleHash].combiners.indexOf(hash);
       this.modules[moduleHash].combiners.splice(index, 1);
     });
     delete (this.combiners[hash]);
@@ -253,19 +214,19 @@ export class Store {
    * @throws {Error} If there is no combiner created with the given hash.
    */
   public subscribe(hash: string, handler: subscription): string {
-    const combiner: Combiner = this.combiners[hash];
+    const combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
         `Could not subscribe to combiner with hash "${hash}": `
         + 'combiner does not exist.',
       );
     }
-    const subscriptionId: string = this.generateSubscriptionId();
+    const subscriptionId = this.generateSubscriptionId();
     combiner.subscriptions[subscriptionId] = handler;
     // We trigger the notification a first time with "initial" states.
-    const mappedModules: string[] = Object.keys(combiner.mapper);
-    const combinedState: mixed = mappedModules.reduce((state, moduleHash) => {
-      const moduleState: mixed = this.modules[moduleHash].state;
+    const mappedModules = Object.keys(combiner.mapper);
+    const combinedState = mappedModules.reduce((state, moduleHash) => {
+      const moduleState = this.modules[moduleHash].state;
       return Object.assign(state, combiner.mapper[moduleHash](moduleState));
     }, {});
     handler(combinedState);
@@ -286,7 +247,7 @@ export class Store {
    * @throws {Error} If subscription id does not exist.
    */
   public unsubscribe(hash: string, subscriptionId: string): void {
-    const combiner: Combiner = this.combiners[hash];
+    const combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
         `Could not unsubscribe from combiner with hash "${hash}": `
@@ -307,34 +268,46 @@ export class Store {
    *
    * @param {string} hash Hash of the module on which to perform mutation.
    *
-   * @param {mixed} mutation Contains all the information about mutation to perform.
+   * @param {string} name Name of the mutation to perform.
+   *
+   * @param {mixed} [data] Additional data to pass to the mutation.
    *
    * @returns {void}
    *
    * @throws {Error} If there is no module registered with the given hash.
    *
-   * @throws {Error} If module's mutator did not return an object.
+   * @throws {Error} If mutation's name does not exist on registered module.
+   *
+   * @throws {Error} If mutation is not a pure function.
    */
-  public mutate(hash: string, mutation: mixed): void {
-    const registeredModule: RegisteredModule = this.modules[hash];
+  public mutate(hash: string, name: string, data?: mixed): void {
+    const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
         `Could not perform mutation on module with hash "${hash}": `
         + 'module does not exist.',
       );
     }
-    const newState: mixed = registeredModule.mutator({
-      hash,
-      state: this.modules[hash].state,
-      mutate: this.mutate.bind(this),
-    }, mutation);
-
-    if (typeof newState !== 'object') {
+    if (registeredModule.mutations[name] === undefined) {
       throw new Error(
         `Could not perform mutation on module with hash "${hash}": `
-        + 'new state must be an object.',
+        + `mutation "${name}" does not exist.`,
       );
     }
+
+    const newState = registeredModule.mutations[name]({
+      hash,
+      state: registeredModule.state,
+      mutate: this.mutate.bind(this),
+    }, data);
+
+    if (newState === registeredModule.state) {
+      throw new Error(
+        `Could not perform mutation on module with hash "${hash}": `
+        + 'new state must be a deep copy of module\'s state.',
+      );
+    }
+
     registeredModule.state = newState;
 
     // Notifying all the middlewares of the changes...
@@ -344,9 +317,9 @@ export class Store {
 
     // Notifying all the combiners' subscriptions of the changes...
     registeredModule.combiners.forEach((combiner) => {
-      const mappedModules: string[] = Object.keys(this.combiners[combiner].mapper);
-      const combinedState: mixed = mappedModules.reduce((state, moduleHash) => {
-        const moduleState: mixed = this.modules[moduleHash].state;
+      const mappedModules = Object.keys(this.combiners[combiner].mapper);
+      const combinedState = mappedModules.reduce((state, moduleHash) => {
+        const moduleState = this.modules[moduleHash].state;
         return Object.assign(state, this.combiners[combiner].mapper[moduleHash](moduleState));
       }, {});
       Object.keys(this.combiners[combiner].subscriptions).forEach((subscriptionId) => {
@@ -360,21 +333,31 @@ export class Store {
    *
    * @param {string} hash Hash of the module to dispatch action on.
    *
-   * @param {mixed} action Contains all the information about the action to dispatch.
+   * @param {string} name Name of the action to perform.
+   *
+   * @param {mixed} [data] Additional data to pass to the action.
    *
    * @returns {void}
    *
    * @throws {Error} If there is no module registered with the given hash.
+   *
+   * @throws {Error} If action's name does not exist on registered module.
    */
-  public dispatch(hash: string, action: mixed): void {
-    const registeredModule: RegisteredModule = this.modules[hash];
+  public dispatch(hash: string, name: string, data?: mixed): void {
+    const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
         `Could not dispatch action to module with hash "${hash}": `
         + 'module does not exist.',
       );
     }
-    registeredModule.dispatcher({
+    if (registeredModule.actions[name] === undefined) {
+      throw new Error(
+        `Could not dispatch action to module with hash "${hash}": `
+        + `action "${name}" does not exist.`,
+      );
+    }
+    registeredModule.actions[name]({
       hash,
       mutate: this.mutate.bind(this),
       dispatch: this.dispatch.bind(this),
@@ -382,9 +365,8 @@ export class Store {
       uncombine: this.uncombine.bind(this),
       register: this.register.bind(this),
       unregister: this.unregister.bind(this),
-    }, action);
+    }, data);
   }
-
 
   /**
    * Applies the given middleware to the store.
