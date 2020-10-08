@@ -12,7 +12,7 @@ jobs:
 
 # Necessary to install peer dependencies
 before_script:
-  - yarn add @types/path-to-regexp @types/react path-to-regexp react vue
+  - yarn add --peer @types/path-to-regexp @types/react path-to-regexp react vue
 
 deploy:
   # Deploys package on NPM
