@@ -46,45 +46,32 @@ const subscription = (newState) => {
 
 ```
 
-### Mutators
+### Mutations
 
-A mutator is also a pure function that returns a copy of an object (the state) depending on the
-desired type of change (mutation). In diox, mutators are in charge of performing synchronous changes
-on the internal state.
+A mutation is also a pure function that returns a copy of an object (the state) depending on the
+desired type of change (mutation). In diox, mutations are in charge of performing synchronous
+changes on the internal state.
 
 ```typescript
 
-const myMutator = ({ state }, mutation) => {
-  if (mutation === 'ADD') {
-    return {
-      count: state.count + 1,
-    };
-  }
-  // If this is the very first time mutator is called, state has not been defined yet and we must
-  // return an initial value.
-  if (state === undefined) {
-    return {
-      count: 0,
-    };
-  }
-  // By default, just return a copy of the current state.
-  return Object.assign({}, state);
+const MY_MUTATION = ({ state }) => {
+  return {
+    count: state.count + 1,
+  };
 };
 
 ```
 
-### Dispatchers
+### Actions
 
-A dispatcher is a function that performs one or several calls to mutators depending on the desired
-type of action. Dispatchers cannot update state directly as it's the mutators' job.
+An action is a function that performs one or several calls to mutations depending on the desired
+type of action. Dispatchers cannot update state directly as it's the mutations' job.
 
 ```typescript
 
-const myDispatcher = ({ mutate, hash }, action) => {
-  if (action === 'ASYNC_ADD') {
-    // `hash` tells diox which mutator should be called with the given mutation (see Modules).
-    setTimeout(() => mutate(hash, 'ADD'), 500);
-  }
+const myAction = ({ mutate, hash }) => {
+  // `hash` tells diox which mutation should be called (see Modules).
+  setTimeout(() => mutate(hash, 'ADD'), 500);
 };
 
 ```
@@ -94,13 +81,20 @@ const myDispatcher = ({ mutate, hash }, action) => {
 A module contains a part of your app's global state, managing a specific concern (e.g. list of users,
 list of blog articles, app status, ...). By creating several modules, and combining them, you can
 build complex, evolutive, infinitely scalable apps without worrying about performance. Each module
-is composed of a Mutator and optionally a Dispatcher.
+is composed of mutations and optionally action.
 
 ```typescript
 
 const myModule = {
-  mutator: myMutator,
-  dispatcher: myDispatcher,
+  state: {
+    count: 0,
+  },
+  mutations: {
+    MY_MUTATION,
+  },
+  actions: {
+    myAction,
+  },
 };
 
 ```
@@ -163,33 +157,29 @@ Example in diox:
 import { Store } from 'diox';
 
 const moduleA = {
-  mutator: ({ state }, mutation) => {
-    if (mutation === 'ADD') {
+  state: { increment: 0 },
+  mutations: {
+    ADD({ state }) {
       return {
         increment: state.increment + 1,
       };
-    }
-    return (state === undefined)
-      ? { increment: 0 }
-      : Object.assign({}, state);
+    },
   },
 };
 
 const moduleB = {
-  mutator: ({ state }, mutation) => {
-    if (mutation === 'SUB') {
+  state: { decrement: 1000 },
+  mutations: {
+    SUB({ state }) {
       return {
         decrement: state.decrement - 1,
       };
-    }
-    return (state === undefined)
-      ? { decrement: 1000 }
-      : Object.assign({}, state);
+    },
   },
-  dispatcher: ({ mutate, hash }, action) => {
-    if (action === 'ASYNC_SUB') {
+  actions: {
+    asyncSub({ mutate }) {
       setTimeout(() => { mutate(hash, 'SUB'); }, 1000);
-    }
+    },
   },
 };
 
@@ -216,7 +206,7 @@ store.subscribe('c', (newState) => {
 });
 
 store.mutate('a', 'ADD');
-store.dispatch('b', 'ASYNC_SUB');
+store.dispatch('b', 'asyncSub');
 
 ```
 
@@ -337,15 +327,12 @@ import { Store } from 'diox';
 
 const store = new Store();
 store.register('my-module', {
-  mutator: ({ state }, mutation) => {
-    switch (mutation) {
-      case 'INCREMENT':
-        return {
-          count: state.count + 1,
-        };
-      default:
-        return { ...state || { count: 0 } };
-    }
+  mutations: {
+    INCREMENT({ state }) {
+      return {
+        count: state.count + 1,
+      };
+    },
   },
 });
 
@@ -396,15 +383,12 @@ import { Store } from 'diox';
 
 const store = new Store();
 store.register('my-module', {
-  mutator: ({ state }, mutation) => {
-    switch (mutation) {
-      case 'INCREMENT':
-        return {
-          count: state.count + 1,
-        };
-      default:
-        return { ...state || { count: 0 } };
-    }
+  mutations: {
+    INCREMENT({ state }) {
+      return {
+        count: state.count + 1,
+      };
+    },
   },
 });
 
