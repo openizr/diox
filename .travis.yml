@@ -4,13 +4,10 @@ node_js:
 
 jobs:
   include:
+    - stage: install peer dependencies
+      script: rm -rf node_modules && yarn install --dev
     - stage: tests and code coverage
       script: yarn run test && sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info && ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
-
-# Necessary to install peer dependencies
-before_script:
-  - rm -rf node_modules
-  - yarn install --dev
 
 deploy:
   # Deploys package on NPM
