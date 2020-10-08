@@ -426,7 +426,7 @@ In addition, the [basx](https://github.com/openizr/basx) library makes it easy t
 
 ## API documentation
 
-The complete API documentation is available [here](https://matthieujabbour.github.io/diox)
+The complete API documentation is available [here](https://openizr.github.io/diox)
 
 
 ## Contributing
