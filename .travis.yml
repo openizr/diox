@@ -22,7 +22,8 @@ before_deploy:
 deploy:
   # Deploys package on NPM
   - provider: script
-    script: cp package.json package.json.bkp && sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && ls node_modules && yarn run build && npm publish ./dist
+    skip_cleanup: true
+    script: cp package.json package.json.bkp && sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
     on:
       tags: true
   # Generates documentation
