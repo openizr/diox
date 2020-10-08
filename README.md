@@ -2,8 +2,8 @@
 
 Complete state management for both front and back ends.
 
-[![Build Status](https://travis-ci.org/matthieujabbour/diox.svg?branch=master)](https://travis-ci.org/matthieujabbour/diox)
-[![Coverage Status](https://coveralls.io/repos/github/matthieujabbour/diox/badge.svg)](https://coveralls.io/github/matthieujabbour/diox)
+[![Build Status](https://travis-ci.org/openizr/diox.svg?branch=master)](https://travis-ci.org/openizr/diox)
+[![Coverage Status](https://coveralls.io/repos/github/openizr/diox/badge.svg)](https://coveralls.io/github/openizr/diox)
 [![npm version](https://badge.fury.io/js/diox.svg)](https://badge.fury.io/js/diox)
 [![Downloads](https://img.shields.io/npm/dm/diox.svg)](https://www.npmjs.com/package/diox)
 
@@ -28,16 +28,6 @@ improvements:
 - Compatible with any front-end library such as React or VueJS
 - Easy to use, with a very small learning curve and simple concepts
 - Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)
-
-
-## Integrations with UI frameworks
-
-Several official connectors are available for most common UI frameworks:
-
-- React: [diox-react](https://github.com/matthieujabbour/diox-react)
-- VueJS: [diox-vue](https://github.com/matthieujabbour/diox-vue)
-
-In addition, the [diox-cloner](https://github.com/matthieujabbour/diox-cloner) package makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.
 
 
 ## Concepts
@@ -303,6 +293,153 @@ New state from c ! { a: 1, b: { decrement: 999 } }
 ```
 
 
+## Extensions
+
+### diox/extensions/router
+
+```typescript
+// main.jsx
+// --------------------------
+import store from './store.jsx';
+
+store.subscribe('router', (context) => console.log(context));
+
+// store.js
+// --------------------------
+import Store, { Mapper } from 'diox';
+import router from 'diox/extensions/router';
+
+const store = new Store();
+store.register('router', router(['/home', '/blog']));
+export default store;
+```
+
+
+## Integrations with UI frameworks
+
+Several official connectors are available for most common UI frameworks:
+
+### diox/connectors/react
+
+```typescript
+// main.jsx
+// --------------------------
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import Counter from './Counter.jsx';
+
+ReactDOM.render(<Counter />, document.body);
+
+
+// store.js
+// --------------------------
+import { Store } from 'diox';
+
+const store = new Store();
+store.register('my-module', {
+  mutator: ({ state }, mutation) => {
+    switch (mutation) {
+      case 'INCREMENT':
+        return {
+          count: state.count + 1,
+        };
+      default:
+        return { ...state || { count: 0 } };
+    }
+  },
+});
+
+export default store;
+
+
+// Counter.jsx
+// --------------------------
+import * as React from 'react';
+import useStore from 'diox/connectors/react';
+import store from './store.jsx';
+
+const [useCombiner, mutate, dispatch] = useStore(store);
+
+export default function Button(props) {
+  const [count] = useCombiner('my-module', (newState) => newState.count);
+  const doSomething = () => {
+    mutate('my-module', 'INCREMENT');
+  };
+  return <button type="button" onClick={doSomething}>{count}</button>;
+}
+```
+
+
+### diox/connectors/vuejs
+
+```typescript
+// main.js
+// --------------------------
+
+import Vue from 'vuejs';
+import Counter from './Counter.vue';
+
+const app = new Vue({
+  el: '#app',
+  components: { Counter },
+  template: `
+    <div class="app">
+      <counter></counter>
+    </div>
+  `
+});
+
+
+// store.js
+// --------------------------
+import { Store } from 'diox';
+
+const store = new Store();
+store.register('my-module', {
+  mutator: ({ state }, mutation) => {
+    switch (mutation) {
+      case 'INCREMENT':
+        return {
+          count: state.count + 1,
+        };
+      default:
+        return { ...state || { count: 0 } };
+    }
+  },
+});
+
+export default store;
+
+
+// Counter.vue
+// --------------------------
+<template>
+  <div @click="doSomething">{{ count }}</div>
+</template>
+
+<script>
+import Vue from 'vuejs';
+import connect from 'diox/connectors/vuejs';
+import store from './store.js';
+
+const mapper = {
+  'my-module': newState => ({ count: newState.count }),
+};
+
+export default connect(store, mapper)(({ dispatch }) => ({
+  name: 'Counter',
+  methods: {
+    doSomething() {
+      dispatch('my-module', 'incrementAsync');
+    },
+  },
+}));
+</script>
+```
+
+In addition, the [basx](https://github.com/openizr/basx) library makes it easy to perform deep copies and deep merges of JavaScript objects to keep your functions pure.
+
+
 ## API documentation
 
 The complete API documentation is available [here](https://matthieujabbour.github.io/diox)
@@ -310,11 +447,11 @@ The complete API documentation is available [here](https://matthieujabbour.githu
 
 ## Contributing
 
-See the [Contribution guide](https://github.com/matthieujabbour/diox/blob/master/CONTRIBUTING.md)
+See the [Contribution guide](https://github.com/openizr/diox/blob/master/CONTRIBUTING.md)
 
 
 ## License
 
-[MIT](https://github.com/matthieujabbour/diox/blob/master/LICENSE)
+[MIT](https://github.com/openizr/diox/blob/master/LICENSE)
 
 Copyright (c) Matthieu Jabbour. All Rights Reserved.

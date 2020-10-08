@@ -217,7 +217,7 @@ describe('core/Store', () => {
       store.unsubscribe('module', (store.subscribe('module', jest.fn())));
       expect(store).toMatchSnapshot();
     });
-    // Issue #1 (https://github.com/matthieujabbour/diox/issues/1).
+    // Issue #1 (https://github.com/openizr/diox/issues/1).
     test('correctly unsubscribes several listeners from the given combiner in any order', () => {
       store.register('module', moduleA);
       const firstID: string = store.subscribe('module', jest.fn());

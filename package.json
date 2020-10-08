@@ -2,8 +2,8 @@
   "name": "diox",
   "version": "TRAVIS_TAG",
   "description": "Complete state management for both front and back ends",
-  "repository": "https://github.com/matthieujabbour/diox",
-  "bugs": "https://github.com/matthieujabbour/diox/issues",
+  "repository": "https://github.com/openizr/diox",
+  "bugs": "https://github.com/openizr/diox/issues",
   "main": "./main.js",
   "contributors": [
     {
@@ -39,9 +39,8 @@
   },
   "peerDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^16.9.49",
-    "is-plain-object": "^5.0.0",
-    "path-to-regexp": "^6.1.0",
+    "@types/react": "^16.9.51",
+    "path-to-regexp": "^6.2.0",
     "react": "^16.13.1",
     "vue": "^2.6.12"
   },
@@ -50,7 +49,6 @@
     "target": "node",
     "entry": {
       "main": "./scripts/main.ts",
-      "extensions/cloner": "./scripts/extensions/cloner.ts",
       "extensions/router": "./scripts/extensions/router.ts",
       "connectors/react": "./scripts/connectors/react.ts",
       "connectors/vuejs": "./scripts/connectors/vuejs.ts"
