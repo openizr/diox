@@ -9,6 +9,7 @@ jobs:
 
 # Necessary to install peer dependencies
 before_script:
+  - rm -rf node_modules
   - yarn install --dev
 
 deploy:
