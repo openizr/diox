@@ -8,12 +8,17 @@ jobs:
       script:
         - yarn run test
         - sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info
-        - ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
 
 # Necessary to install peer dependencies
 before_script:
   - yarn add --peer @types/path-to-regexp @types/react path-to-regexp react vue
 
+before_deploy:
+  - yarn run doc
+  - touch docs/.nojekyll
+  - echo $'always-auth=true\n//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' > .npmrc
+
+# Only when deploying a new release
 deploy:
   # Deploys package on NPM
   - provider: script
@@ -29,7 +34,6 @@ deploy:
     on:
       tags: true
 
-before_deploy:
-  - yarn run doc
-  - touch docs/.nojekyll
-  - echo $'always-auth=true\n//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' > .npmrc
+# Coveralls is executed at the very end to prevent it from making deployment fail in case of error
+after_success:
+  - ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
