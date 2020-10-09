@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_store_.html">&quot;Store&quot;</a>
+					<a href="../modules/_scripts_types_.html">&quot;scripts/types&quot;</a>
 				</li>
 				<li>
-					<a href="_store_.mapper.html">Mapper</a>
+					<a href="_scripts_types_.mapper.html">Mapper</a>
 				</li>
 			</ul>
 			<h1>Interface Mapper</h1>
@@ -86,7 +86,7 @@
 			</section>
 			<section class="tsd-panel tsd-kind-interface tsd-parent-kind-module">
 				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a></div>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Combiner&#39;s mapper.</p>
@@ -95,17 +95,17 @@
 				<ul class="tsd-parameters">
 					<li class="tsd-parameter-signature">
 						<ul class="tsd-signatures tsd-kind-type-literal">
-							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a></li>
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a></li>
 						</ul>
 						<ul class="tsd-descriptions">
 							<li class="tsd-description">
 								<h4 class="tsd-parameters-title">Parameters</h4>
 								<ul class="tsd-parameters">
 									<li>
-										<h5>newState: <a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a></h5>
+										<h5>newState: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									</li>
 								</ul>
-								<h4 class="tsd-returns-title">Returns <a href="../modules/_store_.html#mixed" class="tsd-signature-type">mixed</a></h4>
+								<h4 class="tsd-returns-title">Returns <a href="../modules/_scripts_types_.html#mixed" class="tsd-signature-type">mixed</a></h4>
 							</li>
 						</ul>
 					</li>
@@ -118,43 +118,58 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_scripts_connectors_react_.html">&quot;scripts/connectors/react&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_scripts_connectors_vuejs_.html">&quot;scripts/connectors/vuejs&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_scripts_core_store_.html">&quot;scripts/core/<wbr>Store&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_scripts_extensions_router_.html">&quot;scripts/extensions/router&quot;</a>
+					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_store_.html">&quot;<wbr>Store&quot;</a>
+						<a href="../modules/_scripts_types_.html">&quot;scripts/types&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_store_.store.html" class="tsd-kind-icon">Store</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_store_.combiner.html" class="tsd-kind-icon">Combiner</a>
+						<a href="_scripts_types_.actionapi.html" class="tsd-kind-icon">Action<wbr>Api</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_store_.dispatcherexposedapi.html" class="tsd-kind-icon">Dispatcher<wbr>ExposedAPI</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_scripts_types_.combiner.html" class="tsd-kind-icon">Combiner</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_scripts_types_.context.html" class="tsd-kind-icon">Context</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_store_.mapper.html" class="tsd-kind-icon">Mapper</a>
+						<a href="_scripts_types_.mapper.html" class="tsd-kind-icon">Mapper</a>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_store_.module.html" class="tsd-kind-icon">Module</a>
+						<a href="_scripts_types_.module.html" class="tsd-kind-icon">Module</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_store_.mutatorexposedapi.html" class="tsd-kind-icon">Mutator<wbr>ExposedAPI</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_scripts_types_.mutationapi.html" class="tsd-kind-icon">Mutation<wbr>Api</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_store_.registeredmodule.html" class="tsd-kind-icon">Registered<wbr>Module</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_scripts_types_.registeredmodule.html" class="tsd-kind-icon">Registered<wbr>Module</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_store_.html#mixed" class="tsd-kind-icon">mixed</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_scripts_types_.store.html" class="tsd-kind-icon">Store</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_store_.html#subscription" class="tsd-kind-icon">subscription</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_scripts_types_.html#mixed" class="tsd-kind-icon">mixed</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_scripts_types_.html#subscription" class="tsd-kind-icon">subscription</a>
 					</li>
 				</ul>
 			</nav>
@@ -166,6 +181,7 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
@@ -182,6 +198,5 @@
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
