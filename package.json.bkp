@@ -1,6 +1,6 @@
 {
   "name": "diox",
-  "version": "2.0.1",
+  "version": "TRAVIS_TAG",
   "description": "Complete state management for both front and back ends",
   "repository": "https://github.com/openizr/diox",
   "bugs": "https://github.com/openizr/diox/issues",
