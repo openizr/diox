@@ -7,17 +7,17 @@
  */
 
 import { useState, useEffect } from 'react';
-import { mixed, Store } from 'scripts/types';
+import { Json, Store } from 'scripts/types';
 
 type HookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
-  (hash: string, reducer: (state: mixed) => mixed) => mixed[],
+  (hash: string, reducer?: (state: Json) => Json) => Json[],
 
   /** `mutate` function, allowing mutations on store. */
-  (hash: string, name: string, data?: mixed) => void,
+  (hash: string, name: string, data?: Json) => void,
 
   /** `dispatch` function, allowing mutations on store. */
-  (hash: string, name: string, data?: mixed) => void,
+  (hash: string, name: string, data?: Json) => void,
 ];
 
 /**
@@ -30,16 +30,14 @@ type HookApi = [
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
 export default function useStore(store: Store): HookApi {
+  const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
+
   return [
-    (hash: string, reducer: (state: mixed) => mixed): mixed[] => {
-      const combiner = (store as mixed).combiners[hash];
+    (hash: string, reducer: (state: Json) => Json = (newState): Json => newState): Json[] => {
+      const combiner = (store as Json).combiners[hash];
+
       if (combiner !== undefined) {
-        // Retrieving combiner's initial state from its related modules...
-        let initialState = {};
-        Object.keys(combiner.mapper).forEach((moduleHash: string) => {
-          const module = (store as mixed).modules[moduleHash];
-          initialState = Object.assign(initialState, combiner.mapper[moduleHash](module.state));
-        });
+        const initialState = combiner.reducer(...combiner.modulesHashes.map(getState));
         // Subscribing to the given combiner at component creation...
         const [state, setState] = useState(reducer(initialState));
         useEffect(() => {

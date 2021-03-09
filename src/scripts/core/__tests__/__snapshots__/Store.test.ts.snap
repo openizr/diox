@@ -1,25 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`core/Store combine correctly creates combiner if all mapped hashes exist 1`] = `
+exports[`core/Store combine correctly creates combiner if all modules' hashes exist 1`] = `
 Store {
   "combiners": Object {
     "combiner": Object {
-      "mapper": Object {
-        "moduleA": [MockFunction],
-        "moduleB": [MockFunction],
-      },
+      "modulesHashes": Array [
+        "moduleA",
+        "moduleB",
+      ],
+      "reducer": [MockFunction],
       "subscriptions": Object {},
     },
     "moduleA": Object {
-      "mapper": Object {
-        "moduleA": [Function],
-      },
+      "modulesHashes": Array [
+        "moduleA",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
     "moduleB": Object {
-      "mapper": Object {
-        "moduleB": [Function],
-      },
+      "modulesHashes": Array [
+        "moduleB",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },
@@ -70,13 +73,74 @@ Store {
 }
 `;
 
-exports[`core/Store register correctly registers module if hash is not already used 1`] = `
+exports[`core/Store register correctly registers module if hash is not already used, state is a primitive 1`] = `
 Store {
   "combiners": Object {
     "module": Object {
-      "mapper": Object {
-        "module": [Function],
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
+      "subscriptions": Object {},
+    },
+  },
+  "index": 0,
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "actions": Object {},
+      "combiners": Array [
+        "module",
+      ],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
       },
+      "state": "test",
+    },
+  },
+}
+`;
+
+exports[`core/Store register correctly registers module if hash is not already used, state is an array 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
+      "subscriptions": Object {},
+    },
+  },
+  "index": 0,
+  "middlewares": Array [],
+  "modules": Object {
+    "module": Object {
+      "actions": Object {},
+      "combiners": Array [
+        "module",
+      ],
+      "mutations": Object {
+        "ADD": [Function],
+        "BAD": [Function],
+        "DIOX_INITIALIZE": [Function],
+      },
+      "state": Array [],
+    },
+  },
+}
+`;
+
+exports[`core/Store register correctly registers module if hash is not already used, state is an object 1`] = `
+Store {
+  "combiners": Object {
+    "module": Object {
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },
@@ -105,10 +169,11 @@ exports[`core/Store subscribe correctly subscribes to the given combiner if it e
 Store {
   "combiners": Object {
     "combiner": Object {
-      "mapper": Object {
-        "moduleA": [Function],
-        "moduleB": [Function],
-      },
+      "modulesHashes": Array [
+        "moduleA",
+        "moduleB",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {
         "641676f1d7d8a": [MockFunction] {
           "calls": Array [
@@ -131,15 +196,17 @@ Store {
       },
     },
     "moduleA": Object {
-      "mapper": Object {
-        "moduleA": [Function],
-      },
+      "modulesHashes": Array [
+        "moduleA",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
     "moduleB": Object {
-      "mapper": Object {
-        "moduleB": [Function],
-      },
+      "modulesHashes": Array [
+        "moduleB",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },
@@ -185,9 +252,10 @@ exports[`core/Store uncombine correctly uncombines the user-defined combiner if 
 Store {
   "combiners": Object {
     "module": Object {
-      "mapper": Object {
-        "module": [Function],
-      },
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },
@@ -225,9 +293,10 @@ exports[`core/Store unsubscribe correctly unsubscribes from the given combiner i
 Store {
   "combiners": Object {
     "module": Object {
-      "mapper": Object {
-        "module": [Function],
-      },
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },
@@ -256,9 +325,10 @@ exports[`core/Store unsubscribe correctly unsubscribes several listeners from th
 Store {
   "combiners": Object {
     "module": Object {
-      "mapper": Object {
-        "module": [Function],
-      },
+      "modulesHashes": Array [
+        "module",
+      ],
+      "reducer": [Function],
       "subscriptions": Object {},
     },
   },

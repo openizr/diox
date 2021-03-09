@@ -7,7 +7,7 @@
  */
 
 import Store from 'scripts/core/Store';
-import { mixed, Module } from 'scripts/types';
+import { Json, Module } from 'scripts/types';
 
 Date.now = jest.fn(() => 1543757462922);
 
@@ -18,12 +18,12 @@ describe('core/Store', () => {
       test: 0,
     },
     mutations: {
-      ADD({ state }): mixed {
+      ADD({ state }): Json {
         return {
           test: state.test + 1,
         };
       },
-      BAD({ state }): mixed {
+      BAD({ state }): Json {
         return Object.assign(state, { test: 10 });
       },
     },
@@ -33,7 +33,7 @@ describe('core/Store', () => {
       test: 5,
     },
     mutations: {
-      ADD: ({ state }): Record<string, mixed> => ({ test: state.test + 1 }),
+      ADD: ({ state }): Record<string, Json> => ({ test: state.test + 1 }),
     },
     actions: {
       ADD({ mutate, hash }): void {
@@ -62,8 +62,16 @@ describe('core/Store', () => {
         + 'another module with the same hash already exists.',
       );
     });
-    test('correctly registers module if hash is not already used', () => {
+    test('correctly registers module if hash is not already used, state is an object', () => {
       store.register('module', moduleA);
+      expect(store).toMatchSnapshot();
+    });
+    test('correctly registers module if hash is not already used, state is an array', () => {
+      store.register('module', { ...moduleA, state: [] });
+      expect(store).toMatchSnapshot();
+    });
+    test('correctly registers module if hash is not already used, state is a primitive', () => {
+      store.register('module', { ...moduleA, state: 'test' });
       expect(store).toMatchSnapshot();
     });
   });
@@ -79,9 +87,7 @@ describe('core/Store', () => {
     });
     test('throws an error if module has still related user-defined combiners', () => {
       store.register('module', moduleA);
-      store.combine('combiner', {
-        module: jest.fn(),
-      });
+      store.combine('combiner', ['module'], jest.fn());
       expect(() => {
         store.unregister('module');
       }).toThrow(
@@ -100,27 +106,24 @@ describe('core/Store', () => {
     test('throws an error if hash is already used by another combiner', () => {
       store.register('module', moduleA);
       expect(() => {
-        store.combine('module', { module: jest.fn() });
+        store.combine('module', ['module'], jest.fn());
       }).toThrow(
         'Could not create combiner with hash "module": '
         + 'another combiner with the same hash already exists.',
       );
     });
-    test('throws an error if one of the mapped hash does not correspond to a registered module', () => {
+    test('throws an error if one of the modules\' hashes does not correspond to a registered module', () => {
       expect(() => {
-        store.combine('combiner', { module: jest.fn() });
+        store.combine('combiner', ['module'], jest.fn());
       }).toThrow(
         'Could not create combiner with hash "combiner": '
-        + 'mapped module with hash "module" does not exist.',
+        + 'module with hash "module" does not exist.',
       );
     });
-    test('correctly creates combiner if all mapped hashes exist', () => {
+    test('correctly creates combiner if all modules\' hashes exist', () => {
       store.register('moduleA', moduleA);
       store.register('moduleB', moduleB);
-      store.combine('combiner', {
-        moduleA: jest.fn(),
-        moduleB: jest.fn(),
-      });
+      store.combine('combiner', ['moduleA', 'moduleB'], jest.fn());
       expect(store).toMatchSnapshot();
     });
   });
@@ -140,12 +143,12 @@ describe('core/Store', () => {
         store.uncombine('module');
       }).toThrow(
         'Could not uncombine combiner with hash "module": '
-        + 'default combiners cannot be uncombined.',
+        + 'default combiners cannot be uncombined, use `unregister` instead.',
       );
     });
     test('throws an error if the given hash corresponds to a default combiner', () => {
       store.register('module', moduleA);
-      store.combine('combiner', { module: jest.fn() });
+      store.combine('combiner', ['module'], jest.fn());
       store.subscribe('combiner', jest.fn());
       expect(() => {
         store.uncombine('combiner');
@@ -156,7 +159,7 @@ describe('core/Store', () => {
     });
     test('correctly uncombines the user-defined combiner if it has no more subscriptions', () => {
       store.register('module', moduleA);
-      store.combine('combiner', { module: (newState) => newState });
+      store.combine('combiner', ['module'], jest.fn());
       store.unsubscribe('combiner', store.subscribe('combiner', jest.fn()));
       store.uncombine('combiner');
       expect(store).toMatchSnapshot();
@@ -186,10 +189,10 @@ describe('core/Store', () => {
       });
       store.register('moduleA', moduleA);
       store.register('moduleB', moduleB);
-      store.combine('combiner', {
-        moduleA: (newState) => ({ a: newState.test }),
-        moduleB: (newState) => ({ b: newState }),
-      });
+      store.combine('combiner', ['moduleA', 'moduleB'], (newStateA, newStateB) => ({
+        a: newStateA.test,
+        b: newStateB,
+      }));
       expect(store.subscribe('combiner', handler)).toBe('641676f1d7d8a');
     });
   });

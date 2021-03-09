@@ -6,9 +6,9 @@
  *
  */
 
-import { mixed } from 'scripts/types';
+import { Json } from 'scripts/types';
 
-export default function Store(): mixed {
+export default function Store(): Json {
   return {
     subscribe: jest.fn((_hash, callback) => {
       callback({ count: 5 });
@@ -19,9 +19,8 @@ export default function Store(): mixed {
     mutate: jest.fn(),
     combiners: {
       combiner: {
-        mapper: {
-          module: (newState: mixed): mixed => newState,
-        },
+        modulesHashes: ['module'],
+        reducer: (newState: Json): Json => newState,
         subscriptions: [],
       },
     },

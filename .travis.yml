@@ -23,7 +23,7 @@ deploy:
   # Deploys package on NPM
   - provider: script
     skip_cleanup: true
-    script: cp package.json package.json.bkp && sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist
+    script: cp package.json package.json.bkp && sed -i "s/TRAVIS_TAG/$TRAVIS_TAG/g" package.json && yarn run build && npm publish ./dist && mv package.json.bkp package.json && rm .npmrc
     on:
       tags: true
   # Generates documentation

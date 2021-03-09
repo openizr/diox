@@ -52,5 +52,7 @@ describe('connectors/react', () => {
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
     expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
     expect(state).toBe('test');
+    const [otherState] = useCombiner('combiner'); // With default reducer.
+    expect(otherState).toBe('test');
   });
 });

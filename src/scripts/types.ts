@@ -7,17 +7,17 @@
  */
 
 export interface Store {
-  subscribe(hash: string, handler: subscription): string;
+  subscribe(hash: string, handler: Subscription): string;
   unsubscribe(hash: string, subscriptionId: string): void;
-  mutate(hash: string, name: string, data?: mixed): void;
-  dispatch(hash: string, name: string, data?: mixed): void;
+  mutate(hash: string, name: string, data?: Json): void;
+  dispatch(hash: string, name: string, data?: Json): void;
 }
 
 /** Mutation's exposed API as argument. */
 export interface MutationApi {
   hash: string;
-  state: Record<string, mixed>;
-  mutate: (hash: string, name: string, data?: mixed) => void;
+  state: Json;
+  mutate: (hash: string, name: string, data?: Json) => void;
 }
 
 export interface Context {
@@ -32,42 +32,39 @@ export interface Context {
 /** Dispatcher's exposed API as argument. */
 interface ActionApi {
   hash: string;
-  mutate: (hash: string, name: string, data?: mixed) => void;
-  dispatch: (hash: string, name: string, data?: mixed) => void;
+  mutate: (hash: string, name: string, data?: Json) => void;
+  dispatch: (hash: string, name: string, data?: Json) => void;
   register: (hash: string, module: Module) => string;
   unregister: (hash: string) => void;
-  combine: (hash: string, mapper: Mapper) => string;
+  combine: (hash: string, modules: string[], reducer: Reducer) => string;
   uncombine: (hash: string) => void;
 }
 
 /** Any valid JavaScript primitive. */
-export type mixed = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 /** Subscription to modules' states changes. */
-export type subscription = (newState: Record<string, mixed>) => void;
+export type Subscription = (newState: Json) => void;
+
+/** Reducer, mixes several modules' states into one. */
+export type Reducer = (...newState: Json[]) => Json;
 
 /** Module. */
 export interface Module {
-  state: Record<string, mixed>;
-  mutations: { [name: string]: (api: MutationApi, data?: mixed) => Record<string, mixed> };
-  actions?: { [name: string]: (api: ActionApi, data?: mixed) => void };
-}
-
-/** Combiner's mapper. */
-export interface Mapper {
-  // Hash of each combined module, along with a function of its state.
-  [key: string]: (newState: Record<string, mixed>) => mixed;
+  state: Json;
+  mutations: { [name: string]: (api: MutationApi, data?: Json) => Json };
+  actions?: { [name: string]: (api: ActionApi, data?: Json) => void };
 }
 
 /** Registered module. */
 export interface RegisteredModule extends Module {
   combiners: string[];
-  actions: { [name: string]: (api: ActionApi, data?: mixed) => void };
+  actions: { [name: string]: (api: ActionApi, data?: Json) => void };
 }
 
 /** Combiner. */
 export interface Combiner {
-  mapper: Mapper;
-  // User-defined subscriptions.
-  subscriptions: { [id: string]: ((newState: Record<string, mixed>) => void) };
+  reducer: Reducer;
+  modulesHashes: string[];
+  subscriptions: { [id: string]: ((newState: Json) => void) };
 }
