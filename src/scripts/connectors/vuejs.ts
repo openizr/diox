@@ -7,13 +7,17 @@
  */
 
 import Vue, { Component } from 'vue';
-import { mixed, Store, Mapper } from 'scripts/types';
+import { Json, Reducer, Store } from 'scripts/types';
 
 /** Function that exposes Store's public methods to component for internal use. */
 type connector = (publicApi: {
-  dispatch: (hash: string, mutation: mixed) => void;
-  mutate: (hash: string, mutation: mixed) => void;
+  dispatch: (hash: string, mutation: Json) => void;
+  mutate: (hash: string, mutation: Json) => void;
 }) => Component;
+
+interface Mapper {
+  [moduleHash: string]: Reducer;
+}
 
 /**
  * Connects the given diox Store to VueJS component. Once component is mounted in the DOM, it
@@ -43,7 +47,7 @@ export default function connect(store: Store, mapper: Mapper) {
             this.$subscriptions = [];
             Object.keys(mapper).forEach((hash: string) => {
               this.$subscriptions.push(
-                store.subscribe(hash, (newState: mixed) => {
+                store.subscribe(hash, (newState: Json) => {
                   const newData = mapper[hash](newState);
                   Object.keys(newData).forEach((key: string) => {
                     this[key] = newData[key];
@@ -60,7 +64,7 @@ export default function connect(store: Store, mapper: Mapper) {
             });
           },
         } as {
-          [key: string]: mixed;
+          [key: string]: Json;
         },
 
         // Actual component.

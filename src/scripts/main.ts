@@ -9,7 +9,7 @@
 /* istanbul ignore file */
 
 import Store from 'scripts/core/Store';
-import { Mapper, Module } from 'scripts/types';
+import { Reducer, Module } from 'scripts/types';
 
-export { Mapper, Module };
+export { Reducer, Module };
 export default Store;

@@ -7,13 +7,20 @@
  */
 
 import {
-  mixed,
+  Json,
   Module,
-  Mapper,
+  Reducer,
   Combiner,
-  subscription,
+  Subscription,
   RegisteredModule,
 } from 'scripts/types';
+
+const isPlainObject = (variable: Json): boolean => (
+  typeof variable === 'object'
+  && variable !== null
+  && variable.constructor === Object
+  && Object.prototype.toString.call(variable) === '[object Object]'
+);
 
 /**
  * Global state manager.
@@ -21,7 +28,7 @@ import {
  */
 export default class Store {
   /** List of store middlewares. */
-  private middlewares: subscription[];
+  private middlewares: Subscription[];
 
   /** Unique index used for subscriptions ids generation. */
   private index: number;
@@ -78,17 +85,25 @@ export default class Store {
       );
     }
     this.modules[hash] = {
-      state: { ...module.state },
+      state: module.state,
       mutations: {
         ...module.mutations,
-        DIOX_INITIALIZE: ({ state }): Record<string, mixed> => ({ ...state }),
+        DIOX_INITIALIZE: ({ state }): Record<string, Json> => {
+          if (Array.isArray(state)) {
+            return [...state];
+          }
+          if (isPlainObject(state)) {
+            return { ...state };
+          }
+          return state;
+        },
       },
       actions: module.actions || {},
       // Storing related combiners' hashes makes it easier to notify them after mutating module.
       combiners: [],
     };
     // A default combiner with the same hash as the module is always created first.
-    this.combine(hash, { [hash]: (newState) => newState });
+    this.combine(hash, [hash], (newState) => newState);
     this.mutate(hash, 'DIOX_INITIALIZE');
     return hash;
   }
@@ -128,35 +143,37 @@ export default class Store {
    * @param {string} hash Combiner's unique identifier in registry. Can be any string, although it
    * is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
    *
-   * @param {Mapper} mapper Contains transformation functions, indexed by their related module hash.
-   * Each transformation function is called with a `newState` parameter, which contains the current
-   * module's state. For instance :
-   * { '/my_app/my_module': (newState) => ({ prop: newState.prop }) }
+   * @param {string[]} modulesHashes Hashes of the modules to combine.
+   *
+   * @param {Reducer} reducer Transformation function. This function is called with every combined
+   * module's state as arguments.
+   * For instance: `(stateA, stateB, stateC) => ({ a: stateA.prop, b: stateB, c: stateC.propC })`
    *
    * @returns {string} Combiner's hash.
    *
    * @throws {Error} If a combiner with the same hash already exists in registry.
    *
-   * @throws {Error} If one of the mapped hashes does not correspond to a registered module.
+   * @throws {Error} If one of the modules hashes does not correspond to a registered module.
    */
-  public combine(hash: string, mapper: Mapper): string {
+  public combine(hash: string, modulesHashes: string[], reducer: Reducer): string {
     if (this.combiners[hash] !== undefined) {
       throw new Error(
         `Could not create combiner with hash "${hash}": `
         + 'another combiner with the same hash already exists.',
       );
     }
-    Object.keys(mapper).forEach((moduleHash) => {
+    modulesHashes.forEach((moduleHash) => {
       if (this.modules[moduleHash] === undefined) {
         throw new Error(
           `Could not create combiner with hash "${hash}": `
-          + `mapped module with hash "${moduleHash}" does not exist.`,
+          + `module with hash "${moduleHash}" does not exist.`,
         );
       }
       this.modules[moduleHash].combiners.push(hash);
     });
     this.combiners[hash] = {
-      mapper,
+      reducer,
+      modulesHashes,
       subscriptions: {},
     };
     return hash;
@@ -185,7 +202,7 @@ export default class Store {
     if (this.modules[hash] !== undefined) {
       throw new Error(
         `Could not uncombine combiner with hash "${hash}": `
-        + 'default combiners cannot be uncombined.',
+        + 'default combiners cannot be uncombined, use `unregister` instead.',
       );
     }
     if (Object.keys(this.combiners[hash].subscriptions).length > 0) {
@@ -195,7 +212,7 @@ export default class Store {
       );
     }
     // Removing all the references to this combiner in modules...
-    Object.keys(this.combiners[hash].mapper).forEach((moduleHash) => {
+    this.combiners[hash].modulesHashes.forEach((moduleHash) => {
       const index = this.modules[moduleHash].combiners.indexOf(hash);
       this.modules[moduleHash].combiners.splice(index, 1);
     });
@@ -207,13 +224,13 @@ export default class Store {
    *
    * @param {string} hash Hash of the combiner to subscribe to.
    *
-   * @param {subscription} handler Callback to execute each time combiner notifies changes.
+   * @param {Subscription} handler Callback to execute each time combiner notifies changes.
    *
    * @returns {string} The subscription id, used to unsubscribe handler.
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe(hash: string, handler: subscription): string {
+  public subscribe(hash: string, handler: Subscription): string {
     const combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
@@ -224,12 +241,8 @@ export default class Store {
     const subscriptionId = this.generateSubscriptionId();
     combiner.subscriptions[subscriptionId] = handler;
     // We trigger the notification a first time with "initial" states.
-    const mappedModules = Object.keys(combiner.mapper);
-    const combinedState = mappedModules.reduce((state, moduleHash) => {
-      const moduleState = this.modules[moduleHash].state;
-      return Object.assign(state, combiner.mapper[moduleHash](moduleState));
-    }, {});
-    handler(combinedState);
+    const states = combiner.modulesHashes.map((moduleHash) => this.modules[moduleHash].state);
+    handler(combiner.reducer(...states));
     return subscriptionId;
   }
 
@@ -270,7 +283,7 @@ export default class Store {
    *
    * @param {string} name Name of the mutation to perform.
    *
-   * @param {mixed} [data] Additional data to pass to the mutation.
+   * @param {Json} [data] Additional data to pass to the mutation.
    *
    * @returns {void}
    *
@@ -280,7 +293,7 @@ export default class Store {
    *
    * @throws {Error} If mutation is not a pure function.
    */
-  public mutate(hash: string, name: string, data?: mixed): void {
+  public mutate(hash: string, name: string, data?: Json): void {
     const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
@@ -301,7 +314,8 @@ export default class Store {
       mutate: this.mutate.bind(this),
     }, data);
 
-    if (newState === registeredModule.state) {
+    const isPrimitive = !isPlainObject(newState) && !Array.isArray(newState);
+    if (newState === registeredModule.state && isPrimitive === false) {
       throw new Error(
         `Could not perform mutation on module with hash "${hash}": `
         + 'new state must be a deep copy of module\'s state.',
@@ -316,14 +330,18 @@ export default class Store {
     });
 
     // Notifying all the combiners' subscriptions of the changes...
-    registeredModule.combiners.forEach((combiner) => {
-      const mappedModules = Object.keys(this.combiners[combiner].mapper);
-      const combinedState = mappedModules.reduce((state, moduleHash) => {
-        const moduleState = this.modules[moduleHash].state;
-        return Object.assign(state, this.combiners[combiner].mapper[moduleHash](moduleState));
-      }, {});
-      Object.keys(this.combiners[combiner].subscriptions).forEach((subscriptionId) => {
-        this.combiners[combiner].subscriptions[subscriptionId](combinedState);
+    registeredModule.combiners.forEach((combinerHash) => {
+      const combiner = this.combiners[combinerHash];
+      const states = combiner.modulesHashes.map((moduleHash) => this.modules[moduleHash].state);
+      const finalState = combiner.reducer(...states);
+      Object.keys(combiner.subscriptions).forEach((subscriptionId) => {
+        /* istanbul ignore next */
+        if (combiner.subscriptions[subscriptionId] !== undefined) {
+          // In some cases, when unsubscribing from a module and mutating it at the same time,
+          // subscriptions may be removed while they are triggered. We ensure they still exist
+          // before actually calling them.
+          (combiner.subscriptions[subscriptionId])(finalState);
+        }
       });
     });
   }
@@ -335,7 +353,7 @@ export default class Store {
    *
    * @param {string} name Name of the action to perform.
    *
-   * @param {mixed} [data] Additional data to pass to the action.
+   * @param {Json} [data] Additional data to pass to the action.
    *
    * @returns {void}
    *
@@ -343,7 +361,7 @@ export default class Store {
    *
    * @throws {Error} If action's name does not exist on registered module.
    */
-  public dispatch(hash: string, name: string, data?: mixed): void {
+  public dispatch(hash: string, name: string, data?: Json): void {
     const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
@@ -371,11 +389,11 @@ export default class Store {
   /**
    * Applies the given middleware to the store.
    *
-   * @param {subscription} middleware Middleware to apply to store.
+   * @param {Subscription} middleware Middleware to apply to store.
    *
    * @returns {void}
    */
-  public use(middleware: subscription): void {
+  public use(middleware: Subscription): void {
     this.middlewares.push(middleware);
   }
 }

@@ -6,10 +6,10 @@
  *
  */
 
-import { mixed } from 'scripts/types';
+import { Json } from 'scripts/types';
 
 /* eslint-disable import/prefer-default-export */
-export const match = jest.fn(() => (): mixed => {
+export const match = jest.fn(() => (): Json => {
   // Route matching with params.
   if (process.env.MATCH === '1') {
     return {
