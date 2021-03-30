@@ -30,6 +30,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@types/path-to-regexp": "^1.7.0",
+    "@types/react": "^17.0.3",
     "typescript-dev-kit": "^2.2.4"
   },
   "eslintConfig": {
@@ -38,12 +40,10 @@
     ]
   },
   "dependencies": {
-    "@types/path-to-regexp": "^1.7.0",
     "path-to-regexp": "^6.2.0"
   },
   "peerDependencies": {
-    "@types/react": "^17.0.3",
-    "react": "^17.0.1",
+    "react": "^17.0.2",
     "vue": "^2.6.12"
   },
   "tsDevKitConfig": {
@@ -56,7 +56,7 @@
     },
     "srcPath": "src",
     "distPath": "dist",
-    "banner": "/**\n * Copyright (c) Matthieu Jabbour. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
+    "banner": "/*!\n * Copyright (c) Matthieu Jabbour. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
     "env": {
       "development": {
         "NODE_ENV": "\"development\""
@@ -71,6 +71,7 @@
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cd ../.. && sed -i 's#module/scripts/connectors#diox/connectors#g' ./dist/types.d.ts && sed -i 's#module/scripts/extensions#diox/extensions#g' ./dist/types.d.ts",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ./docs/ src/ --exclude \"**/__+(tests|mocks)__/**\""
+    "doc": "node_modules/.bin/typedoc --out ./docs/ src/ --exclude \"**/__+(tests|mocks)__/**\"",
+    "postinstall": "test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue"
   }
 }
