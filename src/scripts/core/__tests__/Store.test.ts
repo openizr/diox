@@ -270,6 +270,24 @@ describe('core/Store', () => {
       store.subscribe('module', handler);
       store.mutate('module', 'ADD');
     });
+    test('asynchronously calls each subscription in the order of their declaration', (done) => {
+      const handler = jest.fn((newState) => {
+        if (newState.test === 2) {
+          expect(handler).toHaveBeenNthCalledWith(1, { test: 0 });
+          expect(handler).toHaveBeenNthCalledWith(2, { test: 1 });
+          expect(handler).toHaveBeenNthCalledWith(3, { test: 2 });
+          done();
+        }
+      });
+      store.register('module', moduleA);
+      store.subscribe('module', (newState) => {
+        if (newState.test === 1) {
+          store.mutate('module', 'ADD');
+        }
+      });
+      store.subscribe('module', handler);
+      store.mutate('module', 'ADD');
+    });
   });
 
   describe('dispatch', () => {
@@ -290,12 +308,16 @@ describe('core/Store', () => {
         + 'action "ADD" does not exist.',
       );
     });
-    test('correctly dispatches action on the given module if it exists', () => {
-      const handler = jest.fn();
+    test('correctly dispatches action on the given module if it exists', (done) => {
+      const handler = jest.fn((newState) => {
+        if (newState.test === 6) {
+          expect(handler).toHaveBeenCalledTimes(2);
+          done();
+        }
+      });
       store.register('module', moduleB);
       store.subscribe('module', handler);
       store.dispatch('module', 'ADD');
-      expect(handler).toHaveBeenCalledTimes(2);
     });
   });
 

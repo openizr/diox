@@ -334,15 +334,18 @@ export default class Store {
       const combiner = this.combiners[combinerHash];
       const states = combiner.modulesHashes.map((moduleHash) => this.modules[moduleHash].state);
       const finalState = combiner.reducer(...states);
-      Object.keys(combiner.subscriptions).forEach((subscriptionId) => {
+      // All subscriptions are called asynchronously to avoid the "mutation in mutation" effect,
+      // which happens when performing a mutation on a module inside a subscription to that
+      // same module, making any other subscription receiving updates in the wrong order.
+      Object.keys(combiner.subscriptions).forEach((subscriptionId) => setTimeout(() => {
+        // In some cases, when unsubscribing from a module and mutating it at the same time,
+        // subscriptions may be removed while they are triggered. We ensure they still exist
+        // before actually calling them.
         /* istanbul ignore next */
         if (combiner.subscriptions[subscriptionId] !== undefined) {
-          // In some cases, when unsubscribing from a module and mutating it at the same time,
-          // subscriptions may be removed while they are triggered. We ensure they still exist
-          // before actually calling them.
           (combiner.subscriptions[subscriptionId])(finalState);
         }
-      });
+      }));
     });
   }
 
