@@ -1,0 +1,43 @@
+{
+  "devDependencies": {
+    "typescript-dev-kit": "^3.0.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/typescript-dev-kit/main.js"
+    ]
+  },
+  "dependencies": {
+    "diox": "file:../../../../library/dist"
+  },
+  "tsDevKitConfig": {
+    "target": "web",
+    "entry": {
+      "main": "./scripts/main.tsx"
+    },
+    "devServer": {
+      "ip": "0.0.0.0",
+      "port": 5030
+    },
+    "splitChunks": false,
+    "srcPath": "src",
+    "distPath": "public",
+    "banner": "",
+    "env": {
+      "development": {
+        "NODE_ENV": "development"
+      },
+      "production": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "scripts": {
+    "init": "node_modules/typescript-dev-kit/scripts/init.sh",
+    "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
+    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build",
+    "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
+    "doc": "node_modules/.bin/typedoc --out ./doc/ --exclude \"**/*.js\" --exclude \"**/__+(tests|mocks)__/**\" src/",
+    "postinstall": "rm -f node_modules/.eslintcache"
+  }
+}
