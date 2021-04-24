@@ -11,10 +11,6 @@ jobs:
         - yarn run test
         - sed -i "s/\.\.\/\.\.\///g" coverage/lcov.info
 
-# Necessary to install peer dependencies
-before_script:
-  - yarn add --peer @types/react react vue
-
 before_deploy:
   - yarn run doc
   - touch ../docs/.nojekyll
