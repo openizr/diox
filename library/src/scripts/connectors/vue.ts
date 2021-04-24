@@ -7,69 +7,73 @@
  */
 
 import Vue, { Component } from 'vue';
-import { Json, Reducer, Store } from 'scripts/core/types';
+import { Json, Store } from 'scripts/core/types';
 
-/** Function that exposes Store's public methods to component for internal use. */
-type connector = (publicApi: {
-  dispatch: (hash: string, mutation: Json) => void;
-  mutate: (hash: string, mutation: Json) => void;
-}) => Component;
+type VueHookApi = [
+  /** `useCombiner` function, making component subscribe to the specified combiner. */
+  (hash: string, component: Component, reducer?: (state: Json) => Json) => Component,
 
-interface Mapper {
-  [moduleHash: string]: Reducer;
-}
+  /** `mutate` function, allowing mutations on store. */
+  (hash: string, name: string, data?: Json) => void,
+
+  /** `dispatch` function, allowing mutations on store. */
+  (hash: string, name: string, data?: Json) => void,
+];
 
 /**
- * Connects the given diox Store to VueJS component. Once component is mounted in the DOM, it
- * automatically subscribes to modules and combiners specified in the mapper, and its data is
- * filled with those values. All subscriptions are removed right before destroying component.
+ * Initializes a VueJS connection to the given store.
  *
- * @param {Store} store diox Store to bind to the component.
+ * @param {Store} store Diox store to connect VueJS to.
  *
- * @param {Mapper} mapper diox Mapper to register on component mounting.
+ * @returns {VueHookApi} Set of methods to manipulate the store.
  *
- * @returns {Component} VueJS connected component.
+ * @throws {Error} If combiner with the given hash does not exist in store.
  */
-export default function connect(store: Store, mapper: Mapper) {
-  return (bindComponent: connector): Component => {
-    const Container: Component = bindComponent({
-      dispatch: store.dispatch.bind(store),
-      mutate: store.mutate.bind(store),
-    });
-    return Vue.extend({
-      mixins: [
-        {
-          /** List of component's subscriptions ids to the store. */
-          $subscriptions: [],
+export default function useStore(store: Store): VueHookApi {
+  const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
 
-          /** Subscribes to all modules and combiners defined in mapper. */
-          mounted(): void {
-            this.$subscriptions = [];
-            Object.keys(mapper).forEach((hash: string) => {
-              this.$subscriptions.push(
-                store.subscribe(hash, (newState: Json) => {
-                  const newData = mapper[hash](newState);
+  return [
+    (hash, component, reducer = (newState: Json): Json => newState): Component => {
+      const combiner = (store as Json).combiners[hash];
+
+      if (combiner !== undefined) {
+        const initialState = combiner.reducer(...combiner.modulesHashes.map(getState));
+        // Subscribing to the given combiner at component creation...
+        return Vue.extend({
+          mixins: [
+            {
+              /** Component's subscription id to the store. */
+              $subscription: null,
+
+              /** Initial component's state data. */
+              data() {
+                return initialState;
+              },
+
+              /** Subscribes to combiner. */
+              mounted(): void {
+                this.$subscription = store.subscribe(hash, (newState) => {
+                  const newData = reducer(newState);
                   Object.keys(newData).forEach((key: string) => {
                     this[key] = newData[key];
                   });
-                }),
-              );
-            });
-          },
+                });
+              },
 
-          /** Unsubscribes from all modules and combiners defined in mapper. */
-          beforeDestroy(): void {
-            Object.keys(mapper).forEach((combiner) => {
-              store.unsubscribe(combiner, this.$subscriptions.shift());
-            });
-          },
-        } as {
-          [key: string]: Json;
-        },
+              /** Unsubscribes from combiner. */
+              beforeDestroy(): void {
+                store.unsubscribe(hash, this.$subscription);
+              },
+            } as Json,
 
-        // Actual component.
-        Container,
-      ],
-    });
-  };
+            // Actual component.
+            component,
+          ],
+        });
+      }
+      throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
+    },
+    store.mutate.bind(store),
+    store.dispatch.bind(store),
+  ];
 }

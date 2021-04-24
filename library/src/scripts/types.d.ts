@@ -6,13 +6,16 @@
  *
  */
 
+import { Component } from 'vue';
+import { Json } from 'scripts/core/types';
+
+/** Subscription to modules' states changes. */
+type Subscription = (newState: Json) => void;
+
+/** Reducer, mixes several modules' states into one. */
+type Reducer = (...newState: Json[]) => Json;
+
 declare module 'diox' {
-  /** Subscription to modules' states changes. */
-  type Subscription = (newState: Json) => void;
-
-  /** Reducer, mixes several modules' states into one. */
-  type Reducer = (...newState: Json[]) => Json;
-
   /** Mutation's exposed API as argument. */
   interface MutationApi {
     hash: string;
@@ -43,9 +46,6 @@ declare module 'diox' {
     modulesHashes: string[];
     subscriptions: { [id: string]: ((newState: Json) => void) };
   }
-
-  /** Any valid JavaScript primitive. */
-  type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /** Module. */
   export interface Module {
@@ -229,12 +229,6 @@ declare module 'diox/extensions/router' {
     params: Record<string, string>;
   }
 
-  /** Any valid JavaScript primitive. */
-  type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-  /** Reducer, mixes several modules' states into one. */
-  type Reducer = (...newState: Json[]) => Json;
-
   /** Mutation's exposed API as argument. */
   interface MutationApi {
     hash: string;
@@ -271,12 +265,6 @@ declare module 'diox/extensions/router' {
 }
 
 declare module 'diox/connectors/react' {
-  /** Subscription to modules' states changes. */
-  type Subscription = (newState: Json) => void;
-
-  /** Any valid JavaScript primitive. */
-  type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
   /** Store. */
   interface Store {
     subscribe(hash: string, handler: Subscription): string;
@@ -285,7 +273,7 @@ declare module 'diox/connectors/react' {
     dispatch(hash: string, name: string, data?: Json): void;
   }
 
-  type HookApi = [
+  type ReactHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
     (hash: string, reducer?: (state: Json) => Json) => Json[],
 
@@ -301,30 +289,14 @@ declare module 'diox/connectors/react' {
    *
    * @param {Store} store Diox store to connect React to.
    *
-   * @returns {HookApi} Set of methods to manipulate the store.
+   * @returns {ReactHookApi} Set of methods to manipulate the store.
    *
    * @throws {Error} If combiner with the given hash does not exist in store.
    */
-  export default function useStore(store: Store): HookApi;
+  export default function useStore(store: Store): ReactHookApi;
 }
 
 declare module 'diox/connectors/vue' {
-  import { Component } from 'vue';
-
-  /** Any valid JavaScript primitive. */
-  type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-  /** Reducer, mixes several modules' states into one. */
-  type Reducer = (...newState: Json[]) => Json;
-
-  /** Subscription to modules' states changes. */
-  type Subscription = (newState: Json) => void;
-
-  /** Function that exposes Store's public methods to component for internal use. */
-  type connector = (publicApi: {
-    dispatch: (hash: string, mutation: Json) => void;
-    mutate: (hash: string, mutation: Json) => void;
-  }) => Component;
 
   /** Store. */
   interface Store {
@@ -334,20 +306,25 @@ declare module 'diox/connectors/vue' {
     dispatch(hash: string, name: string, data?: Json): void;
   }
 
-  interface Mapper {
-    [moduleHash: string]: Reducer;
-  }
+  type VueHookApi = [
+    /** `useCombiner` function, making component subscribe to the specified combiner. */
+    (hash: string, component: Component, reducer?: (state: Json) => Json) => Component,
+
+    /** `mutate` function, allowing mutations on store. */
+    (hash: string, name: string, data?: Json) => void,
+
+    /** `dispatch` function, allowing mutations on store. */
+    (hash: string, name: string, data?: Json) => void,
+  ];
 
   /**
-   * Connects the given diox Store to VueJS component. Once component is mounted in the DOM, it
-   * automatically subscribes to modules and combiners specified in the mapper, and its data is
-   * filled with those values. All subscriptions are removed right before destroying component.
+   * Initializes a VueJS connection to the given store.
    *
-   * @param {Store} store diox Store to bind to the component.
+   * @param {Store} store Diox store to connect VueJS to.
    *
-   * @param {Mapper} mapper diox Mapper to register on component mounting.
+   * @returns {VueHookApi} Set of methods to manipulate the store.
    *
-   * @returns {Component} VueJS connected component.
+   * @throws {Error} If combiner with the given hash does not exist in store.
    */
-  export default function connect(store: Store, mapper: Mapper);
+  export default function useStore(store: Store): VueHookApi;
 }

@@ -8,12 +8,14 @@
     ]
   },
   "dependencies": {
-    "diox": "file:../../../../library/dist"
+    "diox": "file:../../../../library/dist",
+    "vue": "^2.6.12"
   },
   "tsDevKitConfig": {
     "target": "web",
     "entry": {
-      "main": "./scripts/main.tsx"
+      "main": "./scripts/main.tsx",
+      "vue": "./scripts/vue.ts"
     },
     "devServer": {
       "ip": "0.0.0.0",
