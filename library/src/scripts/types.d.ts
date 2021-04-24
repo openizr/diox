@@ -6,8 +6,8 @@
  *
  */
 
-import { Component } from 'vue';
-import { Json } from 'scripts/core/types';
+/** Any valid JavaScript primitive. */
+type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 /** Subscription to modules' states changes. */
 type Subscription = (newState: Json) => void;
@@ -220,6 +220,7 @@ declare module 'diox' {
 }
 
 declare module 'diox/extensions/router' {
+
   interface Context {
     path: string;
     host: string;
@@ -297,6 +298,8 @@ declare module 'diox/connectors/react' {
 }
 
 declare module 'diox/connectors/vue' {
+  import { Component } from 'vue';
+  import { ExtendedVue } from 'vue/types/vue.d';
 
   /** Store. */
   interface Store {
@@ -308,7 +311,7 @@ declare module 'diox/connectors/vue' {
 
   type VueHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    (hash: string, component: Component, reducer?: (state: Json) => Json) => Component,
+    (hash: string, component: Component, reducer?: (state: Json) => Json) => ExtendedVue,
 
     /** `mutate` function, allowing mutations on store. */
     (hash: string, name: string, data?: Json) => void,
