@@ -34,7 +34,7 @@ development of large-scale applications more and more complex over time. diox br
 improvements:
 
 - 100% standalone (no dependency)
-- Extremely light (~300 lines of code, 1.7Kb gzipped)
+- Extremely light (~300 lines of code, 1.5Kb gzipped)
 - Fast and optimized by design
 - Scalable out of the box without using any additional NPM module, thanks to the concept of Modules
 - Native compatibility with any front-end library such as React or VueJS
