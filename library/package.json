@@ -63,6 +63,10 @@
       "production": {}
     }
   },
+  "engines": {
+    "node": ">= 10.0.0",
+    "npm": ">= 5.0.0"
+  },
   "scripts": {
     "init": "node_modules/typescript-dev-kit/scripts/init.sh",
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
