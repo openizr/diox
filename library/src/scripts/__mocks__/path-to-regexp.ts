@@ -6,7 +6,7 @@
  *
  */
 
-import { Json } from 'scripts/types';
+import { Json } from 'scripts/core/types';
 
 /* eslint-disable import/prefer-default-export */
 export const match = jest.fn(() => (): Json => {

@@ -7,13 +7,21 @@
  */
 
 import {
-  Json,
-  Module,
-  Reducer,
-  Combiner,
-  Subscription,
-  RegisteredModule,
-} from 'scripts/types';
+  Json, Module, ActionApi, Reducer, Subscription,
+} from 'scripts/core/types';
+
+/** Registered module. */
+interface RegisteredModule extends Module {
+  combiners: string[];
+  actions: { [name: string]: (api: ActionApi, data?: Json) => void };
+}
+
+/** Combiner. */
+interface Combiner {
+  reducer: Reducer;
+  modulesHashes: string[];
+  subscriptions: { [id: string]: ((newState: Json) => void) };
+}
 
 const isPlainObject = (variable: Json): boolean => (
   typeof variable === 'object'

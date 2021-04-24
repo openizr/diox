@@ -7,7 +7,16 @@
  */
 
 import { match } from 'path-to-regexp';
-import { Module, MutationApi, Context } from 'scripts/types';
+import { Module } from 'scripts/core/types';
+
+interface Context {
+  path: string;
+  host: string;
+  query: string;
+  route: string | null;
+  protocol: string;
+  params: Record<string, string>;
+}
 
 /**
  * Generates the routing context from current URL, gathering many useful informations such as host,
@@ -63,7 +72,7 @@ export default function router(routes: string[]): Module {
         return generateContext(routes);
       },
       // Triggers a new navigation to the given page.
-      NAVIGATE({ mutate, hash }: MutationApi, page: string): Context {
+      NAVIGATE({ mutate, hash }, page: string): Context {
         if (initialized === false) {
           window.addEventListener('popstate', () => mutate(hash, 'POP_STATE'));
           initialized = true;

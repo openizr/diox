@@ -5,6 +5,7 @@
   "repository": "https://github.com/openizr/diox",
   "bugs": "https://github.com/openizr/diox/issues",
   "main": "./main.js",
+  "types": "./types.d.ts",
   "contributors": [
     {
       "name": "Matthieu Jabbour",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
     "@types/react": "^17.0.3",
-    "typescript-dev-kit": "^2.2.4"
+    "typescript-dev-kit": "^3.0.5"
   },
   "eslintConfig": {
     "extends": [
@@ -52,26 +53,22 @@
       "main": "./scripts/main.ts",
       "extensions/router": "./scripts/extensions/router.ts",
       "connectors/react": "./scripts/connectors/react.ts",
-      "connectors/vuejs": "./scripts/connectors/vuejs.ts"
+      "connectors/vue": "./scripts/connectors/vue.ts"
     },
     "srcPath": "src",
     "distPath": "dist",
     "banner": "/*!\n * Copyright (c) Matthieu Jabbour. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
     "env": {
-      "development": {
-        "NODE_ENV": "\"development\""
-      },
-      "production": {
-        "NODE_ENV": "\"production\""
-      }
+      "development": {},
+      "production": {}
     }
   },
   "scripts": {
     "init": "node_modules/typescript-dev-kit/scripts/init.sh",
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
-    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cd ../.. && sed -i 's#module/scripts/connectors#diox/connectors#g' ./dist/types.d.ts && sed -i 's#module/scripts/extensions#diox/extensions#g' ./dist/types.d.ts",
+    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cp ../../src/scripts/types.d.ts ../../dist",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ./docs/ src/ --exclude \"**/__+(tests|mocks)__/**\"",
-    "postinstall": "test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue"
+    "doc": "node_modules/.bin/typedoc --out ../docs/ --exclude \"**/*.js\" --exclude \"**/__+(tests|mocks)__/**\" src/",
+    "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue"
   }
 }

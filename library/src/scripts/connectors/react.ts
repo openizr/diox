@@ -7,9 +7,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Json, Store } from 'scripts/types';
+import { Json, Store } from 'scripts/core/types';
 
-type HookApi = [
+type ReactHookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
   (hash: string, reducer?: (state: Json) => Json) => Json[],
 
@@ -25,11 +25,11 @@ type HookApi = [
  *
  * @param {Store} store Diox store to connect React to.
  *
- * @returns {HookApi} Set of methods to manipulate the store.
+ * @returns {ReactHookApi} Set of methods to manipulate the store.
  *
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
-export default function useStore(store: Store): HookApi {
+export default function useStore(store: Store): ReactHookApi {
   const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
 
   return [

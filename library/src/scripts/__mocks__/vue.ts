@@ -10,5 +10,6 @@ export default {
   extend: jest.fn((firstObject) => ({
     ...firstObject.mixins[0],
     ...firstObject.mixins[1],
+    data: { ...firstObject.mixins[0].data() },
   })),
 };

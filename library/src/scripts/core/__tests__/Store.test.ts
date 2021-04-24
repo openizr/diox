@@ -7,7 +7,7 @@
  */
 
 import Store from 'scripts/core/Store';
-import { Json, Module } from 'scripts/types';
+import { Json, Module } from 'scripts/core/types';
 
 Date.now = jest.fn(() => 1543757462922);
 

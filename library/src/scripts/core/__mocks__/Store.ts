@@ -6,7 +6,7 @@
  *
  */
 
-import { Json } from 'scripts/types';
+import { Json } from 'scripts/core/types';
 
 export default function Store(): Json {
   return {
