@@ -3,10 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;scripts/extensions/router&quot; | diox</title>
+	<title>extensions/router | diox</title>
 	<meta name="description" content="Documentation for diox">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -53,13 +52,13 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../modules.html">diox</a>
 				</li>
 				<li>
-					<a href="_scripts_extensions_router_.html">&quot;scripts/extensions/router&quot;</a>
+					<a href="extensions_router.html">extensions/router</a>
 				</li>
 			</ul>
-			<h1>Module &quot;scripts/extensions/router&quot;</h1>
+			<h1>Module extensions/router</h1>
 		</div>
 	</div>
 </header>
@@ -73,8 +72,7 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_scripts_extensions_router_.html#generatecontext" class="tsd-kind-icon">generate<wbr>Context</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_scripts_extensions_router_.html#router" class="tsd-kind-icon">router</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="extensions_router.html#default" class="tsd-kind-icon">default</a></li>
 							</ul>
 						</section>
 					</div>
@@ -82,50 +80,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-					<a name="generatecontext" class="tsd-anchor"></a>
-					<h3>generate<wbr>Context</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">generate<wbr>Context<span class="tsd-signature-symbol">(</span>routes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_scripts_types_.context.html" class="tsd-signature-type">Context</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/openizr/diox/blob/6ad60d5/src/scripts/extensions/router.ts#L20">scripts/extensions/router.ts:20</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Generates the routing context from current URL, gathering many useful informations such as host,
-									parameters, protocol, query string, ...</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>routes: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>List of routes the router will serve.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_scripts_types_.context.html" class="tsd-signature-type">Context</a></h4>
-							<p>Generated routing context.</p>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="router" class="tsd-anchor"></a>
-					<h3>router</h3>
+					<a name="default" class="tsd-anchor"></a>
+					<h3>default</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">router<span class="tsd-signature-symbol">(</span>routes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_scripts_types_.module.html" class="tsd-signature-type">Module</a></li>
+						<li class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">(</span>routes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/core_types.module.html" class="tsd-signature-type" data-tsd-kind="Interface">Module</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/openizr/diox/blob/6ad60d5/src/scripts/extensions/router.ts#L56">scripts/extensions/router.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/openizr/diox/blob/833039a/library/src/scripts/extensions/router.ts#L65">extensions/router.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -142,7 +107,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_scripts_types_.module.html" class="tsd-signature-type">Module</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/core_types.module.html" class="tsd-signature-type" data-tsd-kind="Interface">Module</a></h4>
 							<p>Initialized diox routing module.</p>
 						</li>
 					</ul>
@@ -152,33 +117,36 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_scripts_connectors_react_.html">&quot;scripts/connectors/react&quot;</a>
+						<a href="connectors_react.html">connectors/react</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_scripts_connectors_vuejs_.html">&quot;scripts/connectors/vuejs&quot;</a>
+						<a href="connectors_vue.html">connectors/vue</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_scripts_core_store_.html">&quot;scripts/core/<wbr>Store&quot;</a>
+						<a href="core_store.html">core/<wbr>Store</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="core_types.html">core/types</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_scripts_extensions_router_.html">&quot;scripts/extensions/router&quot;</a>
+						<a href="extensions_router.html">extensions/router</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_scripts_types_.html">&quot;scripts/types&quot;</a>
+						<a href="main.html">main</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="types.html">types</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_scripts_extensions_router_.html#generatecontext" class="tsd-kind-icon">generate<wbr>Context</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_scripts_extensions_router_.html#router" class="tsd-kind-icon">router</a>
+						<a href="extensions_router.html#default" class="tsd-kind-icon">default</a>
 					</li>
 				</ul>
 			</nav>
