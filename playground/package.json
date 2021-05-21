@@ -17,6 +17,12 @@
       "main": "./scripts/main.tsx",
       "vue": "./scripts/vue.ts"
     },
+    "html": {
+      "template": "./html/index.html",
+      "entries": [
+        "vue"
+      ]
+    },
     "devServer": {
       "ip": "0.0.0.0",
       "port": 5030

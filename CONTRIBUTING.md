@@ -170,14 +170,11 @@ In order to keep this package up-to-date, dependencies updates should be checked
 using the `yarn outdated` and `yarn upgrade-interactive --latest` commands. Here is the list of repositories
 changelogs to watch for updates:
 
-- [@types/prop-types](https://github.com/DefinitelyTyped/DefinitelyTyped#readme)
 - [@types/react](https://github.com/DefinitelyTyped/DefinitelyTyped#readme)
-- [@types/react-dom](https://github.com/DefinitelyTyped/DefinitelyTyped#readme)
-- [@vue/test-utils](https://github.com/vuejs/vue-test-utils/releases)
+- [@types/path-to-regexp](https://github.com/DefinitelyTyped/DefinitelyTyped#readme)
+- [path-to-regexp](https://github.com/pillarjs/path-to-regexp/releases)
 - [coveralls](https://github.com/nickmerwin/node-coveralls/releases)
-- [prop-types](https://github.com/facebook/prop-types/blob/master/CHANGELOG.md)
 - [react](https://github.com/facebook/react/releases)
-- [react-dom](https://github.com/facebook/react/releases)
 - [typescript-dev-kit](https://github.com/openizr/typescript-dev-kit/releases)
 - [vue](https://github.com/vuejs/vue/releases)
 
