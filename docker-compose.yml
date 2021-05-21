@@ -6,7 +6,7 @@ services:
     image: openizr/node:2.0.0-dev
     env_file:
       - .env
-    command: sh -c "yarn && (sleep 10 && dsync src/scripts/types.d.ts dist/types.d.ts & yarn run dev)"
+    command: sh -c "dsync src/scripts/types.d.ts dist/types.d.ts & yarn && yarn run dev"
     volumes:
       - ./library:/var/www/html
       - ./:/mount
@@ -18,7 +18,7 @@ services:
       - .env
     ports:
       - "127.0.0.1:${PLAYGROUND_PORT}:${PLAYGROUND_PORT}"
-    command: sh -c "yarn && (dsync /library/dist/ node_modules/diox/ & cp /library/src/scripts/types.d.ts node_modules/diox/ && yarn run dev)"
+    command: sh -c "dsync /library/dist/ node_modules/diox/ & yarn && yarn run dev"
     volumes:
       - ./playground:/var/www/html
       - ./library:/library
