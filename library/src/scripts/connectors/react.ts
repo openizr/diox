@@ -37,9 +37,10 @@ export default function useStore(store: Store): ReactHookApi {
       const combiner = (store as Json).combiners[hash];
 
       if (combiner !== undefined) {
-        const initialState = combiner.reducer(...combiner.modulesHashes.map(getState));
         // Subscribing to the given combiner at component creation...
-        const [state, setState] = useState(reducer(initialState));
+        const [state, setState] = useState(() => reducer(combiner.reducer(
+          ...combiner.modulesHashes.map(getState),
+        )));
         useEffect(() => {
           const subscriptionId = store.subscribe(hash, (newState) => {
             setState(reducer(newState));

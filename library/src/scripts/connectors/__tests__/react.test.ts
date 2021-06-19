@@ -37,8 +37,8 @@ describe('connectors/react', () => {
 
   test('should correctly subscribe to an existing combiner', () => {
     const store = new Store();
-    const reducer = jest.fn();
     const [useCombiner] = useStore(store);
+    const reducer = jest.fn((value) => value.value);
     const [state] = useCombiner('combiner', reducer);
     expect(reducer).toHaveBeenCalledTimes(2);
     // First time to compute initial state...
@@ -53,6 +53,6 @@ describe('connectors/react', () => {
     expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
     expect(state).toBe('test');
     const [otherState] = useCombiner('combiner'); // With default reducer.
-    expect(otherState).toBe('test');
+    expect(otherState).toEqual({ value: 'test' });
   });
 });

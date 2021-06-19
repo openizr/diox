@@ -6,8 +6,8 @@
  *
  */
 
-export function useState(): (string | (() => null))[] {
-  return ['test', (): null => null];
+export function useState(callback: () => string): (string | (() => null))[] {
+  return [callback(), (): null => null];
 }
 
 export function useEffect(effect: () => () => void): () => void {

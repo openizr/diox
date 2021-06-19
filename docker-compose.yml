@@ -18,7 +18,7 @@ services:
       - .env
     ports:
       - "127.0.0.1:${PLAYGROUND_PORT}:${PLAYGROUND_PORT}"
-    command: sh -c "dsync /library/dist/ node_modules/diox/ & yarn && yarn run dev"
+    command: sh -c "dsync /library/dist/ node_modules/diox/"
     volumes:
       - ./playground:/var/www/html
       - ./library:/library
