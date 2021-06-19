@@ -160,6 +160,8 @@ To technically contribute to this project, here are the software you will need:
 3. `cp .env.example .env`
 4. Fill or change environment variables in your `.env` file if necessary
 5. `docker-compose up`
+6. `docker exec -it <PROJECT_NAME>_library sh -c "yarn run test -w"` if you want to run unit tests
+7. `docker exec -it <PROJECT_NAME>_playground sh -c "yarn && yarn run dev"` if you want to run playground
 
 This will run the project locally and allow you to develop and see changes in real-time.
 
