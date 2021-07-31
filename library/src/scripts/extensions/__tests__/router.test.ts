@@ -49,7 +49,7 @@ describe('extensions/router', () => {
     expect(newState).toEqual({
       host: 'localhost',
       params: { id: '125' },
-      path: '/user/125',
+      path: '/user/125?q=ok',
       protocol: 'http',
       query: { q: 'ok' },
       route: '/user/:id',

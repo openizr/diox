@@ -47,8 +47,8 @@ function generateContext(routes: string[]): RoutingContext {
   }
 
   return {
-    path,
     host: location.host,
+    path: `${path}${location.search}`,
     protocol: location.protocol.replace(':', ''),
     route: routes[routeIndex] || null,
     params: ((routeInfo === false) ? {} : routeInfo?.params ?? {}) as Record<string, string>,
