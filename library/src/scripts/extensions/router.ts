@@ -9,7 +9,8 @@
 import { match } from 'path-to-regexp';
 import { Module } from 'scripts/core/types';
 
-interface Context {
+/* Route data. */
+export interface RoutingContext {
   path: string;
   host: string;
   query: string;
@@ -24,9 +25,9 @@ interface Context {
  *
  * @param routes List of routes the router will serve.
  *
- * @returns {Context} Generated routing context.
+ * @returns {RoutingContext} Generated routing context.
  */
-function generateContext(routes: string[]): Context {
+function generateContext(routes: string[]): RoutingContext {
   const { location } = window;
   const path = location.pathname;
   // See https://stackoverflow.com/questions/8648892/how-to-convert-url-parameters-to-a-javascript-object.
@@ -46,8 +47,8 @@ function generateContext(routes: string[]): Context {
   }
 
   return {
-    path,
     host: location.host,
+    path: `${path}${location.search}`,
     protocol: location.protocol.replace(':', ''),
     route: routes[routeIndex] || null,
     params: ((routeInfo === false) ? {} : routeInfo?.params ?? {}) as Record<string, string>,
@@ -60,19 +61,19 @@ function generateContext(routes: string[]): Context {
  *
  * @param {string[]} routes List of routes the router will serve.
  *
- * @return {Module} Initialized diox routing module.
+ * @return {Module<RoutingContext>} Initialized diox routing module.
  */
-export default function router(routes: string[]): Module {
+export default function router(routes: string[]): Module<RoutingContext> {
   let initialized = false;
-  return {
+  return <Module<RoutingContext>>{
     state: generateContext(routes),
     mutations: {
       // Triggered when user goes back and forth through browser's history.
-      POP_STATE(): Context {
+      POP_STATE() {
         return generateContext(routes);
       },
       // Triggers a new navigation to the given page.
-      NAVIGATE({ mutate, hash }, page: string): Context {
+      NAVIGATE({ mutate, hash }, page: string) {
         if (initialized === false) {
           window.addEventListener('popstate', () => mutate(hash, 'POP_STATE'));
           initialized = true;

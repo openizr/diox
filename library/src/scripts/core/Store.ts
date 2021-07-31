@@ -11,14 +11,14 @@ import {
 } from 'scripts/core/types';
 
 /** Registered module. */
-interface RegisteredModule extends Module {
+interface RegisteredModule extends Module<Json> {
   combiners: string[];
   actions: { [name: string]: (api: ActionApi, data?: Json) => void };
 }
 
 /** Combiner. */
 interface Combiner {
-  reducer: Reducer;
+  reducer: Reducer<Json>;
   modulesHashes: string[];
   subscriptions: { [id: string]: ((newState: Json) => void) };
 }
@@ -36,7 +36,7 @@ const isPlainObject = (variable: Json): boolean => (
  */
 export default class Store {
   /** List of store middlewares. */
-  private middlewares: Subscription[];
+  private middlewares: Subscription<Json>[];
 
   /** Unique index used for subscriptions ids generation. */
   private index: number;
@@ -85,7 +85,7 @@ export default class Store {
    *
    * @throws {Error} If a module with the same hash already exists in registry.
    */
-  public register(hash: string, module: Module): string {
+  public register<T = Json>(hash: string, module: Module<T>): string {
     if (this.modules[hash] !== undefined) {
       throw new Error(
         `Could not register module with hash "${hash}": `
@@ -96,7 +96,7 @@ export default class Store {
       state: module.state,
       mutations: {
         ...module.mutations,
-        DIOX_INITIALIZE: ({ state }): Record<string, Json> => {
+        DIOX_INITIALIZE: ({ state }): T | T[] => {
           if (Array.isArray(state)) {
             return [...state];
           }
@@ -111,7 +111,7 @@ export default class Store {
       combiners: [],
     };
     // A default combiner with the same hash as the module is always created first.
-    this.combine(hash, [hash], (newState) => newState);
+    this.combine(hash, [hash], (newState: T) => newState);
     this.mutate(hash, 'DIOX_INITIALIZE');
     return hash;
   }
@@ -163,7 +163,7 @@ export default class Store {
    *
    * @throws {Error} If one of the modules hashes does not correspond to a registered module.
    */
-  public combine(hash: string, modulesHashes: string[], reducer: Reducer): string {
+  public combine<T = Json>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string {
     if (this.combiners[hash] !== undefined) {
       throw new Error(
         `Could not create combiner with hash "${hash}": `
@@ -238,7 +238,7 @@ export default class Store {
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe(hash: string, handler: Subscription): string {
+  public subscribe<T = Json>(hash: string, handler: Subscription<T>): string {
     const combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
@@ -404,7 +404,7 @@ export default class Store {
    *
    * @returns {void}
    */
-  public use(middleware: Subscription): void {
+  public use<T>(middleware: Subscription<T>): void {
     this.middlewares.push(middleware);
   }
 }

@@ -93,8 +93,6 @@ Store {
         "module",
       ],
       "mutations": Object {
-        "ADD": [Function],
-        "BAD": [Function],
         "DIOX_INITIALIZE": [Function],
       },
       "state": "test",
@@ -123,8 +121,6 @@ Store {
         "module",
       ],
       "mutations": Object {
-        "ADD": [Function],
-        "BAD": [Function],
         "DIOX_INITIALIZE": [Function],
       },
       "state": Array [],

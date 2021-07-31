@@ -11,7 +11,7 @@ import { Json, Store } from 'scripts/core/types';
 
 type VueHookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
-  (hash: string, component: Component, reducer?: (state: Json) => Json) => Component,
+  <T>(hash: string, component: Component, reducer?: (state: Json) => T) => Component,
 
   /** `mutate` function, allowing mutations on store. */
   (hash: string, name: string, data?: Json) => void,
@@ -33,7 +33,7 @@ export default function useStore(store: Store): VueHookApi {
   const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
 
   return [
-    (hash, component, reducer = (newState: Json): Json => newState): Component => {
+    <T>(hash: string, component: Json, reducer = (newState: Json): T => newState): Component => {
       const combiner = (store as Json).combiners[hash];
 
       if (combiner !== undefined) {
@@ -55,7 +55,7 @@ export default function useStore(store: Store): VueHookApi {
                 this.$subscription = store.subscribe(hash, (newState) => {
                   const newData = reducer(newState);
                   Object.keys(newData).forEach((key: string) => {
-                    this[key] = newData[key];
+                    this[key] = (newData as Json)[key];
                   });
                 });
               },

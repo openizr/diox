@@ -7,36 +7,36 @@
  */
 
 import Store from 'scripts/core/Store';
-import { Json, Module } from 'scripts/core/types';
+import { Module } from 'scripts/core/types';
 
 Date.now = jest.fn(() => 1543757462922);
 
 describe('core/Store', () => {
   let store: Store;
-  const moduleA: Module = {
+  const moduleA: Module<{ test: number; }> = {
     state: {
       test: 0,
     },
     mutations: {
-      ADD({ state }): Json {
+      ADD({ state }) {
         return {
           test: state.test + 1,
         };
       },
-      BAD({ state }): Json {
+      BAD({ state }) {
         return Object.assign(state, { test: 10 });
       },
     },
   };
-  const moduleB: Module = {
+  const moduleB: Module<{ test: number; }> = {
     state: {
       test: 5,
     },
     mutations: {
-      ADD: ({ state }): Record<string, Json> => ({ test: state.test + 1 }),
+      ADD: ({ state }) => ({ test: state.test + 1 }),
     },
     actions: {
-      ADD({ mutate, hash }): void {
+      ADD({ mutate, hash }) {
         mutate(hash, 'ADD');
       },
     },
@@ -67,11 +67,11 @@ describe('core/Store', () => {
       expect(store).toMatchSnapshot();
     });
     test('correctly registers module if hash is not already used, state is an array', () => {
-      store.register('module', { ...moduleA, state: [] });
+      store.register<string[]>('module', { state: [], mutations: {} });
       expect(store).toMatchSnapshot();
     });
     test('correctly registers module if hash is not already used, state is a primitive', () => {
-      store.register('module', { ...moduleA, state: 'test' });
+      store.register<string>('module', { state: 'test', mutations: {} });
       expect(store).toMatchSnapshot();
     });
   });
