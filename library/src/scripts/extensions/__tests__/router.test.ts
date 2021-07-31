@@ -11,6 +11,15 @@ import router from 'scripts/extensions/router';
 jest.mock('path-to-regexp');
 
 describe('extensions/router', () => {
+  const state = {
+    host: '',
+    path: '',
+    route: '',
+    query: '',
+    params: {},
+    protocol: '',
+  };
+
   beforeAll(() => {
     window.addEventListener = jest.fn((_event, callback) => (callback as () => void)());
   });
@@ -36,7 +45,7 @@ describe('extensions/router', () => {
     process.env.MATCH = '1';
     const module = router(['/user/:id', '/home']);
     const mutate = jest.fn();
-    const newState = module.mutations.NAVIGATE({ mutate, hash: 'router', state: {} }, '/user/125?q=ok');
+    const newState = module.mutations.NAVIGATE({ mutate, hash: 'router', state }, '/user/125?q=ok');
     expect(newState).toEqual({
       host: 'localhost',
       params: { id: '125' },
@@ -51,12 +60,12 @@ describe('extensions/router', () => {
     process.env.MATCH = '3';
     const mutate = jest.fn();
     const module = router(['/home', '/user/:id']);
-    module.mutations.NAVIGATE({ mutate, hash: 'router', state: {} }, '/home');
+    module.mutations.NAVIGATE({ mutate, hash: 'router', state }, '/home');
     process.env.MATCH = '2';
-    module.mutations.NAVIGATE({ mutate, hash: 'router', state: {} }, '/home');
+    module.mutations.NAVIGATE({ mutate, hash: 'router', state }, '/home');
     expect(mutate).toHaveBeenCalledTimes(1);
     expect(mutate).toHaveBeenCalledWith('router', 'POP_STATE');
-    const newState = module.mutations.POP_STATE({ mutate, hash: 'router', state: {} });
+    const newState = module.mutations.POP_STATE({ mutate, hash: 'router', state });
     expect(newState).toEqual({
       host: 'localhost',
       params: {},
