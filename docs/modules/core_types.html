@@ -82,7 +82,7 @@
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/core_types.actionapi.html" class="tsd-kind-icon">Action<wbr>Api</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/core_types.module.html" class="tsd-kind-icon">Module</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/core_types.module.html" class="tsd-kind-icon">Module</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/core_types.store.html" class="tsd-kind-icon">Store</a></li>
 							</ul>
 						</section>
@@ -90,8 +90,8 @@
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="core_types.html#json" class="tsd-kind-icon">Json</a></li>
-								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="core_types.html#reducer" class="tsd-kind-icon">Reducer</a></li>
-								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="core_types.html#subscription" class="tsd-kind-icon">Subscription</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="core_types.html#reducer" class="tsd-kind-icon">Reducer</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="core_types.html#subscription" class="tsd-kind-icon">Subscription</a></li>
 							</ul>
 						</section>
 					</div>
@@ -105,7 +105,7 @@
 					<div class="tsd-signature tsd-kind-icon">Json<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/openizr/diox/blob/fe5d5c5/library/src/scripts/core/types.ts#L49">src/scripts/core/types.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/openizr/diox/blob/01ed78c/library/src/scripts/core/types.ts#L49">src/scripts/core/types.ts:49</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -114,21 +114,27 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 					<a name="reducer" class="tsd-anchor"></a>
 					<h3>Reducer</h3>
-					<div class="tsd-signature tsd-kind-icon">Reducer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a></div>
+					<div class="tsd-signature tsd-kind-icon">Reducer&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/openizr/diox/blob/fe5d5c5/library/src/scripts/core/types.ts#L28">src/scripts/core/types.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/openizr/diox/blob/01ed78c/library/src/scripts/core/types.ts#L28">src/scripts/core/types.ts:28</a></li>
 						</ul>
 					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -143,28 +149,34 @@
 												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>newState: <a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">[]</span></h5>
 											</li>
 										</ul>
-										<h4 class="tsd-returns-title">Returns <a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a></h4>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 									</li>
 								</ul>
 							</li>
 						</ul>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 					<a name="subscription" class="tsd-anchor"></a>
 					<h3>Subscription</h3>
-					<div class="tsd-signature tsd-kind-icon">Subscription<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<div class="tsd-signature tsd-kind-icon">Subscription&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/openizr/diox/blob/fe5d5c5/library/src/scripts/core/types.ts#L17">src/scripts/core/types.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/openizr/diox/blob/01ed78c/library/src/scripts/core/types.ts#L17">src/scripts/core/types.ts:17</a></li>
 						</ul>
 					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>newState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -176,7 +188,7 @@
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>newState: <a href="core_types.html#json" class="tsd-signature-type" data-tsd-kind="Type alias">Json</a></h5>
+												<h5>newState: <span class="tsd-signature-type">T</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -222,7 +234,7 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/core_types.actionapi.html" class="tsd-kind-icon">Action<wbr>Api</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="../interfaces/core_types.module.html" class="tsd-kind-icon">Module</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
@@ -231,10 +243,10 @@
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="core_types.html#json" class="tsd-kind-icon">Json</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="core_types.html#reducer" class="tsd-kind-icon">Reducer</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="core_types.html#subscription" class="tsd-kind-icon">Subscription</a>
 					</li>
 				</ul>
@@ -250,9 +262,11 @@
 				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
