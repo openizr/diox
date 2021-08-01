@@ -7,17 +7,17 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Json, Store } from 'scripts/core/types';
+import { Any, Store } from 'scripts/core/types';
 
 type ReactHookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
   <T>(hash: string, reducer?: (state: T) => T) => T[],
 
   /** `mutate` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Json) => void,
+  <T>(hash: string, name: string, data?: T) => void,
 
   /** `dispatch` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Json) => void,
+  <T>(hash: string, name: string, data?: T) => void,
 ];
 
 /**
@@ -30,11 +30,11 @@ type ReactHookApi = [
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
 export default function useStore(store: Store): ReactHookApi {
-  const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
+  const getState = (moduleHash: string): Any => (store as Any).modules[moduleHash].state;
 
   return [
-    <T>(hash: string, reducer: (state: Json) => T = (newState): T => newState): T[] => {
-      const combiner = (store as Json).combiners[hash];
+    <T>(hash: string, reducer: (state: Any) => T = (newState): T => newState): T[] => {
+      const combiner = (store as Any).combiners[hash];
 
       if (combiner !== undefined) {
         // Subscribing to the given combiner at component creation...

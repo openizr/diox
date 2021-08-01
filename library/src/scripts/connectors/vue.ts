@@ -7,17 +7,17 @@
  */
 
 import Vue, { Component } from 'vue';
-import { Json, Store } from 'scripts/core/types';
+import { Any, Store } from 'scripts/core/types';
 
 type VueHookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
-  <T>(hash: string, component: Component, reducer?: (state: Json) => T) => Component,
+  <T>(hash: string, component: Component, reducer?: (state: Any) => T) => Component,
 
   /** `mutate` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Json) => void,
+  (hash: string, name: string, data?: Any) => void,
 
   /** `dispatch` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Json) => void,
+  (hash: string, name: string, data?: Any) => void,
 ];
 
 /**
@@ -30,11 +30,11 @@ type VueHookApi = [
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
 export default function useStore(store: Store): VueHookApi {
-  const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
+  const getState = (moduleHash: string): Any => (store as Any).modules[moduleHash].state;
 
   return [
-    <T>(hash: string, component: Json, reducer = (newState: Json): T => newState): Component => {
-      const combiner = (store as Json).combiners[hash];
+    <T>(hash: string, component: Any, reducer = (newState: Any): T => newState): Component => {
+      const combiner = (store as Any).combiners[hash];
 
       if (combiner !== undefined) {
         const initialState = combiner.reducer(...combiner.modulesHashes.map(getState));
@@ -55,7 +55,7 @@ export default function useStore(store: Store): VueHookApi {
                 this.$subscription = store.subscribe(hash, (newState) => {
                   const newData = reducer(newState);
                   Object.keys(newData).forEach((key: string) => {
-                    this[key] = (newData as Json)[key];
+                    this[key] = (newData as Any)[key];
                   });
                 });
               },
@@ -64,7 +64,7 @@ export default function useStore(store: Store): VueHookApi {
               beforeDestroy(): void {
                 store.unsubscribe(hash, this.$subscription);
               },
-            } as Json,
+            } as Any,
 
             // Actual component.
             component,

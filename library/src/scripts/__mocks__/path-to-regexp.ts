@@ -6,10 +6,10 @@
  *
  */
 
-import { Json } from 'scripts/core/types';
+import { Any } from 'scripts/core/types';
 
-/* eslint-disable import/prefer-default-export */
-export const match = jest.fn(() => (): Json => {
+export const test = true;
+export const match = jest.fn(() => (): Any => {
   // Route matching with params.
   if (process.env.MATCH === '1') {
     return {

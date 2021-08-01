@@ -6,9 +6,9 @@
  *
  */
 
-import { Json } from 'scripts/core/types';
+import { Any } from 'scripts/core/types';
 
-export default function Store(): Json {
+export default function Store(): Any {
   return {
     subscribe: jest.fn((_hash, callback) => {
       callback({ count: 5 });
@@ -20,7 +20,7 @@ export default function Store(): Json {
     combiners: {
       combiner: {
         modulesHashes: ['module'],
-        reducer: (newState: Json): Json => newState,
+        reducer: (newState: Any): Any => newState,
         subscriptions: [],
       },
     },
