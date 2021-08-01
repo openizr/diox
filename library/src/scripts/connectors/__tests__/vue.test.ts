@@ -8,7 +8,7 @@
 
 import Vue from 'vue';
 import Store from 'scripts/core/Store';
-import { Json } from 'scripts/core/types';
+import { Any } from 'scripts/core/types';
 import useStore from 'scripts/connectors/vue';
 
 jest.mock('vue');
@@ -56,15 +56,15 @@ describe('connectors/vue', () => {
     expect(container.name).toBe('MyComponent');
 
     // Simulating VueJS component's mounting...
-    (container as Json).mounted();
+    (container as Any).mounted();
     expect(Vue.extend).toHaveBeenCalledTimes(1);
     expect(store.subscribe).toHaveBeenCalledTimes(1);
     expect(store.unsubscribe).toHaveBeenCalledTimes(0);
-    expect((container as Json).count).toBe(5);
-    expect((container as Json).$subscription).toEqual(1);
+    expect((container as Any).count).toBe(5);
+    expect((container as Any).$subscription).toEqual(1);
 
     // Simulating VueJS component's destruction...
-    (container as Json).beforeDestroy();
+    (container as Any).beforeDestroy();
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
   });
 });

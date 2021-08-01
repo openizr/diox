@@ -25,7 +25,7 @@ const [useCombiner, mutate] = useStore(store);
 export default useCombiner('router', {
   computed: {
     url(): string {
-      return `http://localhost:5030${(this as any).route}`; // eslint-disable-line
+      return `http://localhost:5030${(this as unknown as { route: string; }).route}`;
     },
   },
   methods: {

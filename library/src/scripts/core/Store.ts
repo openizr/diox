@@ -7,23 +7,23 @@
  */
 
 import {
-  Json, Module, ActionApi, Reducer, Subscription,
+  Any, Module, ActionApi, Reducer, Subscription,
 } from 'scripts/core/types';
 
 /** Registered module. */
-interface RegisteredModule extends Module<Json> {
+interface RegisteredModule extends Module<Any> {
   combiners: string[];
-  actions: { [name: string]: (api: ActionApi, data?: Json) => void };
+  actions: { [name: string]: (api: ActionApi, data?: Any) => void };
 }
 
 /** Combiner. */
 interface Combiner {
-  reducer: Reducer<Json>;
+  reducer: Reducer<Any>;
   modulesHashes: string[];
-  subscriptions: { [id: string]: ((newState: Json) => void) };
+  subscriptions: { [id: string]: ((newState: Any) => void) };
 }
 
-const isPlainObject = (variable: Json): boolean => (
+const isPlainObject = (variable: Any): boolean => (
   typeof variable === 'object'
   && variable !== null
   && variable.constructor === Object
@@ -36,7 +36,7 @@ const isPlainObject = (variable: Json): boolean => (
  */
 export default class Store {
   /** List of store middlewares. */
-  private middlewares: Subscription<Json>[];
+  private middlewares: Subscription<Any>[];
 
   /** Unique index used for subscriptions ids generation. */
   private index: number;
@@ -85,7 +85,7 @@ export default class Store {
    *
    * @throws {Error} If a module with the same hash already exists in registry.
    */
-  public register<T = Json>(hash: string, module: Module<T>): string {
+  public register<T>(hash: string, module: Module<T>): string {
     if (this.modules[hash] !== undefined) {
       throw new Error(
         `Could not register module with hash "${hash}": `
@@ -163,7 +163,7 @@ export default class Store {
    *
    * @throws {Error} If one of the modules hashes does not correspond to a registered module.
    */
-  public combine<T = Json>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string {
+  public combine<T>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string {
     if (this.combiners[hash] !== undefined) {
       throw new Error(
         `Could not create combiner with hash "${hash}": `
@@ -238,7 +238,7 @@ export default class Store {
    *
    * @throws {Error} If there is no combiner created with the given hash.
    */
-  public subscribe<T = Json>(hash: string, handler: Subscription<T>): string {
+  public subscribe<T>(hash: string, handler: Subscription<T>): string {
     const combiner = this.combiners[hash];
     if (combiner === undefined) {
       throw new Error(
@@ -291,7 +291,7 @@ export default class Store {
    *
    * @param {string} name Name of the mutation to perform.
    *
-   * @param {Json} [data] Additional data to pass to the mutation.
+   * @param {any} [data] Additional data to pass to the mutation.
    *
    * @returns {void}
    *
@@ -301,7 +301,7 @@ export default class Store {
    *
    * @throws {Error} If mutation is not a pure function.
    */
-  public mutate(hash: string, name: string, data?: Json): void {
+  public mutate(hash: string, name: string, data?: Any): void {
     const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(
@@ -364,7 +364,7 @@ export default class Store {
    *
    * @param {string} name Name of the action to perform.
    *
-   * @param {Json} [data] Additional data to pass to the action.
+   * @param {any} [data] Additional data to pass to the action.
    *
    * @returns {void}
    *
@@ -372,7 +372,7 @@ export default class Store {
    *
    * @throws {Error} If action's name does not exist on registered module.
    */
-  public dispatch(hash: string, name: string, data?: Json): void {
+  public dispatch(hash: string, name: string, data?: Any): void {
     const registeredModule = this.modules[hash];
     if (registeredModule === undefined) {
       throw new Error(

@@ -7,13 +7,12 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 /** Subscription to modules' states changes. */
 type Subscription<T> = (newState: T) => void;
 
 /** Reducer, mixes several modules' states into one. */
-type Reducer<T> = (...newState: any[]) => T;
+type Reducer<T, T2> = (...newState: T2[]) => T;
 
 declare module 'diox' {
   /** Mutation's exposed API as argument. */
@@ -26,25 +25,25 @@ declare module 'diox' {
   /** Dispatcher's exposed API as argument. */
   interface ActionApi {
     hash: string;
-    mutate: (hash: string, name: string, data?: any) => void;
-    dispatch: (hash: string, name: string, data?: any) => void;
-    register: <T = any>(hash: string, module: Module<T>) => string;
+    mutate: <T>(hash: string, name: string, data?: T) => void;
+    dispatch: <T>(hash: string, name: string, data?: T) => void;
+    register: <T>(hash: string, module: Module<T>) => string;
     unregister: (hash: string) => void;
-    combine: <T = any>(hash: string, modules: string[], reducer: Reducer<T>) => string;
+    combine: <T>(hash: string, modules: string[], reducer: Reducer<T>) => string;
     uncombine: (hash: string) => void;
   }
 
   /** Registered module. */
   interface RegisteredModule extends Module {
     combiners: string[];
-    actions: { [name: string]: (api: ActionApi, data?: any) => void };
+    actions: { [name: string]: <T>(api: ActionApi, data?: T) => void };
   }
 
   /** Combiner. */
   interface Combiner {
     reducer: Reducer;
     modulesHashes: string[];
-    subscriptions: { [id: string]: ((newState: any) => void) };
+    subscriptions: { [id: string]: (<T>(newState: T) => void) };
   }
 
   /** Module. */
@@ -60,7 +59,7 @@ declare module 'diox' {
    */
   export default class Store {
     /** List of store middlewares. */
-    private middlewares: Subscription<any>[];
+    private middlewares: Subscription[];
 
     /** Unique index used for subscriptions ids generation. */
     private index: number;
@@ -94,7 +93,7 @@ declare module 'diox' {
      *
      * @throws {Error} If a module with the same hash already exists in registry.
      */
-    public register<T = Json>(hash: string, module: Module<T>): string;
+    public register<T>(hash: string, module: Module<T>): string;
 
     /**
      * Unregisters a module from the global modules registry.
@@ -127,7 +126,7 @@ declare module 'diox' {
      *
      * @throws {Error} If one of the modules hashes does not correspond to a registered module.
      */
-    public combine<T = Json>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string;
+    public combine<T>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string;
 
     /**
      * Uncombines a user-defined combiner.
@@ -155,7 +154,7 @@ declare module 'diox' {
      *
      * @throws {Error} If there is no combiner created with the given hash.
      */
-    public subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
+    public subscribe<T>(hash: string, handler: Subscription<T>): string;
 
     /**
      * Unsubscribes from a combiner changes.
@@ -189,7 +188,7 @@ declare module 'diox' {
      *
      * @throws {Error} If mutation is not a pure function.
      */
-    public mutate(hash: string, name: string, data?: any): void;
+    public mutate<T>(hash: string, name: string, data?: T): void;
 
     /**
      * Dispatches an asynchronous action to a registered module.
@@ -206,7 +205,7 @@ declare module 'diox' {
      *
      * @throws {Error} If action's name does not exist on registered module.
      */
-    public dispatch(hash: string, name: string, data?: any): void;
+    public dispatch<T>(hash: string, name: string, data?: T): void;
 
     /**
      * Applies the given middleware to the store.
@@ -215,7 +214,7 @@ declare module 'diox' {
      *
      * @returns {void}
      */
-    public use<T = Json>(middleware: Subscription<T>): void;
+    public use<T>(middleware: Subscription<T>): void;
   }
 }
 
@@ -231,11 +230,11 @@ declare module 'diox/extensions/router' {
   /** Dispatcher's exposed API as argument. */
   interface ActionApi {
     hash: string;
-    mutate: (hash: string, name: string, data?: any) => void;
-    dispatch: (hash: string, name: string, data?: any) => void;
-    register: <T = Json>(hash: string, module: Module<T>) => string;
+    mutate: <T>(hash: string, name: string, data?: T) => void;
+    dispatch: <T>(hash: string, name: string, data?: T) => void;
+    register: <T>(hash: string, module: Module<T>) => string;
     unregister: (hash: string) => void;
-    combine: <T = Json>(hash: string, modules: string[], reducer: Reducer<T>) => string;
+    combine: <T>(hash: string, modules: string[], reducer: Reducer<T>) => string;
     uncombine: (hash: string) => void;
   }
 
@@ -269,21 +268,21 @@ declare module 'diox/extensions/router' {
 declare module 'diox/connectors/react' {
   /** Store. */
   interface Store {
-    subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
+    subscribe<T>(hash: string, handler: Subscription<T>): string;
     unsubscribe(hash: string, subscriptionId: string): void;
-    mutate(hash: string, name: string, data?: any): void;
-    dispatch(hash: string, name: string, data?: any): void;
+    mutate<T>(hash: string, name: string, data?: T): void;
+    dispatch<T>(hash: string, name: string, data?: T): void;
   }
 
   type ReactHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T>(hash: string, reducer?: (state: any) => T) => T[],
+    <T1, T2>(hash: string, reducer?: (state: T1) => T2) => T2[],
 
     /** `mutate` function, allowing mutations on store. */
-    (hash: string, name: string, data?: any) => void,
+    <T>(hash: string, name: string, data?: T) => void,
 
     /** `dispatch` function, allowing mutations on store. */
-    (hash: string, name: string, data?: any) => void,
+    <T>(hash: string, name: string, data?: T) => void,
   ];
 
   /**
@@ -304,21 +303,21 @@ declare module 'diox/connectors/vue' {
 
   /** Store. */
   interface Store {
-    subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
+    subscribe<T>(hash: string, handler: Subscription<T>): string;
     unsubscribe(hash: string, subscriptionId: string): void;
-    mutate(hash: string, name: string, data?: any): void;
-    dispatch(hash: string, name: string, data?: any): void;
+    mutate<T>(hash: string, name: string, data?: T): void;
+    dispatch<T>(hash: string, name: string, data?: T): void;
   }
 
   type VueHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T>(hash: string, component: Component, reducer?: (state: any) => T) => ExtendedVue,
+    <T1, T2>(hash: string, component: Component, reducer?: (state: T1) => T2) => ExtendedVue,
 
     /** `mutate` function, allowing mutations on store. */
-    (hash: string, name: string, data?: any) => void,
+    <T>(hash: string, name: string, data?: T) => void,
 
     /** `dispatch` function, allowing mutations on store. */
-    (hash: string, name: string, data?: any) => void,
+    <T>(hash: string, name: string, data?: T) => void,
   ];
 
   /**

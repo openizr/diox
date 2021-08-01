@@ -280,7 +280,7 @@ describe('core/Store', () => {
         }
       });
       store.register('module', moduleA);
-      store.subscribe('module', (newState) => {
+      store.subscribe('module', (newState: { test: number; }) => {
         if (newState.test === 1) {
           store.mutate('module', 'ADD');
         }
