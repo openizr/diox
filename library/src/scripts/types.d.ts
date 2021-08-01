@@ -6,52 +6,52 @@
  *
  */
 
-/** Any valid JavaScript primitive. */
-type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 /** Subscription to modules' states changes. */
-type Subscription = (newState: Json) => void;
+type Subscription<T> = (newState: T) => void;
 
 /** Reducer, mixes several modules' states into one. */
-type Reducer = (...newState: Json[]) => Json;
+type Reducer<T> = (...newState: any[]) => T;
 
 declare module 'diox' {
   /** Mutation's exposed API as argument. */
-  interface MutationApi {
+  interface MutationApi<T> {
     hash: string;
-    state: Json;
-    mutate: (hash: string, name: string, data?: Json) => void;
+    state: T;
+    mutate: (hash: string, name: string, data?: any) => void;
   }
 
   /** Dispatcher's exposed API as argument. */
   interface ActionApi {
     hash: string;
-    mutate: (hash: string, name: string, data?: Json) => void;
-    dispatch: (hash: string, name: string, data?: Json) => void;
-    register: (hash: string, module: Module) => string;
+    mutate: (hash: string, name: string, data?: any) => void;
+    dispatch: (hash: string, name: string, data?: any) => void;
+    register: <T = any>(hash: string, module: Module<T>) => string;
     unregister: (hash: string) => void;
-    combine: (hash: string, modules: string[], reducer: Reducer) => string;
+    combine: <T = any>(hash: string, modules: string[], reducer: Reducer<T>) => string;
     uncombine: (hash: string) => void;
   }
 
   /** Registered module. */
   interface RegisteredModule extends Module {
     combiners: string[];
-    actions: { [name: string]: (api: ActionApi, data?: Json) => void };
+    actions: { [name: string]: (api: ActionApi, data?: any) => void };
   }
 
   /** Combiner. */
   interface Combiner {
     reducer: Reducer;
     modulesHashes: string[];
-    subscriptions: { [id: string]: ((newState: Json) => void) };
+    subscriptions: { [id: string]: ((newState: any) => void) };
   }
 
   /** Module. */
-  export interface Module {
-    state: Json;
-    mutations: { [name: string]: (api: MutationApi, data?: Json) => Json };
-    actions?: { [name: string]: (api: ActionApi, data?: Json) => void };
+  export interface Module<T> {
+    state: T;
+    mutations: { [name: string]: (api: MutationApi<T>, data?: any) => T };
+    actions?: { [name: string]: (api: ActionApi, data?: any) => void };
   }
 
   /**
@@ -60,7 +60,7 @@ declare module 'diox' {
    */
   export default class Store {
     /** List of store middlewares. */
-    private middlewares: Subscription[];
+    private middlewares: Subscription<any>[];
 
     /** Unique index used for subscriptions ids generation. */
     private index: number;
@@ -94,7 +94,7 @@ declare module 'diox' {
      *
      * @throws {Error} If a module with the same hash already exists in registry.
      */
-    public register(hash: string, module: Module): string;
+    public register<T = Json>(hash: string, module: Module<T>): string;
 
     /**
      * Unregisters a module from the global modules registry.
@@ -127,7 +127,7 @@ declare module 'diox' {
      *
      * @throws {Error} If one of the modules hashes does not correspond to a registered module.
      */
-    public combine(hash: string, modulesHashes: string[], reducer: Reducer): string;
+    public combine<T = Json>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string;
 
     /**
      * Uncombines a user-defined combiner.
@@ -155,7 +155,7 @@ declare module 'diox' {
      *
      * @throws {Error} If there is no combiner created with the given hash.
      */
-    public subscribe(hash: string, handler: Subscription): string;
+    public subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
 
     /**
      * Unsubscribes from a combiner changes.
@@ -179,7 +179,7 @@ declare module 'diox' {
      *
      * @param {string} name Name of the mutation to perform.
      *
-     * @param {Json} [data] Additional data to pass to the mutation.
+     * @param {any} [data] Additional data to pass to the mutation.
      *
      * @returns {void}
      *
@@ -189,7 +189,7 @@ declare module 'diox' {
      *
      * @throws {Error} If mutation is not a pure function.
      */
-    public mutate(hash: string, name: string, data?: Json): void;
+    public mutate(hash: string, name: string, data?: any): void;
 
     /**
      * Dispatches an asynchronous action to a registered module.
@@ -198,7 +198,7 @@ declare module 'diox' {
      *
      * @param {string} name Name of the action to perform.
      *
-     * @param {Json} [data] Additional data to pass to the action.
+     * @param {any} [data] Additional data to pass to the action.
      *
      * @returns {void}
      *
@@ -206,7 +206,7 @@ declare module 'diox' {
      *
      * @throws {Error} If action's name does not exist on registered module.
      */
-    public dispatch(hash: string, name: string, data?: Json): void;
+    public dispatch(hash: string, name: string, data?: any): void;
 
     /**
      * Applies the given middleware to the store.
@@ -215,13 +215,39 @@ declare module 'diox' {
      *
      * @returns {void}
      */
-    public use(middleware: Subscription): void;
+    public use<T = Json>(middleware: Subscription<T>): void;
   }
 }
 
 declare module 'diox/extensions/router' {
 
-  interface Context {
+  /** Mutation's exposed API as argument. */
+  interface MutationApi<T> {
+    hash: string;
+    state: T;
+    mutate: (hash: string, name: string, data?: any) => void;
+  }
+
+  /** Dispatcher's exposed API as argument. */
+  interface ActionApi {
+    hash: string;
+    mutate: (hash: string, name: string, data?: any) => void;
+    dispatch: (hash: string, name: string, data?: any) => void;
+    register: <T = Json>(hash: string, module: Module<T>) => string;
+    unregister: (hash: string) => void;
+    combine: <T = Json>(hash: string, modules: string[], reducer: Reducer<T>) => string;
+    uncombine: (hash: string) => void;
+  }
+
+  /** Module. */
+  interface Module<T> {
+    state: T;
+    mutations: { [name: string]: (api: MutationApi<T>, data?: any) => T };
+    actions?: { [name: string]: (api: ActionApi, data?: any) => void };
+  }
+
+  /* Route data. */
+  export interface RoutingContext {
     path: string;
     host: string;
     query: string;
@@ -230,59 +256,34 @@ declare module 'diox/extensions/router' {
     params: Record<string, string>;
   }
 
-  /** Mutation's exposed API as argument. */
-  interface MutationApi {
-    hash: string;
-    state: Json;
-    mutate: (hash: string, name: string, data?: Json) => void;
-  }
-
-  /** Dispatcher's exposed API as argument. */
-  interface ActionApi {
-    hash: string;
-    mutate: (hash: string, name: string, data?: Json) => void;
-    dispatch: (hash: string, name: string, data?: Json) => void;
-    register: (hash: string, module: Module) => string;
-    unregister: (hash: string) => void;
-    combine: (hash: string, modules: string[], reducer: Reducer) => string;
-    uncombine: (hash: string) => void;
-  }
-
-  /** Module. */
-  interface Module {
-    state: Json;
-    mutations: { [name: string]: (api: MutationApi, data?: Json) => Json };
-    actions?: { [name: string]: (api: ActionApi, data?: Json) => void };
-  }
-
   /**
    * Initializes a diox module handling routing for the given configuration.
    *
    * @param {string[]} routes List of routes the router will serve.
    *
-   * @return {Module} Initialized diox routing module.
+   * @return {Module<RoutingContext>} Initialized diox routing module.
    */
-  export default function router(routes: string[]): Module;
+  export default function router(routes: string[]): Module<RoutingContext>;
 }
 
 declare module 'diox/connectors/react' {
   /** Store. */
   interface Store {
-    subscribe(hash: string, handler: Subscription): string;
+    subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
     unsubscribe(hash: string, subscriptionId: string): void;
-    mutate(hash: string, name: string, data?: Json): void;
-    dispatch(hash: string, name: string, data?: Json): void;
+    mutate(hash: string, name: string, data?: any): void;
+    dispatch(hash: string, name: string, data?: any): void;
   }
 
   type ReactHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    (hash: string, reducer?: (state: Json) => Json) => Json[],
+    <T>(hash: string, reducer?: (state: any) => T) => T[],
 
     /** `mutate` function, allowing mutations on store. */
-    (hash: string, name: string, data?: Json) => void,
+    (hash: string, name: string, data?: any) => void,
 
     /** `dispatch` function, allowing mutations on store. */
-    (hash: string, name: string, data?: Json) => void,
+    (hash: string, name: string, data?: any) => void,
   ];
 
   /**
@@ -303,21 +304,21 @@ declare module 'diox/connectors/vue' {
 
   /** Store. */
   interface Store {
-    subscribe(hash: string, handler: Subscription): string;
+    subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
     unsubscribe(hash: string, subscriptionId: string): void;
-    mutate(hash: string, name: string, data?: Json): void;
-    dispatch(hash: string, name: string, data?: Json): void;
+    mutate(hash: string, name: string, data?: any): void;
+    dispatch(hash: string, name: string, data?: any): void;
   }
 
   type VueHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    (hash: string, component: Component, reducer?: (state: Json) => Json) => ExtendedVue,
+    <T>(hash: string, component: Component, reducer?: (state: any) => T) => ExtendedVue,
 
     /** `mutate` function, allowing mutations on store. */
-    (hash: string, name: string, data?: Json) => void,
+    (hash: string, name: string, data?: any) => void,
 
     /** `dispatch` function, allowing mutations on store. */
-    (hash: string, name: string, data?: Json) => void,
+    (hash: string, name: string, data?: any) => void,
   ];
 
   /**

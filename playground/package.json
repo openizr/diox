@@ -1,5 +1,7 @@
 {
   "devDependencies": {
+    "@types/react": "^17.0.15",
+    "@types/react-dom": "^17.0.9",
     "typescript-dev-kit": "^3.1.0"
   },
   "eslintConfig": {
@@ -9,6 +11,8 @@
   },
   "dependencies": {
     "diox": "file:../../../../library/dist",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "vue": "^2.6.12"
   },
   "tsDevKitConfig": {
@@ -20,7 +24,7 @@
     "html": {
       "template": "./html/index.html",
       "entries": [
-        "vue"
+        "main"
       ]
     },
     "devServer": {

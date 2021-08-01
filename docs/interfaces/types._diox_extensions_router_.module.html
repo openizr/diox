@@ -64,7 +64,7 @@
 					<a href="types._diox_extensions_router_.module.html">Module</a>
 				</li>
 			</ul>
-			<h1>Interface Module</h1>
+			<h1>Interface Module&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -77,6 +77,14 @@
 						<p>Module.</p>
 					</div>
 				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T</h4>
+					</li>
+				</ul>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
@@ -109,18 +117,18 @@
 					<div class="tsd-signature tsd-kind-icon">actions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:255</li>
+							<li>Defined in dist/types.d.ts:246</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.actionapi.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Json</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<h5><span class="tsd-signature-symbol">[</span>name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.actionapi.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 								<ul class="tsd-parameters">
 									<li class="tsd-parameter-signature">
 										<ul class="tsd-signatures tsd-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.actionapi.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Json</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.actionapi.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 										</ul>
 										<ul class="tsd-descriptions">
 											<li class="tsd-description">
@@ -130,7 +138,7 @@
 														<h5>api: <a href="types._diox_extensions_router_.actionapi.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionApi</a></h5>
 													</li>
 													<li>
-														<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">Json</span></h5>
+														<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">any</span></h5>
 													</li>
 												</ul>
 												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -148,31 +156,31 @@
 					<div class="tsd-signature tsd-kind-icon">mutations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:254</li>
+							<li>Defined in dist/types.d.ts:245</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Json</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Json</span></h5>
+								<h5><span class="tsd-signature-symbol">[</span>name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span></h5>
 								<ul class="tsd-parameters">
 									<li class="tsd-parameter-signature">
 										<ul class="tsd-signatures tsd-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Json</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Json</span></li>
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 										</ul>
 										<ul class="tsd-descriptions">
 											<li class="tsd-description">
 												<h4 class="tsd-parameters-title">Parameters</h4>
 												<ul class="tsd-parameters">
 													<li>
-														<h5>api: <a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a></h5>
+														<h5>api: <a href="types._diox_extensions_router_.mutationapi.html" class="tsd-signature-type" data-tsd-kind="Interface">MutationApi</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 													</li>
 													<li>
-														<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">Json</span></h5>
+														<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">any</span></h5>
 													</li>
 												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Json</span></h4>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 											</li>
 										</ul>
 									</li>
@@ -184,10 +192,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="state" class="tsd-anchor"></a>
 					<h3>state</h3>
-					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:253</li>
+							<li>Defined in dist/types.d.ts:244</li>
 						</ul>
 					</aside>
 				</section>
@@ -206,12 +214,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
 						<a href="types._diox_extensions_router_.actionapi.html" class="tsd-kind-icon">Action<wbr>Api</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types._diox_extensions_router_.context.html" class="tsd-kind-icon">Context</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
+					<li class="current tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 						<a href="types._diox_extensions_router_.module.html" class="tsd-kind-icon">Module</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
@@ -227,8 +232,11 @@
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 						<a href="types._diox_extensions_router_.mutationapi.html" class="tsd-kind-icon">Mutation<wbr>Api</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="types._diox_extensions_router_.routingcontext.html" class="tsd-kind-icon">Routing<wbr>Context</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="../modules/types._diox_extensions_router_.html#default" class="tsd-kind-icon">default</a>
@@ -246,9 +254,11 @@
 				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">

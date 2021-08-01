@@ -7,30 +7,30 @@
  */
 
 /** Mutation's exposed API as argument. */
-interface MutationApi {
+interface MutationApi<T> {
   hash: string;
-  state: Json;
+  state: T;
   mutate: (hash: string, name: string, data?: Json) => void;
 }
 
 /** Subscription to modules' states changes. */
-export type Subscription = (newState: Json) => void;
+export type Subscription<T> = (newState: T) => void;
 
 /** Store. */
 export interface Store {
-  subscribe(hash: string, handler: Subscription): string;
+  subscribe<T = Json>(hash: string, handler: Subscription<T>): string;
   unsubscribe(hash: string, subscriptionId: string): void;
   mutate(hash: string, name: string, data?: Json): void;
   dispatch(hash: string, name: string, data?: Json): void;
 }
 
 /** Reducer, mixes several modules' states into one. */
-export type Reducer = (...newState: Json[]) => Json;
+export type Reducer<T> = (...newState: Json[]) => T;
 
 /** Module. */
-export interface Module {
-  state: Json;
-  mutations: { [name: string]: (api: MutationApi, data?: Json) => Json };
+export interface Module<T> {
+  state: T;
+  mutations: { [name: string]: (api: MutationApi<T>, data?: Json) => T };
   actions?: { [name: string]: (api: ActionApi, data?: Json) => void };
 }
 
@@ -39,9 +39,9 @@ export interface ActionApi {
   hash: string;
   mutate: (hash: string, name: string, data?: Json) => void;
   dispatch: (hash: string, name: string, data?: Json) => void;
-  register: (hash: string, module: Module) => string;
+  register: <T = Json>(hash: string, module: Module<T>) => string;
   unregister: (hash: string) => void;
-  combine: (hash: string, modules: string[], reducer: Reducer) => string;
+  combine: <T = Json>(hash: string, modules: string[], reducer: Reducer<T>) => string;
   uncombine: (hash: string) => void;
 }
 

@@ -11,7 +11,7 @@ import { Json, Store } from 'scripts/core/types';
 
 type ReactHookApi = [
   /** `useCombiner` function, making component subscribe to the specified combiner. */
-  (hash: string, reducer?: (state: Json) => Json) => Json[],
+  <T>(hash: string, reducer?: (state: T) => T) => T[],
 
   /** `mutate` function, allowing mutations on store. */
   (hash: string, name: string, data?: Json) => void,
@@ -33,7 +33,7 @@ export default function useStore(store: Store): ReactHookApi {
   const getState = (moduleHash: string): Json => (store as Json).modules[moduleHash].state;
 
   return [
-    (hash: string, reducer: (state: Json) => Json = (newState): Json => newState): Json[] => {
+    <T>(hash: string, reducer: (state: Json) => T = (newState): T => newState): T[] => {
       const combiner = (store as Json).combiners[hash];
 
       if (combiner !== undefined) {
