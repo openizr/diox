@@ -3,7 +3,7 @@ version: "3.6"
 services:
   library:
     container_name: ${PROJECT_NAME}_library
-    image: openizr/node:2.0.0-dev
+    image: openizr/node:2.0.1-dev
     env_file:
       - .env
     command: sh -c "dsync src/scripts/types.d.ts dist/types.d.ts & yarn && yarn run dev"
@@ -13,11 +13,11 @@ services:
     restart: unless-stopped
   playground:
     container_name: ${PROJECT_NAME}_playground
-    image: openizr/node:2.0.0-dev
+    image: openizr/node:2.0.1-dev
     env_file:
       - .env
     ports:
-      - "127.0.0.1:${PLAYGROUND_PORT}:${PLAYGROUND_PORT}"
+      - "${HOST_IP}:${PLAYGROUND_PORT}:${PLAYGROUND_PORT}"
     command: sh -c "dsync /library/dist/ node_modules/diox/"
     volumes:
       - ./playground:/var/www/html
