@@ -110,10 +110,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="combine" class="tsd-anchor"></a>
 					<h3>combine</h3>
-					<div class="tsd-signature tsd-kind-icon">combine<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, modules<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">combine<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, modules<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:238</li>
+							<li>Defined in dist/types.d.ts:237</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -121,14 +121,14 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface tsd-has-type-parameter">
-									<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, modules<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+									<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, modules<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-type-parameters-title">Type parameters</h4>
 										<ul class="tsd-type-parameters">
 											<li>
-												<h4>T = <span class="tsd-signature-type">any</span></h4>
+												<h4>T</h4>
 											</li>
 										</ul>
 										<h4 class="tsd-parameters-title">Parameters</h4>
@@ -140,7 +140,7 @@
 												<h5>modules: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 											</li>
 											<li>
-												<h5>reducer: <span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+												<h5>reducer: <span class="tsd-signature-type">any</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -153,21 +153,27 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="dispatch" class="tsd-anchor"></a>
 					<h3>dispatch</h3>
-					<div class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<div class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:235</li>
+							<li>Defined in dist/types.d.ts:234</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface tsd-has-type-parameter">
+									<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
+										<h4 class="tsd-type-parameters-title">Type parameters</h4>
+										<ul class="tsd-type-parameters">
+											<li>
+												<h4>T</h4>
+											</li>
+										</ul>
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
@@ -177,7 +183,7 @@
 												<h5>name: <span class="tsd-signature-type">string</span></h5>
 											</li>
 											<li>
-												<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">any</span></h5>
+												<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">T</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -193,28 +199,34 @@
 					<div class="tsd-signature tsd-kind-icon">hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:233</li>
+							<li>Defined in dist/types.d.ts:232</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="mutate" class="tsd-anchor"></a>
 					<h3>mutate</h3>
-					<div class="tsd-signature tsd-kind-icon">mutate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<div class="tsd-signature tsd-kind-icon">mutate<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:234</li>
+							<li>Defined in dist/types.d.ts:233</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface tsd-has-type-parameter">
+									<li class="tsd-signature tsd-kind-icon">&lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
+										<h4 class="tsd-type-parameters-title">Type parameters</h4>
+										<ul class="tsd-type-parameters">
+											<li>
+												<h4>T</h4>
+											</li>
+										</ul>
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
@@ -224,7 +236,7 @@
 												<h5>name: <span class="tsd-signature-type">string</span></h5>
 											</li>
 											<li>
-												<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">any</span></h5>
+												<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">T</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -240,7 +252,7 @@
 					<div class="tsd-signature tsd-kind-icon">register<span class="tsd-signature-symbol">:</span> &lt;T&gt;<span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, module<span class="tsd-signature-symbol">: </span><a href="types._diox_extensions_router_.module.html" class="tsd-signature-type" data-tsd-kind="Interface">Module</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:236</li>
+							<li>Defined in dist/types.d.ts:235</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -255,7 +267,7 @@
 										<h4 class="tsd-type-parameters-title">Type parameters</h4>
 										<ul class="tsd-type-parameters">
 											<li>
-												<h4>T = <span class="tsd-signature-type">any</span></h4>
+												<h4>T</h4>
 											</li>
 										</ul>
 										<h4 class="tsd-parameters-title">Parameters</h4>
@@ -280,7 +292,7 @@
 					<div class="tsd-signature tsd-kind-icon">uncombine<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:239</li>
+							<li>Defined in dist/types.d.ts:238</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -311,7 +323,7 @@
 					<div class="tsd-signature tsd-kind-icon">unregister<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>hash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in dist/types.d.ts:237</li>
+							<li>Defined in dist/types.d.ts:236</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
