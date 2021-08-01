@@ -276,7 +276,7 @@ declare module 'diox/connectors/react' {
 
   type ReactHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T1, T2>(hash: string, reducer?: (state: T1) => T2) => T2[],
+    <T1, T2 = T1>(hash: string, reducer?: (state: T1) => T2) => T2[],
 
     /** `mutate` function, allowing mutations on store. */
     <T>(hash: string, name: string, data?: T) => void,
@@ -311,7 +311,7 @@ declare module 'diox/connectors/vue' {
 
   type VueHookApi = [
     /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T1, T2>(hash: string, component: Component, reducer?: (state: T1) => T2) => ExtendedVue,
+    <T1, T2 = T1>(hash: string, component: Component, reducer?: (state: T1) => T2) => ExtendedVue,
 
     /** `mutate` function, allowing mutations on store. */
     <T>(hash: string, name: string, data?: T) => void,
