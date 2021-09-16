@@ -13,9 +13,9 @@ import { Module } from 'scripts/core/types';
 export interface RoutingContext {
   path: string;
   host: string;
-  query: string;
   route: string | null;
   protocol: string;
+  query: Record<string, string>;
   params: Record<string, string>;
 }
 
