@@ -249,9 +249,9 @@ declare module 'diox/extensions/router' {
   export interface RoutingContext {
     path: string;
     host: string;
-    query: string;
     route: string | null;
     protocol: string;
+    query: Record<string, string>;
     params: Record<string, string>;
   }
 
