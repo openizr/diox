@@ -32,9 +32,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^17.0.15",
+    "@types/react": "^17.0.21",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^3.1.0"
+    "typescript-dev-kit": "^4.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -73,7 +73,7 @@
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cp ../../src/scripts/types.d.ts ../../dist",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ../docs/ --exclude \"**/*.js\" --exclude \"**/__+(tests|mocks)__/**\" src/",
+    "doc": "node_modules/.bin/typedoc --out ../docs/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.ts",
     "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue"
   }
 }

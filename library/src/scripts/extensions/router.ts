@@ -73,13 +73,12 @@ export default function router(routes: string[]): Module<RoutingContext> {
         return generateContext(routes);
       },
       // Triggers a new navigation to the given page.
-      NAVIGATE({ mutate, hash }, page: string) {
+      NAVIGATE({ state, mutate, hash }, page: string) {
         if (initialized === false) {
           window.addEventListener('popstate', () => mutate(hash, 'POP_STATE'));
           initialized = true;
         }
-        /* istanbul ignore next */
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && state.path !== page) {
           window.history.pushState({}, '', page);
         }
         return generateContext(routes);
