@@ -10,8 +10,8 @@
     ]
   },
   "dependencies": {
-    "basx": "^1.3.6",
-    "diox": "file:../../../../library/dist",
+    "basx": "^1.3.7",
+    "diox": "file:../../../library/dist",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "vue": "^2.6.12"
@@ -50,7 +50,7 @@
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ./doc/ --exclude \"**/*.js\" --exclude \"**/__+(tests|mocks)__/**\" src/",
+    "doc": "node_modules/.bin/typedoc --out ./doc/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.tsx",
     "postinstall": "rm -f node_modules/.eslintcache"
   }
 }

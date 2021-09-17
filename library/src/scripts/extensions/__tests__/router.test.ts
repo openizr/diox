@@ -15,7 +15,7 @@ describe('extensions/router', () => {
     host: '',
     path: '',
     route: '',
-    query: '',
+    query: {},
     params: {},
     protocol: '',
   };
