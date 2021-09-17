@@ -4,14 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @jest-environment jsdom
  */
 
-import router from 'scripts/extensions/router';
+import router, { RoutingContext } from 'scripts/extensions/router';
 
 jest.mock('path-to-regexp');
 
 describe('extensions/router', () => {
-  const state = {
+  const state: RoutingContext = {
     host: '',
     path: '',
     route: '',
@@ -43,8 +44,8 @@ describe('extensions/router', () => {
 
   test('should correctly perform mutation on module when navigating to another route', () => {
     process.env.MATCH = '1';
-    const module = router(['/user/:id', '/home']);
     const mutate = jest.fn();
+    const module = router(['/user/:id', '/home']);
     const newState = module.mutations.NAVIGATE({ mutate, hash: 'router', state }, '/user/125?q=ok');
     expect(newState).toEqual({
       host: 'localhost',
@@ -54,6 +55,16 @@ describe('extensions/router', () => {
       query: { q: 'ok' },
       route: '/user/:id',
     });
+  });
+
+  test('should not push new state into history when navigating to the same route', () => {
+    const mutate = jest.fn();
+    const module = router(['/']);
+    const historySpy = jest.spyOn(window.history, 'pushState');
+    historySpy.mockImplementation(jest.fn);
+    module.mutations.NAVIGATE({ mutate, hash: 'router', state: { ...state, path: '/?q=ok' } }, '/?q=ok');
+    expect(window.history.pushState).toBeCalledTimes(0);
+    historySpy.mockRestore();
   });
 
   test('should trigger the POP_STATE mutation each time user navigates through history', () => {
