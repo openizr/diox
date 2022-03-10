@@ -7,9 +7,8 @@
  */
 
 import { match } from 'path-to-regexp';
-import { Module } from 'scripts/core/types';
 
-/* Route data. */
+/** Route data. */
 export interface RoutingContext {
   path: string;
   host: string;

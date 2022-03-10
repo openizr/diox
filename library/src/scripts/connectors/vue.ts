@@ -6,74 +6,50 @@
  *
  */
 
-import Vue, { Component } from 'vue';
-import { Any, Store } from 'scripts/core/types';
+import {
+  ref,
+  Ref,
+  UnwrapRef,
+  onMounted,
+  onUnmounted,
+} from 'vue';
+import Store from 'scripts/core/Store';
 
-type VueHookApi = [
-  /** `useCombiner` function, making component subscribe to the specified combiner. */
-  <T>(hash: string, component: Component, reducer?: (state: Any) => T) => Component,
-
-  /** `mutate` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Any) => void,
-
-  /** `dispatch` function, allowing mutations on store. */
-  (hash: string, name: string, data?: Any) => void,
-];
+/** Registers a new subscription to the specified combiner. */
+type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Ref<UnwrapRef<T>>;
 
 /**
- * Initializes a VueJS connection to the given store.
+ * Initializes a Vue connection to the given store.
  *
- * @param {Store} store Diox store to connect VueJS to.
+ * @param {Store} store Diox store to connect Vue to.
  *
- * @returns {VueHookApi} Set of methods to manipulate the store.
+ * @returns {UseCombiner} `useCombiner` function.
  *
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
-export default function useStore(store: Store): VueHookApi {
-  const getState = (moduleHash: string): Any => (store as Any).modules[moduleHash].state;
+export default function connect(store: Store): UseCombiner {
+  const privateStore = (store as Any);
+  const getState = (moduleHash: string): Any => privateStore.modules[moduleHash].state;
 
-  return [
-    <T>(hash: string, component: Any, reducer = (newState: Any): T => newState): Component => {
-      const combiner = (store as Any).combiners[hash];
+  return (hash, reducer = (newState): Any => newState) => {
+    const combiner = privateStore.combiners[hash];
 
-      if (combiner !== undefined) {
-        const initialState = combiner.reducer(...combiner.modulesHashes.map(getState));
-        // Subscribing to the given combiner at component creation...
-        return Vue.extend({
-          mixins: [
-            {
-              /** Component's subscription id to the store. */
-              $subscription: null,
-
-              /** Initial component's state data. */
-              data() {
-                return initialState;
-              },
-
-              /** Subscribes to combiner. */
-              mounted(): void {
-                this.$subscription = store.subscribe(hash, (newState) => {
-                  const newData = reducer(newState);
-                  Object.keys(newData).forEach((key: string) => {
-                    this[key] = (newData as Any)[key];
-                  });
-                });
-              },
-
-              /** Unsubscribes from combiner. */
-              beforeDestroy(): void {
-                store.unsubscribe(hash, this.$subscription);
-              },
-            } as Any,
-
-            // Actual component.
-            component,
-          ],
+    if (combiner !== undefined) {
+      let subscriptionId: string;
+      const state = ref(reducer(combiner.reducer(
+        ...combiner.modulesHashes.map(getState),
+      )));
+      // Subscribing to the given combiner at component creation...
+      onMounted(() => {
+        subscriptionId = store.subscribe<Any>(hash, (newState) => {
+          state.value = reducer(newState) as UnwrapRef<Any>;
         });
-      }
-      throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
-    },
-    store.mutate.bind(store),
-    store.dispatch.bind(store),
-  ];
+      });
+      onUnmounted(() => {
+        store.unsubscribe(hash, subscriptionId);
+      });
+      return state;
+    }
+    throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
+  };
 }

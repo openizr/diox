@@ -6,19 +6,27 @@
  *
  */
 
-import { ref } from 'vue';
 import Store from 'scripts/core/Store';
-import connect from 'scripts/connectors/vue';
+import { readable } from 'svelte/store/index';
+import connect from 'scripts/connectors/svelte';
 
-jest.mock('vue');
 jest.mock('scripts/core/Store');
+jest.mock('svelte/store/index', () => {
+  const set = jest.fn();
+  return ({
+    readable: jest.fn((_state, callback) => {
+      callback(set)();
+      return { value: 'test' };
+    }),
+  });
+});
 
-describe('connectors/vue', () => {
+describe('connectors/svelte', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should correctly initialize a Vue connection to the store', () => {
+  test('should correctly initialize a Svelte connection to the store', () => {
     const store = new Store();
     const useCombiner = connect(store);
     expect(typeof useCombiner).toBe('function');
@@ -39,9 +47,9 @@ describe('connectors/vue', () => {
     const useCombiner = connect(store);
     const state = useCombiner('combiner');
 
-    expect(state).toEqual({ value: { count: 5 } });
-    expect(ref).toHaveBeenCalledTimes(1);
-    expect(ref).toHaveBeenCalledWith({ value: 'test' });
+    expect(state).toEqual({ value: 'test' });
+    expect(readable).toHaveBeenCalledTimes(1);
+    expect(readable).toHaveBeenCalledWith({ value: 'test' }, expect.any(Function));
     expect(store.subscribe).toHaveBeenCalledTimes(1);
     expect(store.subscribe).toHaveBeenCalledWith('combiner', expect.any(Function));
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);

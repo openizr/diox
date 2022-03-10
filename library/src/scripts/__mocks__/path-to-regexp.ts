@@ -6,8 +6,6 @@
  *
  */
 
-import { Any } from 'scripts/core/types';
-
 export const test = true;
 export const match = jest.fn(() => (): Any => {
   // Route matching with params.
