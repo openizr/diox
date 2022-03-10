@@ -6,7 +6,7 @@ services:
     image: openizr/node:3.0.0-dev
     env_file:
       - .env
-    command: sh -c "dsync src/scripts/types.d.ts dist/types.d.ts & yarn && tail -f /dev/null"
+    command: sh -c "dsync src/scripts/types.d.ts dist/types.d.ts & yarn && yarn run dev"
     volumes:
       - ./library:/var/www/html
       - ./:/mount
