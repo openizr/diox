@@ -2,7 +2,7 @@
   "devDependencies": {
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
-    "typescript-dev-kit": "^3.1.0"
+    "typescript-dev-kit": "^5.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -14,25 +14,15 @@
     "diox": "file:../../../library/dist",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "vue": "^2.6.12"
+    "vue": "^3.2.31"
   },
   "tsDevKitConfig": {
     "target": "web",
-    "entry": {
-      "main": "./scripts/main.tsx",
-      "vue": "./scripts/vue.ts"
-    },
-    "html": {
-      "template": "./html/index.html",
-      "entries": [
-        "main"
-      ]
-    },
+    "html": "./html/index.html",
     "devServer": {
-      "ip": "0.0.0.0",
+      "host": "0.0.0.0",
       "port": 5030
     },
-    "splitChunks": false,
     "srcPath": "src",
     "distPath": "public",
     "banner": "",
@@ -50,7 +40,8 @@
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build",
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
-    "doc": "node_modules/.bin/typedoc --out ./doc/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.tsx",
+    "check": "cd node_modules/typescript-dev-kit/ && node scripts/check",
+    "doc": "typedoc --out ./doc/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.tsx",
     "postinstall": "rm -f node_modules/.eslintcache"
   }
 }

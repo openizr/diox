@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * Copyright (c) Matthieu Jabbour. All Rights Reserved.
  *
@@ -6,51 +8,53 @@
  *
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-/** Subscription to modules' states changes. */
-type Subscription<T> = (newState: T) => void;
+/** Any valid JavaScript primitive. */
+type Any = any;
 
 /** Reducer, mixes several modules' states into one. */
-type Reducer<T, T2> = (...newState: T2[]) => T;
+type Reducer<T> = (...newState: Any[]) => T;
 
 declare module 'diox' {
   /** Mutation's exposed API as argument. */
-  interface MutationApi<T> {
+  export interface MutationApi<T> {
     hash: string;
     state: T;
-    mutate: (hash: string, name: string, data?: any) => void;
+    mutate: (hash: string, name: string, data?: Any) => void;
   }
 
   /** Dispatcher's exposed API as argument. */
-  interface ActionApi {
+  export interface ActionApi {
     hash: string;
-    mutate: <T>(hash: string, name: string, data?: T) => void;
-    dispatch: <T>(hash: string, name: string, data?: T) => void;
+    mutate: (hash: string, name: string, data?: Any) => void;
+    dispatch: (hash: string, name: string, data?: Any) => void;
     register: <T>(hash: string, module: Module<T>) => string;
     unregister: (hash: string) => void;
     combine: <T>(hash: string, modules: string[], reducer: Reducer<T>) => string;
     uncombine: (hash: string) => void;
   }
 
+  /** Module. */
+  export interface Module<T> {
+    state: T;
+    mutations: { [name: string]: (api: MutationApi<T>, data?: Any) => T };
+    actions?: { [name: string]: (api: ActionApi, data?: Any) => void };
+  }
+
+
+  /** Subscription to modules' states changes. */
+  export type Subscription<T> = (newState: T) => void;
+
   /** Registered module. */
-  interface RegisteredModule extends Module {
+  export interface RegisteredModule extends Module {
     combiners: string[];
     actions: { [name: string]: <T>(api: ActionApi, data?: T) => void };
   }
 
   /** Combiner. */
-  interface Combiner {
+  export interface Combiner {
     reducer: Reducer;
     modulesHashes: string[];
     subscriptions: { [id: string]: (<T>(newState: T) => void) };
-  }
-
-  /** Module. */
-  export interface Module<T> {
-    state: T;
-    mutations: { [name: string]: (api: MutationApi<T>, data?: any) => T };
-    actions?: { [name: string]: (api: ActionApi, data?: any) => void };
   }
 
   /**
@@ -84,7 +88,7 @@ declare module 'diox' {
     /**
      * Registers a new module into the store registry.
      *
-     * @param {string} hash Module's unique identifier in registry. Can be any string, although it
+     * @param {string} hash Module's unique identifier in registry. Can be Any string, although it
      * is recommended to follow a tree-structure pattern, like `/my_app/module_a/module_b`.
      *
      * @param {Module} module Module to register.
@@ -111,7 +115,7 @@ declare module 'diox' {
     /**
      * Combines one or several modules to allow subscriptions on that combination.
      *
-     * @param {string} hash Combiner's unique identifier in registry. Can be any string, although it
+     * @param {string} hash Combiner's unique identifier in registry. Can be Any string, although it
      * is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
      *
      * @param {string[]} modulesHashes Hashes of the modules to combine.
@@ -178,7 +182,7 @@ declare module 'diox' {
      *
      * @param {string} name Name of the mutation to perform.
      *
-     * @param {any} [data] Additional data to pass to the mutation.
+     * @param {Any} [data] Additional data to pass to the mutation.
      *
      * @returns {void}
      *
@@ -197,7 +201,7 @@ declare module 'diox' {
      *
      * @param {string} name Name of the action to perform.
      *
-     * @param {any} [data] Additional data to pass to the action.
+     * @param {Any} [data] Additional data to pass to the action.
      *
      * @returns {void}
      *
@@ -219,33 +223,9 @@ declare module 'diox' {
 }
 
 declare module 'diox/extensions/router' {
+  import { Module } from 'diox';
 
-  /** Mutation's exposed API as argument. */
-  interface MutationApi<T> {
-    hash: string;
-    state: T;
-    mutate: (hash: string, name: string, data?: any) => void;
-  }
-
-  /** Dispatcher's exposed API as argument. */
-  interface ActionApi {
-    hash: string;
-    mutate: <T>(hash: string, name: string, data?: T) => void;
-    dispatch: <T>(hash: string, name: string, data?: T) => void;
-    register: <T>(hash: string, module: Module<T>) => string;
-    unregister: (hash: string) => void;
-    combine: <T>(hash: string, modules: string[], reducer: Reducer<T>) => string;
-    uncombine: (hash: string) => void;
-  }
-
-  /** Module. */
-  interface Module<T> {
-    state: T;
-    mutations: { [name: string]: (api: MutationApi<T>, data?: any) => T };
-    actions?: { [name: string]: (api: ActionApi, data?: any) => void };
-  }
-
-  /* Route data. */
+  /** Route data. */
   export interface RoutingContext {
     path: string;
     host: string;
@@ -266,68 +246,55 @@ declare module 'diox/extensions/router' {
 }
 
 declare module 'diox/connectors/react' {
-  /** Store. */
-  interface Store {
-    subscribe<T>(hash: string, handler: Subscription<T>): string;
-    unsubscribe(hash: string, subscriptionId: string): void;
-    mutate<T>(hash: string, name: string, data?: T): void;
-    dispatch<T>(hash: string, name: string, data?: T): void;
-  }
+  import Store from 'diox';
 
-  type ReactHookApi = [
-    /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T1, T2 = T1>(hash: string, reducer?: (state: T1) => T2) => T2[],
-
-    /** `mutate` function, allowing mutations on store. */
-    <T>(hash: string, name: string, data?: T) => void,
-
-    /** `dispatch` function, allowing mutations on store. */
-    <T>(hash: string, name: string, data?: T) => void,
-  ];
+  /** Registers a new subscription to the specified combiner. */
+  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => T;
 
   /**
    * Initializes a React connection to the given store.
    *
    * @param {Store} store Diox store to connect React to.
    *
-   * @returns {ReactHookApi} Set of methods to manipulate the store.
+   * @returns {UseCombiner} `useCombiner` function.
    *
    * @throws {Error} If combiner with the given hash does not exist in store.
    */
-  export default function useStore(store: Store): ReactHookApi;
+  export default function connect(store: Store): UseCombiner;
 }
 
 declare module 'diox/connectors/vue' {
-  import { Component } from 'vue';
-  import { ExtendedVue } from 'vue/types/vue.d';
+  import { Ref, UnwrapRef } from 'vue';
 
-  /** Store. */
-  interface Store {
-    subscribe<T>(hash: string, handler: Subscription<T>): string;
-    unsubscribe(hash: string, subscriptionId: string): void;
-    mutate<T>(hash: string, name: string, data?: T): void;
-    dispatch<T>(hash: string, name: string, data?: T): void;
-  }
-
-  type VueHookApi = [
-    /** `useCombiner` function, making component subscribe to the specified combiner. */
-    <T1, T2 = T1>(hash: string, component: Component, reducer?: (state: T1) => T2) => ExtendedVue,
-
-    /** `mutate` function, allowing mutations on store. */
-    <T>(hash: string, name: string, data?: T) => void,
-
-    /** `dispatch` function, allowing mutations on store. */
-    <T>(hash: string, name: string, data?: T) => void,
-  ];
+  /** Registers a new subscription to the specified combiner. */
+  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Ref<UnwrapRef<T>>;
 
   /**
-   * Initializes a VueJS connection to the given store.
+   * Initializes a Vue connection to the given store.
    *
-   * @param {Store} store Diox store to connect VueJS to.
+   * @param {Store} store Diox store to connect Vue to.
    *
-   * @returns {VueHookApi} Set of methods to manipulate the store.
+   * @returns {UseCombiner} `useCombiner` function.
    *
    * @throws {Error} If combiner with the given hash does not exist in store.
    */
-  export default function useStore(store: Store): VueHookApi;
+  export default function connect(store: Store): UseCombiner;
+}
+
+declare module 'diox/connectors/svelte' {
+  import { Readable } from 'svelte/store/index';
+
+  /** Registers a new subscription to the specified combiner. */
+  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Readable<T>;
+
+  /**
+   * Initializes a Svelte connection to the given store.
+   *
+   * @param {Store} store Diox store to connect Svelte to.
+   *
+   * @returns {UseCombiner} `useCombiner` function.
+   *
+   * @throws {Error} If combiner with the given hash does not exist in store.
+   */
+  export default function connect(store: Store): UseCombiner;
 }

@@ -6,8 +6,6 @@
  *
  */
 
-/* istanbul ignore file */
-
 import Store from 'scripts/core/Store';
 
 export default Store;
