@@ -6,10 +6,9 @@
  *
  */
 
-import Vue from 'vue';
+import { ref } from 'vue';
 import Store from 'scripts/core/Store';
-import { Any } from 'scripts/core/types';
-import useStore from 'scripts/connectors/vue';
+import connect from 'scripts/connectors/vue';
 
 jest.mock('vue');
 jest.mock('scripts/core/Store');
@@ -19,21 +18,17 @@ describe('connectors/vue', () => {
     jest.clearAllMocks();
   });
 
-  test('should correctly initialize a VueJS connection to the store', () => {
+  test('should correctly initialize a Vue connection to the store', () => {
     const store = new Store();
-    const [useCombiner, mutate, dispatch] = useStore(store);
+    const useCombiner = connect(store);
     expect(typeof useCombiner).toBe('function');
-    expect(typeof mutate).toBe('function');
-    expect(typeof dispatch).toBe('function');
   });
 
   test('should throw an error if given combiner does not exist', () => {
     const store = new Store();
-    const [useCombiner] = useStore(store);
+    const useCombiner = connect(store);
     expect(() => {
-      useCombiner('invalid', {
-        name: 'MyComponent',
-      });
+      useCombiner('invalid');
     }).toThrow(
       'Could not use combiner "invalid": combiner does not exist.',
     );
@@ -41,30 +36,15 @@ describe('connectors/vue', () => {
 
   test('should correctly subscribe to an existing combiner', () => {
     const store = new Store();
-    const [useCombiner, mutate, dispatch] = useStore(store);
-    const container = useCombiner('combiner', {
-      name: 'MyComponent',
-      methods: {
-        test(): void {
-          mutate('module', 'INCREMENT');
-        },
-        asyncTest(): void {
-          dispatch('module', 'ASYNC_INCREMENT');
-        },
-      },
-    });
-    expect(container.name).toBe('MyComponent');
+    const useCombiner = connect(store);
+    const state = useCombiner('combiner');
 
-    // Simulating VueJS component's mounting...
-    (container as Any).mounted();
-    expect(Vue.extend).toHaveBeenCalledTimes(1);
+    expect(state).toEqual({ value: { count: 5 } });
+    expect(ref).toHaveBeenCalledTimes(1);
+    expect(ref).toHaveBeenCalledWith({ value: 'test' });
     expect(store.subscribe).toHaveBeenCalledTimes(1);
-    expect(store.unsubscribe).toHaveBeenCalledTimes(0);
-    expect((container as Any).count).toBe(5);
-    expect((container as Any).$subscription).toEqual(1);
-
-    // Simulating VueJS component's destruction...
-    (container as Any).beforeDestroy();
+    expect(store.subscribe).toHaveBeenCalledWith('combiner', expect.any(Function));
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
+    expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
   });
 });
