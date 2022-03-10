@@ -37,7 +37,7 @@ improvements:
 - Extremely light (~300 lines of code, 1.5Kb gzipped)
 - Fast and optimized by design
 - Scalable out of the box without using any additional NPM module, thanks to the concept of Modules
-- Native compatibility with any front-end library such as React or VueJS
+- Native compatibility with any front-end library such as React, Vue, or Svelte
 - Easy to use, with a very small learning curve and simple concepts
 - Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)
 
