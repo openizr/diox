@@ -1913,7 +1913,7 @@ diff-sequences@^27.5.1:
   integrity sha512-k1gCAXAsNgLwEL+Y8Wvl+M6oEFj5bgazfZULpS5CneoPPXRaCCW7dm+q21Ky2VEE5X+VeRDBVg1Pcvvsr4TtNQ==
 
 "diox@file:../../../library/dist":
-  version "4.5.4"
+  version "0.9.3"
   dependencies:
     path-to-regexp "^6.2.0"
 
@@ -1946,9 +1946,9 @@ domexception@^2.0.1:
     webidl-conversions "^5.0.0"
 
 electron-to-chromium@^1.4.76:
-  version "1.4.80"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.80.tgz#299a1ea3e32810934b4e3c2e4d4cb53136fdab3f"
-  integrity sha512-COsbJCGVYCc/aAY4cd94x1Js3q0r406YKGbdL8LXHg0O9dEjuFEFU/vZneRxBxKo/f1lLHi0YyAR7sbFM+i8Bg==
+  version "1.4.81"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.81.tgz#a9ce8997232fb9fb0ec53de8931a85b18c0a7383"
+  integrity sha512-Gs7xVpIZ7tYYSDA+WgpzwpPvfGwUk3KSIjJ0akuj5XQHFdyQnsUoM76EA4CIHXNLPiVwTwOFay9RMb0ChG3OBw==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -2143,7 +2143,7 @@ esbuild-windows-arm64@0.14.25:
   resolved "https://registry.yarnpkg.com/esbuild-windows-arm64/-/esbuild-windows-arm64-0.14.25.tgz#8b243cbbad8a86cf98697da9ccb88c05df2ef458"
   integrity sha512-4ype9ERiI45rSh+R8qUoBtaj6kJvUOI7oVLhKqPEpcF4Pa5PpT3hm/mXAyotJHREkHpM87PAJcA442mLnbtlNA==
 
-esbuild@^0.14.14:
+esbuild@^0.14.14, esbuild@^0.14.25:
   version "0.14.25"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.14.25.tgz#ddb9d47b91ca76abb7d850ce3dfed0bc3dc88d16"
   integrity sha512-4JHEIOMNFvK09ziiL+iVmldIhLbn49V4NAVo888tcGFKedEZY/Y8YapfStJ6zSE23tzYPKxqKwQBnQoIO0BI/Q==
@@ -4464,7 +4464,7 @@ postcss-value-parser@^4.2.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.1.10, postcss@^8.4.6:
+postcss@^8.1.10, postcss@^8.4.6, postcss@^8.4.8:
   version "8.4.8"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.8.tgz#dad963a76e82c081a0657d3a2f3602ce10c2e032"
   integrity sha512-2tXEqGxrjvAO6U+CJzDL2Fk2kPHTv1jQsYkSoMeOis2SsYaXRO2COxTdQp99cYvif9JTXaAk9lYGc3VhJt7JPQ==
@@ -4695,7 +4695,7 @@ rollup-plugin-visualizer@^5.6.0:
     source-map "^0.7.3"
     yargs "^17.3.1"
 
-rollup@^2.59.0:
+rollup@^2.59.0, rollup@^2.70.0:
   version "2.70.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.0.tgz#17a92e5938e92a251b962352e904c9f558230ec7"
   integrity sha512-iEzYw+syFxQ0X9RefVwhr8BA2TNJsTaX8L8dhyeyMECDbmiba+8UQzcu+xZdji0+JQ+s7kouQnw+9Oz5M19XKA==
@@ -5347,10 +5347,10 @@ typedoc@^0.22.13:
     minimatch "^5.0.1"
     shiki "^0.10.1"
 
-typescript-dev-kit@^5.0.0:
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-5.0.3.tgz#d2c51e323389962d54562335951b3c32b4af0a88"
-  integrity sha512-yHIBzftl3OGnWpX6FvuIfEQgM02AJLieCPt1zqM71AmQP8xRR1SBSb6q2BnDuY9Y6PvjawR64byfEzGc0tNgww==
+typescript-dev-kit@^5.0.4:
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/typescript-dev-kit/-/typescript-dev-kit-5.0.4.tgz#3e1672736bf3e825d3b361595f8fc4ba24bb2319"
+  integrity sha512-DZPdpBGSYecAge6gHCiNpxzynYORH3eQynxMRDOUOud3zHybMkcC1w2I72t4BEUZ4A59sON8PCUqti/UaI+MqQ==
   dependencies:
     "@babel/core" "^7.17.5"
     "@babel/preset-typescript" "^7.16.7"
@@ -5364,6 +5364,7 @@ typescript-dev-kit@^5.0.0:
     autoprefixer "^10.4.2"
     babel-jest "^27.5.1"
     chokidar "^3.5.3"
+    esbuild "^0.14.25"
     esbuild-jest "^0.5.0"
     esbuild-plugin-vue-next "^0.1.4"
     esbuild-svelte "^0.6.3"
@@ -5377,7 +5378,9 @@ typescript-dev-kit@^5.0.0:
     eslint-plugin-vue "^8.5.0"
     fs-extra "^10.0.1"
     jest "^27.5.1"
+    postcss "^8.4.8"
     postcss-sort-media-queries "^4.2.1"
+    rollup "^2.70.0"
     rollup-plugin-visualizer "^5.6.0"
     sass "^1.49.9"
     svelte-check "^2.4.5"
