@@ -7,7 +7,7 @@
  */
 
 import Store from 'scripts/core/Store';
-import useStore from 'scripts/connectors/react';
+import connect from 'scripts/connectors/react';
 
 jest.mock('react');
 jest.mock('scripts/core/Store');
@@ -19,15 +19,13 @@ describe('connectors/react', () => {
 
   test('should correctly initialize a React connection to the store', () => {
     const store = new Store();
-    const [useCombiner, mutate, dispatch] = useStore(store);
+    const useCombiner = connect(store);
     expect(typeof useCombiner).toBe('function');
-    expect(typeof mutate).toBe('function');
-    expect(typeof dispatch).toBe('function');
   });
 
   test('should throw an error if given combiner does not exist', () => {
     const store = new Store();
-    const [useCombiner] = useStore(store);
+    const useCombiner = connect(store);
     expect(() => {
       useCombiner('invalid', (newState) => newState);
     }).toThrow(
@@ -37,9 +35,9 @@ describe('connectors/react', () => {
 
   test('should correctly subscribe to an existing combiner', () => {
     const store = new Store();
-    const [useCombiner] = useStore(store);
+    const useCombiner = connect(store);
     const reducer = jest.fn((value) => value.value);
-    const [state] = useCombiner('combiner', reducer);
+    const state = useCombiner('combiner', reducer);
     expect(reducer).toHaveBeenCalledTimes(2);
     // First time to compute initial state...
     expect(reducer).toHaveBeenCalledWith({ count: 5 });
@@ -52,7 +50,7 @@ describe('connectors/react', () => {
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
     expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
     expect(state).toBe('test');
-    const [otherState] = useCombiner('combiner'); // With default reducer.
+    const otherState = useCombiner('combiner'); // With default reducer.
     expect(otherState).toEqual({ value: 'test' });
   });
 });
