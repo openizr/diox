@@ -77,6 +77,6 @@
     "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
     "check": "cd node_modules/typescript-dev-kit/ && node scripts/check",
     "doc": "typedoc --out ../docs/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.ts",
-    "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue"
+    "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue svelte"
   }
 }
