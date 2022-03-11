@@ -42,6 +42,16 @@ describe('extensions/router', () => {
     });
   });
 
+  test('should display a warning when query string format is not valid', () => {
+    const consle = console;
+    consle.warn = jest.fn();
+    const mutate = jest.fn();
+    const module = router(['/home', '/user/:id']);
+    const newState = module.mutations.NAVIGATE({ mutate, hash: 'router', state }, '/user/125?qazdzad&azdzad');
+    expect(newState.query).toEqual({});
+    expect(consle.warn).toHaveBeenCalledWith('Invalid query string "?qazdzad&azdzad".');
+  });
+
   test('should correctly perform mutation on module when navigating to another route', () => {
     process.env.MATCH = '1';
     const mutate = jest.fn();
