@@ -6,54 +6,43 @@
  *
  */
 
-import { useState, useEffect } from 'react';
-import { Any, Store } from 'scripts/core/types';
+import Store from 'scripts/core/Store';
+import { useState as reactUseState, useEffect as reactUseEffect } from 'react';
 
-type ReactHookApi = [
-  /** `useCombiner` function, making component subscribe to the specified combiner. */
-  <T>(hash: string, reducer?: (state: T) => T) => T[],
-
-  /** `mutate` function, allowing mutations on store. */
-  <T>(hash: string, name: string, data?: T) => void,
-
-  /** `dispatch` function, allowing mutations on store. */
-  <T>(hash: string, name: string, data?: T) => void,
-];
+/** Registers a new subscription to the specified combiner. */
+type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => T;
 
 /**
  * Initializes a React connection to the given store.
  *
  * @param {Store} store Diox store to connect React to.
  *
- * @returns {ReactHookApi} Set of methods to manipulate the store.
+ * @returns {UseCombiner} `useCombiner` function.
  *
  * @throws {Error} If combiner with the given hash does not exist in store.
  */
-export default function useStore(store: Store): ReactHookApi {
-  const getState = (moduleHash: string): Any => (store as Any).modules[moduleHash].state;
+export default function connect(store: Store): UseCombiner {
+  const privateStore = (store as Any);
+  const getState = (moduleHash: string): Any => privateStore.modules[moduleHash].state;
 
-  return [
-    <T>(hash: string, reducer: (state: Any) => T = (newState): T => newState): T[] => {
-      const combiner = (store as Any).combiners[hash];
+  return (hash, reducer = (newState): Any => newState) => {
+    const combiner = privateStore.combiners[hash];
 
-      if (combiner !== undefined) {
-        // Subscribing to the given combiner at component creation...
-        const [state, setState] = useState(() => reducer(combiner.reducer(
-          ...combiner.modulesHashes.map(getState),
-        )));
-        useEffect(() => {
-          const subscriptionId = store.subscribe(hash, (newState) => {
-            setState(reducer(newState));
-          });
-          return (): void => {
-            store.unsubscribe(hash, subscriptionId);
-          };
-        }, []);
-        return [state];
-      }
-      throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
-    },
-    store.mutate.bind(store),
-    store.dispatch.bind(store),
-  ];
+    if (combiner !== undefined) {
+      // Subscribing to the given combiner at component creation...
+      const [state, setState] = reactUseState(() => reducer(combiner.reducer(
+        ...combiner.modulesHashes.map(getState),
+      )));
+      reactUseEffect(() => {
+        const subscriptionId = store.subscribe<Any>(hash, (newState) => {
+          setState(reducer(newState));
+        });
+        return (): void => {
+          store.unsubscribe(hash, subscriptionId);
+        };
+      }, []);
+      return state;
+    }
+    throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
+  };
 }

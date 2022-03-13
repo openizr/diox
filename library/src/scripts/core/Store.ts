@@ -6,9 +6,8 @@
  *
  */
 
-import {
-  Any, Module, ActionApi, Reducer, Subscription,
-} from 'scripts/core/types';
+/** Subscription to modules' states changes. */
+type Subscription<T> = (newState: T) => void;
 
 /** Registered module. */
 interface RegisteredModule extends Module<Any> {
@@ -63,8 +62,6 @@ export default class Store {
 
   /**
    * Class constructor.
-   *
-   * @returns {void}
    */
   public constructor() {
     this.modules = {};

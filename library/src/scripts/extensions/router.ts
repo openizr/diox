@@ -7,9 +7,8 @@
  */
 
 import { match } from 'path-to-regexp';
-import { Module } from 'scripts/core/types';
 
-/* Route data. */
+/** Route data. */
 export interface RoutingContext {
   path: string;
   host: string;
@@ -30,8 +29,9 @@ export interface RoutingContext {
 function generateContext(routes: string[]): RoutingContext {
   const { location } = window;
   const path = location.pathname;
+  const queryString = decodeURI(location.search.substring(1));
   // See https://stackoverflow.com/questions/8648892/how-to-convert-url-parameters-to-a-javascript-object.
-  const queryString = decodeURI(location.search.substring(1))
+  const formattedqueryString = queryString
     .replace(/"/g, '\\"')
     .replace(/&/g, '","')
     .replace(/=/g, '":"');
@@ -46,13 +46,23 @@ function generateContext(routes: string[]): RoutingContext {
     }
   }
 
+  let parsedQueryString = {};
+  try {
+    if (formattedqueryString !== '') {
+      parsedQueryString = JSON.parse(`{"${formattedqueryString}"}`);
+    }
+  } catch (error) {
+    const { warn } = console;
+    warn(`Invalid query string "?${queryString}".`);
+  }
+
   return {
     host: location.host,
     path: `${path}${location.search}`,
     protocol: location.protocol.replace(':', ''),
     route: routes[routeIndex] || null,
     params: ((routeInfo === false) ? {} : routeInfo?.params ?? {}) as Record<string, string>,
-    query: (queryString !== '') ? JSON.parse(`{"${queryString}"}`) : {},
+    query: parsedQueryString,
   };
 }
 

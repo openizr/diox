@@ -1,23 +1,20 @@
 import * as React from 'react';
 import store from 'scripts/store';
 import * as ReactDOM from 'react-dom';
-import useStore from 'diox/connectors/react';
+import connect from 'diox/connectors/react';
 
-const [useCombiner, mutate] = useStore(store);
+const useCombiner = connect(store);
 
 const goToTestPage = (): void => {
-  mutate('router', 'NAVIGATE', '/test');
+  store.mutate('router', 'NAVIGATE', '/test');
 };
 
 const goToHomePage = (): void => {
-  mutate('router', 'NAVIGATE', '/');
+  store.mutate('router', 'NAVIGATE', '/');
 };
 
-const Component = (): JSX.Element => {
-  const [router] = useCombiner<{ route: string; query: Record<string, string>; }>('router', (newState) => ({
-    route: newState.route,
-    query: {},
-  }));
+function Component(): JSX.Element {
+  const router = useCombiner<{ route: string; query: Record<string, string>; }>('router', (newState) => ({ route: newState.route, query: {} }));
   return (
     <section>
       <p>{`You are here: http://localhost:5030${router.route}`}</p>
@@ -34,11 +31,6 @@ const Component = (): JSX.Element => {
         )}
     </section>
   );
-};
-
-// Webpack HMR interface.
-interface ExtendedNodeModule extends NodeModule {
-  hot: { accept: () => void };
 }
 
 function main(): void {
@@ -54,7 +46,8 @@ if (document.readyState === 'loading') {
   main();
 }
 
-// Enables Hot Module Rendering.
-if ((module as ExtendedNodeModule).hot) {
-  (module as ExtendedNodeModule).hot.accept();
-}
+// Ensures subscriptions to Store are correctly cleared when page is left, to prevent "ghost"
+// processing, by manually unmounting Vue components tree.
+window.addEventListener('beforeunload', () => {
+  ReactDOM.unmountComponentAtNode(document.querySelector('#root') as Element);
+});

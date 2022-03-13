@@ -6,8 +6,6 @@
  *
  */
 
-import { Any } from 'scripts/core/types';
-
 export default function Store(): Any {
   return {
     subscribe: jest.fn((_hash, callback) => {
