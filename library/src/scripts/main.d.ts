@@ -1,4 +1,4 @@
-/* eslint-disable */
+// /* eslint-disable */
 
 /**
  * Copyright (c) Matthieu Jabbour. All Rights Reserved.
@@ -9,7 +9,7 @@
  */
 
 /** Any valid JavaScript primitive. */
-type Any = any;
+type Any = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 /** Reducer, mixes several modules' states into one. */
 type Reducer<T> = (...newState: Any[]) => T;
@@ -40,19 +40,18 @@ declare module 'diox' {
     actions?: { [name: string]: (api: ActionApi, data?: Any) => void };
   }
 
-
   /** Subscription to modules' states changes. */
   export type Subscription<T> = (newState: T) => void;
 
   /** Registered module. */
-  export interface RegisteredModule extends Module {
+  export interface RegisteredModule extends Module<Any> {
     combiners: string[];
     actions: { [name: string]: <T>(api: ActionApi, data?: T) => void };
   }
 
   /** Combiner. */
   export interface Combiner {
-    reducer: Reducer;
+    reducer: Reducer<Any>;
     modulesHashes: string[];
     subscriptions: { [id: string]: (<T>(newState: T) => void) };
   }
@@ -63,7 +62,7 @@ declare module 'diox' {
    */
   export default class Store {
     /** List of store middlewares. */
-    private middlewares: Subscription[];
+    private middlewares: Subscription<Any>[];
 
     /** Unique index used for subscriptions ids generation. */
     private index: number;
@@ -220,81 +219,4 @@ declare module 'diox' {
      */
     public use<T>(middleware: Subscription<T>): void;
   }
-}
-
-declare module 'diox/extensions/router' {
-  import { Module } from 'diox';
-
-  /** Route data. */
-  export interface RoutingContext {
-    path: string;
-    host: string;
-    route: string | null;
-    protocol: string;
-    query: Record<string, string>;
-    params: Record<string, string>;
-  }
-
-  /**
-   * Initializes a diox module handling routing for the given configuration.
-   *
-   * @param {string[]} routes List of routes the router will serve.
-   *
-   * @return {Module<RoutingContext>} Initialized diox routing module.
-   */
-  export default function router(routes: string[]): Module<RoutingContext>;
-}
-
-declare module 'diox/connectors/react' {
-  import Store from 'diox';
-
-  /** Registers a new subscription to the specified combiner. */
-  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => T;
-
-  /**
-   * Initializes a React connection to the given store.
-   *
-   * @param {Store} store Diox store to connect React to.
-   *
-   * @returns {UseCombiner} `useCombiner` function.
-   *
-   * @throws {Error} If combiner with the given hash does not exist in store.
-   */
-  export default function connect(store: Store): UseCombiner;
-}
-
-declare module 'diox/connectors/vue' {
-  import { Ref, UnwrapRef } from 'vue';
-
-  /** Registers a new subscription to the specified combiner. */
-  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Ref<UnwrapRef<T>>;
-
-  /**
-   * Initializes a Vue connection to the given store.
-   *
-   * @param {Store} store Diox store to connect Vue to.
-   *
-   * @returns {UseCombiner} `useCombiner` function.
-   *
-   * @throws {Error} If combiner with the given hash does not exist in store.
-   */
-  export default function connect(store: Store): UseCombiner;
-}
-
-declare module 'diox/connectors/svelte' {
-  import { Readable } from 'svelte/store/index';
-
-  /** Registers a new subscription to the specified combiner. */
-  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Readable<T>;
-
-  /**
-   * Initializes a Svelte connection to the given store.
-   *
-   * @param {Store} store Diox store to connect Svelte to.
-   *
-   * @returns {UseCombiner} `useCombiner` function.
-   *
-   * @throws {Error} If combiner with the given hash does not exist in store.
-   */
-  export default function connect(store: Store): UseCombiner;
 }
