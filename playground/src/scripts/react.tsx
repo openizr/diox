@@ -1,7 +1,11 @@
 import * as React from 'react';
 import store from 'scripts/store';
-import * as ReactDOM from 'react-dom';
 import connect from 'diox/connectors/react';
+import { createRoot, Root } from 'react-dom/client';
+
+type JSXElement = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+let app: Root;
 
 const useCombiner = connect(store);
 
@@ -34,7 +38,13 @@ function Component(): JSX.Element {
 }
 
 function main(): void {
-  ReactDOM.render(<Component />, document.querySelector('#root'));
+  app = createRoot(document.querySelector('#root') as HTMLElement);
+  const StrictMode = React.StrictMode as JSXElement;
+  app.render(
+    <StrictMode>
+      <Component />
+    </StrictMode>,
+  );
 }
 
 // Ensures DOM is fully loaded before running app's main logic.
@@ -49,5 +59,5 @@ if (document.readyState === 'loading') {
 // Ensures subscriptions to Store are correctly cleared when page is left, to prevent "ghost"
 // processing, by manually unmounting Vue components tree.
 window.addEventListener('beforeunload', () => {
-  ReactDOM.unmountComponentAtNode(document.querySelector('#root') as Element);
+  app.unmount();
 });
