@@ -33,9 +33,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^17.0.40",
+    "@types/react": "^18.0.11",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^5.0.4"
+    "typescript-dev-kit": "^5.1.1"
   },
   "eslintConfig": {
     "extends": [
@@ -43,12 +43,12 @@
     ]
   },
   "dependencies": {
-    "path-to-regexp": "^6.2.0"
+    "path-to-regexp": "^6.2.1"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "svelte": "^3.46.4",
-    "vue": "^3.2.31"
+    "react": "^18.1.0",
+    "svelte": "^3.48.0",
+    "vue": "^3.2.36"
   },
   "tsDevKitConfig": {
     "target": "node",
