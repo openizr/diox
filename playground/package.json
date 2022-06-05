@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@types/react": "^17.0.15",
-    "@types/react-dom": "^17.0.9",
-    "typescript-dev-kit": "^5.0.4"
+    "@types/react": "^18.0.11",
+    "@types/react-dom": "^18.0.5",
+    "typescript-dev-kit": "^5.1.1"
   },
   "eslintConfig": {
     "extends": [
@@ -10,11 +10,12 @@
     ]
   },
   "dependencies": {
-    "basx": "^1.3.7",
+    "basx": "^2.0.1",
     "diox": "file:../../../library/dist",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "vue": "^3.2.31"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "svelte": "^3.48.0",
+    "vue": "^3.2.36"
   },
   "tsDevKitConfig": {
     "target": "web",
