@@ -78,4 +78,4 @@ Or just sending me a quick message saying "Thanks" is also very gratifying, and 
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) Matthieu Jabbour. All Rights Reserved.
+Copyright (c) Openizr. All Rights Reserved.

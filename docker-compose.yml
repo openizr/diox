@@ -2,8 +2,9 @@ version: "3.6"
 
 services:
   library:
+    user: node:node
+    image: openizr/node:5.0.0-dev
     container_name: ${PROJECT_NAME}_library
-    image: openizr/node:3.0.0-dev
     env_file:
       - .env
     command: sh -c "yarn && yarn run dev"
@@ -12,8 +13,9 @@ services:
       - ./:/mount
     restart: unless-stopped
   playground:
+    user: node:node
+    image: openizr/node:5.0.0-dev
     container_name: ${PROJECT_NAME}_playground
-    image: openizr/node:3.0.0-dev
     env_file:
       - .env
     ports:
@@ -30,4 +32,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.72.57.0/24
+        - subnet: ${DOCKER_SUBNET}
