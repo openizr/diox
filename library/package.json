@@ -33,9 +33,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^18.0.11",
+    "@types/react": "^18.0.28",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^5.1.1"
+    "typescript-dev-kit": "^6.0.2"
   },
   "eslintConfig": {
     "extends": [
@@ -46,9 +46,9 @@
     "path-to-regexp": "^6.2.1"
   },
   "peerDependencies": {
-    "react": "^18.1.0",
-    "svelte": "^3.48.0",
-    "vue": "^3.2.36"
+    "react": "^18.2.0",
+    "svelte": "^3.55.1",
+    "vue": "^3.2.47"
   },
   "tsDevKitConfig": {
     "target": "node",
@@ -61,11 +61,7 @@
     },
     "srcPath": "src",
     "distPath": "dist",
-    "banner": "/*!\n * Copyright (c) Matthieu Jabbour. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
-    "env": {
-      "development": {},
-      "production": {}
-    }
+    "banner": "/*!\n * Copyright (c) Openizr. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */"
   },
   "engines": {
     "node": ">= 14.0.0",

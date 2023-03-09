@@ -215,4 +215,4 @@ Project is structured as follow:
 
 [MIT](https://github.com/openizr/diox/blob/master/LICENSE)
 
-Copyright (c) Matthieu Jabbour. All Rights Reserved.
+Copyright (c) Openizr. All Rights Reserved.
