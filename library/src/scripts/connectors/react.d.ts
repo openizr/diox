@@ -9,7 +9,16 @@
 declare module 'diox/connectors/react' {
   import Store from 'diox';
 
-  /** Registers a new subscription to the specified module. */
+  /**
+   * Registers a new subscription to the specified module.
+   *
+   * @param moduleId Id of the module to subscribe to.
+   *
+   * @param reducer Optional state reducer. Allows you to transform the new state to
+   * get exactly what you need. Defaults to the identify function.
+   *
+   * @returns Reduced state.
+   */
   type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => T;
 
   /**

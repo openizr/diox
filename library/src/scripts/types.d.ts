@@ -197,8 +197,6 @@ declare module 'diox' {
      * @throws If module with id `id` does not exist or is a combined module.
      *
      * @throws If mutation's name does not exist on that module.
-     *
-     * @throws If mutation is not a pure function.
      */
     public mutate<T>(id: string, name: string, data?: T): void;
 
