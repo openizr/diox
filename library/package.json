@@ -33,9 +33,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.0.31",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^6.0.2"
+    "typescript-dev-kit": "^6.0.5"
   },
   "eslintConfig": {
     "extends": [
@@ -137,7 +137,6 @@
     "check": "cd node_modules/typescript-dev-kit/ && node scripts/check",
     "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cd ../../ && yarn run types",
     "types": "rsync -a --prune-empty-dirs --include '*/' --include '*.d.ts' --exclude '*' src/scripts/ dist/ && rm dist/index.d.ts",
-    "doc": "typedoc --out ../docs/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.ts src/scripts/extensions/router.ts src/scripts/connectors/vue.ts src/scripts/connectors/react.ts src/scripts/connectors/svelte.ts",
     "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue svelte@3.55.1"
   }
 }

@@ -54,8 +54,8 @@ interface Module<T = any> {
   setup?: (api: ActionApi) => void;
 
   /** List of module's mutations. */
-  mutations: { [name: string]: <T2>(api: MutationApi<T>, data?: T2) => T };
+  mutations: { [name: string]: <T2>(api: MutationApi<T>, data?: T2) => T; };
 
   /** List of module's actions. */
-  actions?: { [name: string]: <T2>(api: ActionApi, data?: T2) => void };
+  actions?: { [name: string]: <T2>(api: ActionApi, data?: T2) => void; };
 }
