@@ -2,8 +2,7 @@
 
 Complete state management for both front and back ends.
 
-[![Build Status](https://travis-ci.org/openizr/diox.svg?branch=master)](https://travis-ci.org/openizr/diox)
-[![Coverage Status](https://coveralls.io/repos/github/openizr/diox/badge.svg)](https://coveralls.io/github/openizr/diox)
+[![Build Status](https://github.com/openizr/diox/actions/workflows/ci.yml/badge.svg)](https://github.com/openizr/diox/actions/workflows/ci.yml/badge.svg)[![Coverage Status](https://coveralls.io/repos/github/openizr/diox/badge.svg)](https://coveralls.io/github/openizr/diox)
 [![npm](https://img.shields.io/npm/v/diox.svg)](https://www.npmjs.com/package/diox)
 [![node](https://img.shields.io/node/v/diox.svg)](https://nodejs.org)
 [![Downloads](https://img.shields.io/npm/dm/diox.svg)](https://www.npmjs.com/package/diox)
@@ -29,22 +28,22 @@ yarn add diox
 
 ## Motivations
 
-This framework is a mix between Redux and Vuex. Both of them have some drawbacks which makes
-development of large-scale applications more and more complex over time. diox brings significant
-improvements:
+This is a front/back state management library that allows you to manage the state of your applications.
+It is designed to be simple, scalable, extensible and predictable. Fully written in TypeScript, you
+will get a strong typing system that provides a high degree of type safety. Here are the key values of diox:
 
+- Based on the Observable pattern
 - 100% standalone (no dependency)
+- Completely isomorphic
 - Extremely light (~300 lines of code, 1.5Kb gzipped)
-- Fast and optimized by design
-- Scalable out of the box without using any additional NPM module, thanks to the concept of Modules
+- Fast and scalable by design
 - Native compatibility with any front-end library such as React, Vue, or Svelte
 - Easy to use, with a very small learning curve and simple concepts
-- Based on the Observer Design Pattern, which means you can subscribe to state changes, (not possible in Vuex for instance)
 
 
 ## Documentation
 
-The complete documentation is available [here](https://matthieu-jabbour.gitbook.io/diox/)
+The complete documentation is available [here](https://openizr.gitbook.io/diox/)
 
 
 ## Contributing

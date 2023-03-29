@@ -2,28 +2,37 @@ version: "3.6"
 
 services:
   library:
+    tty: true
     user: node:node
     image: openizr/node:5.0.0-dev
     container_name: ${PROJECT_NAME}_library
     env_file:
       - .env
-    command: sh -c "yarn && yarn run dev"
+    command: sh -c "
+      dsync src/scripts/types.d.ts dist/types.d.ts &
+      dsync src/scripts/connectors/react.d.ts dist/connectors/react.d.ts &
+      dsync src/scripts/connectors/vue.d.ts dist/connectors/vue.d.ts &
+      dsync src/scripts/connectors/svelte.d.ts dist/connectors/svelte.d.ts &
+      dsync src/scripts/extensions/router.d.ts dist/extensions/router.d.ts &
+      yarn && yarn run dev"
     volumes:
       - ./library:/var/www/html
       - ./:/mount
     restart: unless-stopped
-  playground:
+  examples:
+    tty: true
     user: node:node
     image: openizr/node:5.0.0-dev
-    container_name: ${PROJECT_NAME}_playground
+    container_name: ${PROJECT_NAME}_examples
     env_file:
       - .env
     ports:
-      - "${HOST_IP}:${PLAYGROUND_PORT}:${PLAYGROUND_PORT}"
+      - "${HOST_IP}:${EXAMPLES_PORT}:${EXAMPLES_PORT}"
     command: sh -c "dsync /library/dist/ node_modules/diox/"
+    working_dir: /var/www/html/${EXAMPLES_PROJECT}
     volumes:
-      - ./playground:/var/www/html
       - ./library:/library
+      - ./examples:/var/www/html
     restart: unless-stopped
 
 # For people that use a VPN
