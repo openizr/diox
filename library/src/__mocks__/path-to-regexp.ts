@@ -7,7 +7,7 @@
  */
 
 export const test = true;
-export const match = jest.fn(() => (): Any => {
+export const match = vi.fn(() => (): unknown => {
   // Route matching with params.
   if (process.env.MATCH === '1') {
     return {

@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * Copyright (c) Openizr. All Rights Reserved.
  *
@@ -12,18 +10,15 @@ declare module 'diox/connectors/vue' {
   import Store from 'diox';
   import { Ref, UnwrapRef } from 'vue';
 
-  /** Registers a new subscription to the specified combiner. */
-  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Ref<UnwrapRef<T>>;
+  /** Registers a new subscription to the specified module. */
+  type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Ref<UnwrapRef<T>>;
 
   /**
-   * Initializes a Vue connection to the given store.
+   * Initializes a Vue connection to `store`.
    *
-   * @param {Store} store Diox store to connect Vue to.
+   * @param store Diox store to connect Vue to.
    *
-   * @returns {UseCombiner} `useCombiner` function.
-   *
-   * @throws {Error} If combiner with the given hash does not exist in store.
+   * @returns `useSubscription` function.
    */
-  export default function connect(store: Store): UseCombiner;
+  export default function connect(store: Store): UseSubscription;
 }
-

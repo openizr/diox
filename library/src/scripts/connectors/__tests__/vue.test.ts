@@ -10,12 +10,12 @@ import { ref } from 'vue';
 import Store from 'scripts/core/Store';
 import connect from 'scripts/connectors/vue';
 
-jest.mock('vue');
-jest.mock('scripts/core/Store');
+vi.mock('vue');
+vi.mock('scripts/core/Store');
 
 describe('connectors/vue', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('should correctly initialize a Vue connection to the store', () => {
@@ -24,27 +24,26 @@ describe('connectors/vue', () => {
     expect(typeof useCombiner).toBe('function');
   });
 
-  test('should throw an error if given combiner does not exist', () => {
+  test('should throw an error if given module does not exist', () => {
     const store = new Store();
     const useCombiner = connect(store);
     expect(() => {
       useCombiner('invalid');
     }).toThrow(
-      'Could not use combiner "invalid": combiner does not exist.',
+      'Could not subscribe to module with id "invalid": module does not exist.',
     );
   });
 
-  test('should correctly subscribe to an existing combiner', () => {
+  test('should correctly subscribe to an existing module', () => {
     const store = new Store();
     const useCombiner = connect(store);
-    const state = useCombiner('combiner');
-
+    const state = useCombiner('module');
     expect(state).toEqual({ value: { count: 5 } });
     expect(ref).toHaveBeenCalledTimes(1);
     expect(ref).toHaveBeenCalledWith({ value: 'test' });
     expect(store.subscribe).toHaveBeenCalledTimes(1);
-    expect(store.subscribe).toHaveBeenCalledWith('combiner', expect.any(Function));
+    expect(store.subscribe).toHaveBeenCalledWith('module', expect.any(Function));
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
-    expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
+    expect(store.unsubscribe).toHaveBeenCalledWith('module', 1);
   });
 });

@@ -6,6 +6,6 @@
  *
  */
 
-export const ref = jest.fn(() => ({ value: 'test' }));
-export const onMounted = jest.fn((callback) => callback());
-export const onUnmounted = jest.fn((callback) => callback());
+export const ref = vi.fn(() => ({ value: 'test' }));
+export const onMounted = vi.fn((callback) => callback());
+export const onUnmounted = vi.fn((callback) => callback());

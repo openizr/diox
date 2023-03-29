@@ -1,350 +1,335 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`core/Store combine correctly creates combiner if all modules' hashes exist 1`] = `
+exports[`core/Store > combine > correctly creates combined module if all modules' ids exist 1`] = `
 Store {
-  "combiners": Object {
-    "combiner": Object {
-      "modulesHashes": Array [
-        "moduleA",
-        "moduleB",
-      ],
-      "reducer": [MockFunction],
-      "subscriptions": Object {},
-    },
-    "moduleA": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "moduleA": {
+      "moduleIds": [
         "moduleA",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
     },
-    "moduleB": Object {
-      "modulesHashes": Array [
+    "moduleB": {
+      "moduleIds": [
         "moduleB",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
+    },
+    "moduleC": {
+      "moduleIds": [
+        "moduleA",
+        "moduleB",
+      ],
+      "reducer": [MockFunction spy],
+      "subscriptions": {},
     },
   },
+  "dispatch": [Function],
   "index": 0,
-  "middlewares": Array [],
-  "modules": Object {
-    "moduleA": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "moduleA": {
+      "actions": {},
+      "combinedModules": [
         "moduleA",
-        "combiner",
+        "moduleC",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
-    "moduleB": Object {
-      "actions": Object {
+    "moduleB": {
+      "actions": {
         "ADD": [Function],
       },
-      "combiners": Array [
+      "combinedModules": [
         "moduleB",
-        "combiner",
+        "moduleC",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
-        "DIOX_INITIALIZE": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 5,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store constructor always correctly instanciates 1`] = `
+exports[`core/Store > constructor > always correctly instanciates 1`] = `
 Store {
-  "combiners": Object {},
+  "combine": [Function],
+  "combinedModules": {},
+  "dispatch": [Function],
   "index": 0,
-  "middlewares": Array [],
-  "modules": Object {},
+  "middlewares": [],
+  "modules": {},
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store register correctly registers module if hash is not already used, state is a primitive 1`] = `
+exports[`core/Store > register > correctly registers module if id is not already used 1`] = `
 Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "module": {
+      "moduleIds": [
         "module",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
     },
   },
+  "dispatch": [Function],
   "index": 0,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "module": {
+      "actions": {},
+      "combinedModules": [
         "module",
       ],
-      "mutations": Object {
-        "DIOX_INITIALIZE": [Function],
-      },
-      "state": "test",
-    },
-  },
-}
-`;
-
-exports[`core/Store register correctly registers module if hash is not already used, state is an array 1`] = `
-Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
-        "module",
-      ],
-      "reducer": [Function],
-      "subscriptions": Object {},
-    },
-  },
-  "index": 0,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
-        "module",
-      ],
-      "mutations": Object {
-        "DIOX_INITIALIZE": [Function],
-      },
-      "state": Array [],
-    },
-  },
-}
-`;
-
-exports[`core/Store register correctly registers module if hash is not already used, state is an object 1`] = `
-Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
-        "module",
-      ],
-      "reducer": [Function],
-      "subscriptions": Object {},
-    },
-  },
-  "index": 0,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
-        "module",
-      ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store subscribe correctly subscribes to the given combiner if it exists 1`] = `
+exports[`core/Store > subscribe > correctly subscribes to the given module if it exists 1`] = `
 Store {
-  "combiners": Object {
-    "combiner": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "moduleA": {
+      "moduleIds": [
+        "moduleA",
+      ],
+      "reducer": [Function],
+      "subscriptions": {},
+    },
+    "moduleB": {
+      "moduleIds": [
+        "moduleB",
+      ],
+      "reducer": [Function],
+      "subscriptions": {},
+    },
+    "moduleC": {
+      "moduleIds": [
         "moduleA",
         "moduleB",
       ],
       "reducer": [Function],
-      "subscriptions": Object {
-        "641676f1d7d8a": [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
+      "subscriptions": {
+        "641676f1d7d8a": [MockFunction spy] {
+          "calls": [
+            [
+              {
                 "a": 0,
-                "b": Object {
+                "b": {
                   "test": 5,
                 },
               },
             ],
           ],
-          "results": Array [
-            Object {
-              "type": "incomplete",
-              "value": undefined,
-            },
-          ],
+          "results": [],
         },
       },
     },
-    "moduleA": Object {
-      "modulesHashes": Array [
-        "moduleA",
-      ],
-      "reducer": [Function],
-      "subscriptions": Object {},
-    },
-    "moduleB": Object {
-      "modulesHashes": Array [
-        "moduleB",
-      ],
-      "reducer": [Function],
-      "subscriptions": Object {},
-    },
   },
+  "dispatch": [Function],
   "index": 1,
-  "middlewares": Array [],
-  "modules": Object {
-    "moduleA": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "moduleA": {
+      "actions": {},
+      "combinedModules": [
         "moduleA",
-        "combiner",
+        "moduleC",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
-    "moduleB": Object {
-      "actions": Object {
+    "moduleB": {
+      "actions": {
         "ADD": [Function],
       },
-      "combiners": Array [
+      "combinedModules": [
         "moduleB",
-        "combiner",
+        "moduleC",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
-        "DIOX_INITIALIZE": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 5,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store uncombine correctly uncombines the user-defined combiner if it has no more subscriptions 1`] = `
+exports[`core/Store > uncombine > correctly uncombines the combined module if it has no more subscriptions 1`] = `
 Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "module": {
+      "moduleIds": [
         "module",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
     },
   },
+  "dispatch": [Function],
   "index": 1,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "module": {
+      "actions": {},
+      "combinedModules": [
         "module",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store unregister correctly unregisters if module does not have related user-defined combiners 1`] = `
+exports[`core/Store > unregister > correctly unregisters if module does not have related combined modules 1`] = `
 Store {
-  "combiners": Object {},
+  "combine": [Function],
+  "combinedModules": {},
+  "dispatch": [Function],
   "index": 0,
-  "middlewares": Array [],
-  "modules": Object {},
+  "middlewares": [],
+  "modules": {},
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store unsubscribe correctly unsubscribes from the given combiner if it exists 1`] = `
+exports[`core/Store > unsubscribe > correctly unsubscribes from the given module if it exists 1`] = `
 Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "module": {
+      "moduleIds": [
         "module",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
     },
   },
+  "dispatch": [Function],
   "index": 1,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "module": {
+      "actions": {},
+      "combinedModules": [
         "module",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;
 
-exports[`core/Store unsubscribe correctly unsubscribes several listeners from the given combiner in any order 1`] = `
+exports[`core/Store > unsubscribe > correctly unsubscribes several listeners from the given module in any order 1`] = `
 Store {
-  "combiners": Object {
-    "module": Object {
-      "modulesHashes": Array [
+  "combine": [Function],
+  "combinedModules": {
+    "module": {
+      "moduleIds": [
         "module",
       ],
       "reducer": [Function],
-      "subscriptions": Object {},
+      "subscriptions": {},
     },
   },
+  "dispatch": [Function],
   "index": 2,
-  "middlewares": Array [],
-  "modules": Object {
-    "module": Object {
-      "actions": Object {},
-      "combiners": Array [
+  "middlewares": [],
+  "modules": {
+    "module": {
+      "actions": {},
+      "combinedModules": [
         "module",
       ],
-      "mutations": Object {
+      "mutations": {
         "ADD": [Function],
         "BAD": [Function],
-        "DIOX_INITIALIZE": [Function],
+        "NOOP": [Function],
       },
-      "state": Object {
+      "state": {
         "test": 0,
       },
     },
   },
+  "mutate": [Function],
+  "register": [Function],
+  "uncombine": [Function],
+  "unregister": [Function],
 }
 `;

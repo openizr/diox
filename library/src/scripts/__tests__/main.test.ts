@@ -10,7 +10,7 @@ import Store from 'scripts/main';
 
 describe('main', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('should correctly export Store', () => {
