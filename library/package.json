@@ -35,7 +35,7 @@
     "@types/path-to-regexp": "^1.7.0",
     "@types/react": "^18.0.31",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^6.0.4"
+    "typescript-dev-kit": "^6.0.5"
   },
   "eslintConfig": {
     "extends": [
