@@ -161,7 +161,7 @@ To technically contribute to this project, here are the software you will need:
 4. Fill or change environment variables in your `.env` file if necessary
 5. `docker-compose up`
 6. `docker exec -it <PROJECT_NAME>_library sh -c "yarn run test -w"` if you want to run unit tests
-7. `docker exec -it <PROJECT_NAME>_playground sh -c "yarn && yarn run dev"` if you want to run playground
+7. `docker exec -it <PROJECT_NAME>_examples sh -c "yarn && yarn run dev"` if you want to run examples
 
 This will run the project locally and allow you to develop and see changes in real-time.
 
@@ -177,6 +177,7 @@ changelogs to watch for updates:
 - [path-to-regexp](https://github.com/pillarjs/path-to-regexp/releases)
 - [coveralls](https://github.com/nickmerwin/node-coveralls/releases)
 - [react](https://github.com/facebook/react/releases)
+- [svelte](https://github.com/sveltejs/svelte/blob/master/CHANGELOG.md)
 - [typescript-dev-kit](https://github.com/openizr/typescript-dev-kit/releases)
 - [vue](https://github.com/vuejs/vue/releases)
 
@@ -184,7 +185,7 @@ changelogs to watch for updates:
 ## Build & Deployment
 
 You don't have to worry about deploying the code and publishing it on `npm`, the CI/CD system does
-it for you (using TravisCI). Each time a new release is created on the `master` branch, TravisCI
+it for you (using Github Actions). Each time a new release is created on the `master` branch, Github Actions
 will automatically build and deploy this release on `npm` with the version you specified in your
 release name. Of course, all tests must pass otherwise code won't be deployed. However, if you want
 to get an preview of the distributed package, you can run `docker exec <PROJECT_NAME>_library yarn run build`.
@@ -206,13 +207,12 @@ To provide good and clear git commit messages, you should follow [these guidelin
 ## Project structure
 
 Project is structured as follow:
-- **`/docs`:** contains the documentation automatically generated from code
 - **`library`:** contains the actual library codebase
-- **`playground`:** contains a bunch of code samples and allows you to play with the library in real-time while developing it
+- **`examples`:** contains a bunch of code samples and allows you to play with the library in real-time while developing it
 
 
 ## License
 
 [MIT](https://github.com/openizr/diox/blob/master/LICENSE)
 
-Copyright (c) Matthieu Jabbour. All Rights Reserved.
+Copyright (c) Openizr. All Rights Reserved.

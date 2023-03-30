@@ -6,6 +6,6 @@
  *
  */
 
-import Store from 'scripts/core/Store';
-
-export default Store;
+export const ref = vi.fn(() => ({ value: 'test' }));
+export const onMounted = vi.fn((callback) => callback());
+export const onUnmounted = vi.fn((callback) => callback());

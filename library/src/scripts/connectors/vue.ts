@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Matthieu Jabbour. All Rights Reserved.
+ * Copyright (c) Openizr. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -15,41 +15,54 @@ import {
 } from 'vue';
 import Store from 'scripts/core/Store';
 
-/** Registers a new subscription to the specified combiner. */
-type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Ref<UnwrapRef<T>>;
+/** Registers a new subscription to the specified module. */
+type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Ref<UnwrapRef<T>>;
 
 /**
- * Initializes a Vue connection to the given store.
+ * Initializes a Vue connection to `store`.
  *
- * @param {Store} store Diox store to connect Vue to.
+ * @param store Diox store to connect Vue to.
  *
- * @returns {UseCombiner} `useCombiner` function.
- *
- * @throws {Error} If combiner with the given hash does not exist in store.
+ * @returns `useSubscription` function.
  */
-export default function connect(store: Store): UseCombiner {
-  const privateStore = (store as Any);
-  const getState = (moduleHash: string): Any => privateStore.modules[moduleHash].state;
+export default function connect(store: Store): UseSubscription {
+  const privateStore = (store as unknown as {
+    modules: {
+      [id: string]: Module & {
+        combinedModules: string[];
+        actions: { [name: string]: <T2>(api: ActionApi, data?: T2) => void };
+      };
+    };
+    combinedModules: {
+      [id: string]: {
+        reducer: Reducer;
+        moduleIds: string[];
+        subscriptions: { [id: string]: Subscription; };
+      };
+    };
+  });
+  const defaultReducer = <T>(newState: any): T => newState;
+  const getState = <T>(moduleId: string): T => privateStore.modules[moduleId].state;
 
-  return (hash, reducer = (newState): Any => newState) => {
-    const combiner = privateStore.combiners[hash];
+  return (id, reducer = defaultReducer) => {
+    const combiner = privateStore.combinedModules[id];
 
     if (combiner !== undefined) {
       let subscriptionId: string;
       const state = ref(reducer(combiner.reducer(
-        ...combiner.modulesHashes.map(getState),
+        ...combiner.moduleIds.map(getState),
       )));
       // Subscribing to the given combiner at component creation...
       onMounted(() => {
-        subscriptionId = store.subscribe<Any>(hash, (newState) => {
-          state.value = reducer(newState) as UnwrapRef<Any>;
+        subscriptionId = store.subscribe(id, (newState) => {
+          state.value = reducer(newState) as UnwrapRef<any>;
         });
       });
       onUnmounted(() => {
-        store.unsubscribe(hash, subscriptionId);
+        store.unsubscribe(id, subscriptionId);
       });
       return state;
     }
-    throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
+    throw new Error(`Could not subscribe to module with id "${id}": module does not exist.`);
   };
 }

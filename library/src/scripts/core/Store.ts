@@ -1,59 +1,43 @@
 /**
- * Copyright (c) Matthieu Jabbour. All Rights Reserved.
+ * Copyright (c) Openizr. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  */
 
-/** Subscription to modules' states changes. */
-type Subscription<T> = (newState: T) => void;
-
-/** Registered module. */
-interface RegisteredModule extends Module<Any> {
-  combiners: string[];
-  actions: { [name: string]: (api: ActionApi, data?: Any) => void };
-}
-
-/** Combiner. */
-interface Combiner {
-  reducer: Reducer<Any>;
-  modulesHashes: string[];
-  subscriptions: { [id: string]: ((newState: Any) => void) };
-}
-
-const isPlainObject = (variable: Any): boolean => (
-  typeof variable === 'object'
-  && variable !== null
-  && variable.constructor === Object
-  && Object.prototype.toString.call(variable) === '[object Object]'
-);
-
 /**
  * Global state manager.
- * Contains all the sub-states, combiners and their subscriptions.
+ * Contains all the sub-states, combined modules and their subscriptions.
  */
 export default class Store {
   /** List of store middlewares. */
-  private middlewares: Subscription<Any>[];
+  private middlewares: Subscription[];
 
   /** Unique index used for subscriptions ids generation. */
   private index: number;
 
-  /** List of store combiners. */
-  private combiners: {
-    [hash: string]: Combiner;
+  /** List of store combined modules. */
+  private combinedModules: {
+    [id: string]: {
+      reducer: Reducer;
+      moduleIds: string[];
+      subscriptions: { [id: string]: Subscription; };
+    };
   };
 
   /** Global modules registry. */
   private modules: {
-    [hash: string]: RegisteredModule;
+    [id: string]: Module & {
+      combinedModules: string[];
+      actions: { [name: string]: <T2>(api: ActionApi, data?: T2) => void };
+    };
   };
 
   /**
    * Generates a unique subscription id.
    *
-   * @returns {string} The generated subscription id.
+   * @returns The generated subscription id.
    */
   private generateSubscriptionId(): string {
     const subscriptionId = ((this.index += 1) * 100).toString(16) + Date.now().toString(16);
@@ -64,344 +48,325 @@ export default class Store {
    * Class constructor.
    */
   public constructor() {
-    this.modules = {};
-    this.combiners = {};
-    this.middlewares = [];
     this.index = 0;
+    this.modules = {};
+    this.middlewares = [];
+    this.combinedModules = {};
+    this.mutate = this.mutate.bind(this);
+    this.dispatch = this.dispatch.bind(this);
+    this.combine = this.combine.bind(this);
+    this.uncombine = this.uncombine.bind(this);
+    this.register = this.register.bind(this);
+    this.unregister = this.unregister.bind(this);
   }
 
   /**
    * Registers a new module into the store registry.
    *
-   * @param {string} hash Module's unique identifier in registry. Can be any string, although it
+   * @param id Module's unique identifier in registry. Can be any string, although it
    * is recommended to follow a tree-structure pattern, like `/my_app/module_a/module_b`.
    *
-   * @param {Module} module Module to register.
+   * @param module Module to register.
    *
-   * @returns {string} Module's hash.
+   * @returns Module's id.
    *
-   * @throws {Error} If a module with the same hash already exists in registry.
+   * @throws If a module with the same id already exists in registry.
    */
-  public register<T>(hash: string, module: Module<T>): string {
-    if (this.modules[hash] !== undefined) {
+  public register<T>(id: string, module: Module<T>): string {
+    if (this.modules[id] !== undefined) {
       throw new Error(
-        `Could not register module with hash "${hash}": `
-        + 'another module with the same hash already exists.',
+        `Could not register module with id "${id}": `
+        + 'another module with the same id already exists.',
       );
     }
-    this.modules[hash] = {
+    this.modules[id] = {
       state: module.state,
-      mutations: {
-        ...module.mutations,
-        DIOX_INITIALIZE: ({ state }): T | T[] => {
-          if (Array.isArray(state)) {
-            return [...state];
-          }
-          if (isPlainObject(state)) {
-            return { ...state };
-          }
-          return state;
-        },
-      },
-      actions: module.actions || {},
-      // Storing related combiners' hashes makes it easier to notify them after mutating module.
-      combiners: [],
+      mutations: module.mutations,
+      actions: module.actions ?? {},
+      // Storing related combined modules' ids makes it easier to notify them after mutations.
+      combinedModules: [],
     };
-    // A default combiner with the same hash as the module is always created first.
-    this.combine(hash, [hash], (newState: T) => newState);
-    this.mutate(hash, 'DIOX_INITIALIZE');
-    return hash;
+    // A default combined module with the same id is always created first.
+    this.combine(id, [id], (newState) => newState);
+    if (module.setup !== undefined) {
+      module.setup({
+        id,
+        mutate: this.mutate,
+        dispatch: this.dispatch,
+        combine: this.combine,
+        uncombine: this.uncombine,
+        register: this.register,
+        unregister: this.unregister,
+      });
+    }
+    return id;
   }
 
   /**
-   * Unregisters a module from the global modules registry.
+   * Unregisters module with id `id` from the global modules registry.
    *
-   * @param {string} hash Hash of the module to unregister.
+   * @param id Id of the module to unregister.
    *
-   * @returns {void}
+   * @throws If module with id `id` does not exist.
    *
-   * @throws {Error} If there is no module registered with the given hash.
-   *
-   * @throws {Error} If module still has related user-defined combiners.
+   * @throws If module still has related user-defined combined modules.
    */
-  public unregister(hash: string): void {
-    if (this.modules[hash] === undefined) {
+  public unregister(id: string): void {
+    if (this.modules[id] === undefined) {
       throw new Error(
-        `Could not unregister module with hash "${hash}": `
+        `Could not unregister module with id "${id}": `
         + 'module does not exist.',
       );
     }
-    if (this.modules[hash].combiners.length > 1) {
+    if (this.modules[id].combinedModules.length > 1) {
       throw new Error(
-        `Could not unregister module with hash "${hash}": `
-        + 'all the related user-defined combiners must be uncombined first.',
+        `Could not unregister module with id "${id}": `
+        + 'all the related combined modules must be uncombined first using `uncolmbine`.',
       );
     }
-    // Deleting module and related default combiner...
-    delete (this.modules[hash]);
-    delete (this.combiners[hash]);
+    // Deleting module and related default combined module...
+    delete (this.modules[id]);
+    delete (this.combinedModules[id]);
   }
 
   /**
    * Combines one or several modules to allow subscriptions on that combination.
    *
-   * @param {string} hash Combiner's unique identifier in registry. Can be any string, although it
+   * @param id Combined module's unique identifier in registry. Can be any string, although it
    * is recommended to follow a tree-structure pattern, e.g. `/my_app/module_a/module_b`.
    *
-   * @param {string[]} modulesHashes Hashes of the modules to combine.
+   * @param moduleIds Ids of the modules to combine.
    *
-   * @param {Reducer} reducer Transformation function. This function is called with every combined
+   * @param reducer Transformation function. This function is called with every combined
    * module's state as arguments.
    * For instance: `(stateA, stateB, stateC) => ({ a: stateA.prop, b: stateB, c: stateC.propC })`
    *
-   * @returns {string} Combiner's hash.
+   * @returns Combined module's id.
    *
-   * @throws {Error} If a combiner with the same hash already exists in registry.
+   * @throws If a module with the same id already exists in registry.
    *
-   * @throws {Error} If one of the modules hashes does not correspond to a registered module.
+   * @throws If one of the modules' ids does not exist.
    */
-  public combine<T>(hash: string, modulesHashes: string[], reducer: Reducer<T>): string {
-    if (this.combiners[hash] !== undefined) {
+  public combine<T>(id: string, moduleIds: string[], reducer: Reducer<T>): string {
+    if (this.combinedModules[id] !== undefined) {
       throw new Error(
-        `Could not create combiner with hash "${hash}": `
-        + 'another combiner with the same hash already exists.',
+        `Could not create combined module with id "${id}": `
+        + 'another module with the same id already exists.',
       );
     }
-    modulesHashes.forEach((moduleHash) => {
-      if (this.modules[moduleHash] === undefined) {
+    moduleIds.forEach((moduleId) => {
+      if (this.modules[moduleId] === undefined) {
         throw new Error(
-          `Could not create combiner with hash "${hash}": `
-          + `module with hash "${moduleHash}" does not exist.`,
+          `Could not create combined module with id "${id}": `
+          + `module with id "${moduleId}" does not exist.`,
         );
       }
-      this.modules[moduleHash].combiners.push(hash);
+      this.modules[moduleId].combinedModules.push(id);
     });
-    this.combiners[hash] = {
+    this.combinedModules[id] = {
       reducer,
-      modulesHashes,
+      moduleIds,
       subscriptions: {},
     };
-    return hash;
+    return id;
   }
 
   /**
-   * Uncombines a user-defined combiner.
+   * Uncombines user-defined combined module with id `id`.
    *
-   * @param {string} hash Hash of the combiner to uncombine.
+   * @param id Id of the combined module to uncombine.
    *
-   * @returns {void}
+   * @throws If combined module with id `id` does not exist.
    *
-   * @throws {Error} If there is no combiner created with the given hash.
+   * @throws If the given id corresponds to a default combined module.
    *
-   * @throws {Error} If the given hash corresponds to a default combiner.
-   *
-   * @throws {Error} If combiner still has subscriptions.
+   * @throws If combined module still has subscriptions.
    */
-  public uncombine(hash: string): void {
-    if (this.combiners[hash] === undefined) {
+  public uncombine(id: string): void {
+    if (this.combinedModules[id] === undefined) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}": `
-        + 'combiner does not exist.',
+        `Could not uncombine module with id "${id}": `
+        + 'combined module does not exist.',
       );
     }
-    if (this.modules[hash] !== undefined) {
+    if (this.modules[id] !== undefined) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}": `
-        + 'default combiners cannot be uncombined, use `unregister` instead.',
+        `Could not uncombine combined module with id "${id}": `
+        + 'default combined modules cannot be uncombined, use `unregister` instead.',
       );
     }
-    if (Object.keys(this.combiners[hash].subscriptions).length > 0) {
+    if (Object.keys(this.combinedModules[id].subscriptions).length > 0) {
       throw new Error(
-        `Could not uncombine combiner with hash "${hash}": `
-        + 'all the related subscriptions must be unsubscribed first.',
+        `Could not uncombine combined module with id "${id}": `
+        + 'all the related subscriptions must be removed first using `unsubscribe`.',
       );
     }
-    // Removing all the references to this combiner in modules...
-    this.combiners[hash].modulesHashes.forEach((moduleHash) => {
-      const index = this.modules[moduleHash].combiners.indexOf(hash);
-      this.modules[moduleHash].combiners.splice(index, 1);
+    // Removing all the references to this id from modules...
+    this.combinedModules[id].moduleIds.forEach((moduleId) => {
+      const index = this.modules[moduleId].combinedModules.indexOf(id);
+      this.modules[moduleId].combinedModules.splice(index, 1);
     });
-    delete (this.combiners[hash]);
+    delete (this.combinedModules[id]);
   }
 
   /**
-   * Subscribes to changes on a combiner.
+   * Subscribes to changes on module with id `id`.
    *
-   * @param {string} hash Hash of the combiner to subscribe to.
+   * @param id Id of the module to subscribe to.
    *
-   * @param {Subscription} handler Callback to execute each time combiner notifies changes.
+   * @param handler Callback to execute each time module notifies changes.
    *
-   * @returns {string} The subscription id, used to unsubscribe handler.
+   * @returns Subscription's id, used to unsubscribe handler.
    *
-   * @throws {Error} If there is no combiner created with the given hash.
+   * @throws If module with id `id` does not exist.
    */
-  public subscribe<T>(hash: string, handler: Subscription<T>): string {
-    const combiner = this.combiners[hash];
-    if (combiner === undefined) {
-      throw new Error(
-        `Could not subscribe to combiner with hash "${hash}": `
-        + 'combiner does not exist.',
-      );
+  public subscribe<T>(id: string, handler: Subscription<T>): string {
+    const combinedModule = this.combinedModules[id];
+    if (combinedModule === undefined) {
+      throw new Error(`Could not subscribe to module with id "${id}": module does not exist.`);
     }
     const subscriptionId = this.generateSubscriptionId();
-    combiner.subscriptions[subscriptionId] = handler;
+    combinedModule.subscriptions[subscriptionId] = handler;
     // We trigger the notification a first time with "initial" states.
-    const states = combiner.modulesHashes.map((moduleHash) => this.modules[moduleHash].state);
-    handler(combiner.reducer(...states));
+    const states = combinedModule.moduleIds.map((moduleId) => this.modules[moduleId].state);
+    handler(combinedModule.reducer(...states));
     return subscriptionId;
   }
 
   /**
-   * Unsubscribes from a combiner changes.
+   * Unsubscribes from changes on module with id `id`.
    *
-   * @param {string} hash Hash of the combiner to unsubscribe from.
+   * @param id Id of the module to unsubscribe from.
    *
-   * @param {string} subscriptionId Id of the subscription.
+   * @param subscriptionId Id of the subscription.
    *
-   * @returns {void}
+   * @throws If module with id `id` does not exist.
    *
-   * @throws {Error} If there is no combiner created with the given hash.
-   *
-   * @throws {Error} If subscription id does not exist.
+   * @throws If subscription with id `id` does not exist on that module.
    */
-  public unsubscribe(hash: string, subscriptionId: string): void {
-    const combiner = this.combiners[hash];
-    if (combiner === undefined) {
+  public unsubscribe(id: string, subscriptionId: string): void {
+    const module = this.combinedModules[id];
+    if (module === undefined) {
       throw new Error(
-        `Could not unsubscribe from combiner with hash "${hash}": `
-        + 'combiner does not exist.',
+        `Could not unsubscribe from module with id "${id}": `
+        + 'module does not exist.',
       );
     }
-    if (combiner.subscriptions[subscriptionId] === undefined) {
+    if (module.subscriptions[subscriptionId] === undefined) {
       throw new Error(
-        `Could not unsubscribe from combiner with hash "${hash}": `
-        + `subscription id "${subscriptionId}" does not exist.`,
+        `Could not unsubscribe from module with id "${id}": `
+        + `subscription id "${subscriptionId}" does not exist on that module.`,
       );
     }
-    delete (combiner.subscriptions[subscriptionId]);
+    delete (module.subscriptions[subscriptionId]);
   }
 
   /**
-   * Performs a state mutation on a module.
+   * Performs a state mutation on module with id `id`.
    *
-   * @param {string} hash Hash of the module on which to perform mutation.
+   * @param id Id of the module on which to perform mutation.
    *
-   * @param {string} name Name of the mutation to perform.
+   * @param name Name of the mutation to perform.
    *
-   * @param {any} [data] Additional data to pass to the mutation.
+   * @param data Additional data to pass to the mutation.
    *
-   * @returns {void}
+   * @throws If module with id `id` does not exist or is a combined module.
    *
-   * @throws {Error} If there is no module registered with the given hash.
-   *
-   * @throws {Error} If mutation's name does not exist on registered module.
-   *
-   * @throws {Error} If mutation is not a pure function.
+   * @throws If mutation's name does not exist on that module.
    */
-  public mutate(hash: string, name: string, data?: Any): void {
-    const registeredModule = this.modules[hash];
+  public mutate<T>(id: string, name: string, data?: T): void {
+    const registeredModule = this.modules[id];
     if (registeredModule === undefined) {
       throw new Error(
-        `Could not perform mutation on module with hash "${hash}": `
-        + 'module does not exist.',
+        `Could not perform mutation on module with id "${id}": `
+        + 'module does not exist, or is a combined module.',
       );
     }
     if (registeredModule.mutations[name] === undefined) {
       throw new Error(
-        `Could not perform mutation on module with hash "${hash}": `
-        + `mutation "${name}" does not exist.`,
+        `Could not perform mutation on module with id "${id}": `
+        + `mutation "${name}" does not exist on that module.`,
       );
     }
 
     const newState = registeredModule.mutations[name]({
-      hash,
+      id,
       state: registeredModule.state,
-      mutate: this.mutate.bind(this),
     }, data);
 
-    const isPrimitive = !isPlainObject(newState) && !Array.isArray(newState);
-    if (newState === registeredModule.state && isPrimitive === false) {
-      throw new Error(
-        `Could not perform mutation on module with hash "${hash}": `
-        + 'new state must be a deep copy of module\'s state.',
-      );
+    if (newState !== registeredModule.state) {
+      registeredModule.state = newState;
+
+      // Notifying all the middlewares of the changes...
+      this.middlewares.forEach((middleware) => {
+        middleware(newState);
+      });
+
+      // Notifying all the combined modules' subscriptions of the changes...
+      registeredModule.combinedModules.forEach((combinedmoduleId) => {
+        const combinedModule = this.combinedModules[combinedmoduleId];
+        const states = combinedModule.moduleIds.map((moduleId) => this.modules[moduleId].state);
+        const finalState = combinedModule.reducer(...states);
+        // All subscriptions are called asynchronously to avoid the "mutation in mutation" effect,
+        // which happens when performing a mutation on a module inside a subscription to that
+        // same module, making any other subscription receiving updates in the wrong order.
+        Object.keys(combinedModule.subscriptions).forEach((subscriptionId) => setTimeout(() => {
+          // In some cases, when unsubscribing from a module and mutating it at the same time,
+          // subscriptions may be removed while they are triggered. We ensure they still exist
+          // before actually calling them.
+          /* istanbul ignore next */
+          if (combinedModule.subscriptions[subscriptionId] !== undefined) {
+            (combinedModule.subscriptions[subscriptionId])(finalState);
+          }
+        }));
+      });
     }
-
-    registeredModule.state = newState;
-
-    // Notifying all the middlewares of the changes...
-    this.middlewares.forEach((middleware) => {
-      middleware(newState);
-    });
-
-    // Notifying all the combiners' subscriptions of the changes...
-    registeredModule.combiners.forEach((combinerHash) => {
-      const combiner = this.combiners[combinerHash];
-      const states = combiner.modulesHashes.map((moduleHash) => this.modules[moduleHash].state);
-      const finalState = combiner.reducer(...states);
-      // All subscriptions are called asynchronously to avoid the "mutation in mutation" effect,
-      // which happens when performing a mutation on a module inside a subscription to that
-      // same module, making any other subscription receiving updates in the wrong order.
-      Object.keys(combiner.subscriptions).forEach((subscriptionId) => setTimeout(() => {
-        // In some cases, when unsubscribing from a module and mutating it at the same time,
-        // subscriptions may be removed while they are triggered. We ensure they still exist
-        // before actually calling them.
-        /* istanbul ignore next */
-        if (combiner.subscriptions[subscriptionId] !== undefined) {
-          (combiner.subscriptions[subscriptionId])(finalState);
-        }
-      }));
-    });
   }
 
   /**
-   * Dispatches an asynchronous action to a registered module.
+   * Dispatches an asynchronous action to module with id `id`.
    *
-   * @param {string} hash Hash of the module to dispatch action on.
+   * @param id Id of the module to dispatch action on.
    *
-   * @param {string} name Name of the action to perform.
+   * @param name Name of the action to perform.
    *
-   * @param {any} [data] Additional data to pass to the action.
+   * @param data Additional data to pass to the action.
    *
-   * @returns {void}
+   * @throws If module with id `id` does not exist or is a combined module.
    *
-   * @throws {Error} If there is no module registered with the given hash.
-   *
-   * @throws {Error} If action's name does not exist on registered module.
+   * @throws If action's name does not exist on that module.
    */
-  public dispatch(hash: string, name: string, data?: Any): void {
-    const registeredModule = this.modules[hash];
+  public async dispatch<T>(id: string, name: string, data?: T): Promise<void> {
+    const registeredModule = this.modules[id];
     if (registeredModule === undefined) {
       throw new Error(
-        `Could not dispatch action to module with hash "${hash}": `
-        + 'module does not exist.',
+        `Could not dispatch action to module with id "${id}": `
+        + 'module does not exist, or is a combined module.',
       );
     }
     if (registeredModule.actions[name] === undefined) {
       throw new Error(
-        `Could not dispatch action to module with hash "${hash}": `
-        + `action "${name}" does not exist.`,
+        `Could not dispatch action to module with id "${id}": `
+        + `action "${name}" does not exist on that module.`,
       );
     }
-    registeredModule.actions[name]({
-      hash,
-      mutate: this.mutate.bind(this),
-      dispatch: this.dispatch.bind(this),
-      combine: this.combine.bind(this),
-      uncombine: this.uncombine.bind(this),
-      register: this.register.bind(this),
-      unregister: this.unregister.bind(this),
+    await registeredModule.actions[name]({
+      id,
+      mutate: this.mutate,
+      dispatch: this.dispatch,
+      combine: this.combine,
+      uncombine: this.uncombine,
+      register: this.register,
+      unregister: this.unregister,
     }, data);
   }
 
   /**
    * Applies the given middleware to the store.
    *
-   * @param {Subscription} middleware Middleware to apply to store.
-   *
-   * @returns {void}
+   * @param middleware Middleware to apply to store.
    */
-  public use<T>(middleware: Subscription<T>): void {
+  public use(middleware: Subscription): void {
     this.middlewares.push(middleware);
   }
 }

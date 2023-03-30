@@ -1,7 +1,5 @@
-/* eslint-disable */
-
 /**
- * Copyright (c) Matthieu Jabbour. All Rights Reserved.
+ * Copyright (c) Openizr. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -12,17 +10,24 @@ declare module 'diox/connectors/svelte' {
   import Store from 'diox';
   import { Readable } from 'svelte/store/index';
 
-  /** Registers a new subscription to the specified combiner. */
-  export type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Readable<T>;
+  /**
+   * Registers a new subscription to the specified module.
+   *
+   * @param moduleId Id of the module to subscribe to.
+   *
+   * @param reducer Optional state reducer. Allows you to transform the new state to
+   * get exactly what you need. Defaults to the identify function.
+   *
+   * @returns Reduced state.
+   */
+  type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Readable<T>;
 
   /**
-   * Initializes a Svelte connection to the given store.
+   * Initializes a Svelte connection to `store`.
    *
-   * @param {Store} store Diox store to connect Svelte to.
+   * @param store Diox store to connect Svelte to.
    *
-   * @returns {UseCombiner} `useCombiner` function.
-   *
-   * @throws {Error} If combiner with the given hash does not exist in store.
+   * @returns `useSubscription` function.
    */
-  export default function connect(store: Store): UseCombiner;
+  export default function connect(store: Store): UseSubscription;
 }

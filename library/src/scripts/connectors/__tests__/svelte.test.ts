@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Matthieu Jabbour. All Rights Reserved.
+ * Copyright (c) Openizr. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -7,14 +7,14 @@
  */
 
 import Store from 'scripts/core/Store';
-import { readable } from 'svelte/store/index';
+import { readable } from 'svelte/store';
 import connect from 'scripts/connectors/svelte';
 
-jest.mock('scripts/core/Store');
-jest.mock('svelte/store/index', () => {
-  const set = jest.fn();
+vi.mock('scripts/core/Store');
+vi.mock('svelte/store', () => {
+  const set = vi.fn();
   return ({
-    readable: jest.fn((_state, callback) => {
+    readable: vi.fn((_state, callback) => {
       callback(set)();
       return { value: 'test' };
     }),
@@ -23,36 +23,35 @@ jest.mock('svelte/store/index', () => {
 
 describe('connectors/svelte', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('should correctly initialize a Svelte connection to the store', () => {
     const store = new Store();
-    const useCombiner = connect(store);
-    expect(typeof useCombiner).toBe('function');
+    const useSubscription = connect(store);
+    expect(typeof useSubscription).toBe('function');
   });
 
-  test('should throw an error if given combiner does not exist', () => {
+  test('should throw an error if given module does not exist', () => {
     const store = new Store();
-    const useCombiner = connect(store);
+    const useSubscription = connect(store);
     expect(() => {
-      useCombiner('invalid');
+      useSubscription('invalid');
     }).toThrow(
-      'Could not use combiner "invalid": combiner does not exist.',
+      'Could not subscribe to module with id "invalid": module does not exist.',
     );
   });
 
-  test('should correctly subscribe to an existing combiner', () => {
+  test('should correctly subscribe to an existing module', () => {
     const store = new Store();
-    const useCombiner = connect(store);
-    const state = useCombiner('combiner');
-
+    const useSubscription = connect(store);
+    const state = useSubscription('module');
     expect(state).toEqual({ value: 'test' });
     expect(readable).toHaveBeenCalledTimes(1);
     expect(readable).toHaveBeenCalledWith({ value: 'test' }, expect.any(Function));
     expect(store.subscribe).toHaveBeenCalledTimes(1);
-    expect(store.subscribe).toHaveBeenCalledWith('combiner', expect.any(Function));
+    expect(store.subscribe).toHaveBeenCalledWith('module', expect.any(Function));
     expect(store.unsubscribe).toHaveBeenCalledTimes(1);
-    expect(store.unsubscribe).toHaveBeenCalledWith('combiner', 1);
+    expect(store.unsubscribe).toHaveBeenCalledWith('module', 1);
   });
 });

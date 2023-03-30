@@ -1,39 +1,52 @@
 import Store from 'scripts/core/Store';
-import { readable, Readable } from 'svelte/store/index';
+import { readable, Readable } from 'svelte/store';
 
-/** Registers a new subscription to the specified combiner. */
-type UseCombiner = <T>(hash: string, reducer?: (state: Any) => T) => Readable<T>;
+/** Registers a new subscription to the specified module. */
+type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Readable<T>;
 
 /**
- * Initializes a Svelte connection to the given store.
+ * Initializes a Svelte connection to `store`.
  *
- * @param {Store} store Diox store to connect Svelte to.
+ * @param store Diox store to connect Svelte to.
  *
- * @returns {UseCombiner} `useCombiner` function.
- *
- * @throws {Error} If combiner with the given hash does not exist in store.
+ * @returns `useSubscription` function.
  */
-export default function connect(store: Store): UseCombiner {
-  const privateStore = (store as Any);
-  const getState = (moduleHash: string): Any => privateStore.modules[moduleHash].state;
+export default function connect(store: Store): UseSubscription {
+  const privateStore = (store as unknown as {
+    modules: {
+      [id: string]: Module & {
+        combinedModules: string[];
+        actions: { [name: string]: <T2>(api: ActionApi, data?: T2) => void };
+      };
+    };
+    combinedModules: {
+      [id: string]: {
+        reducer: Reducer;
+        moduleIds: string[];
+        subscriptions: { [id: string]: Subscription; };
+      };
+    };
+  });
+  const defaultReducer = <T>(newState: any): T => newState;
+  const getState = <T>(moduleId: string): T => privateStore.modules[moduleId].state;
 
-  return (hash, reducer = (newState): Any => newState) => {
-    const combiner = privateStore.combiners[hash];
+  return (id, reducer = defaultReducer) => {
+    const combiner = privateStore.combinedModules[id];
 
     if (combiner !== undefined) {
       const state = reducer(combiner.reducer(
-        ...combiner.modulesHashes.map(getState),
+        ...combiner.moduleIds.map(getState),
       ));
       // Subscribing to the given combiner at component creation...
       return readable(state, (set) => {
-        const subscriptionId = store.subscribe(hash, (newState: Any) => {
+        const subscriptionId = store.subscribe(id, (newState) => {
           set(reducer(newState));
         });
         return () => {
-          store.unsubscribe(hash, subscriptionId);
+          store.unsubscribe(id, subscriptionId);
         };
       });
     }
-    throw new Error(`Could not use combiner "${hash}": combiner does not exist.`);
+    throw new Error(`Could not subscribe to module with id "${id}": module does not exist.`);
   };
 }

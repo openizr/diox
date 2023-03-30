@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Matthieu Jabbour. All Rights Reserved.
+ * Copyright (c) Openizr. All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,11 +10,22 @@ import { match } from 'path-to-regexp';
 
 /** Route data. */
 export interface RoutingContext {
+  /** Current URL full path (excluding host, port and protocol). */
   path: string;
+
+  /** Current URL host. */
   host: string;
+
+  /** Registered route that matched with current URL. */
   route: string | null;
+
+  /** Current URL protocol. */
   protocol: string;
+
+  /** Parsed query string for current URL. */
   query: Record<string, string>;
+
+  /** Parsed route params for current URL. */
   params: Record<string, string>;
 }
 
@@ -24,7 +35,7 @@ export interface RoutingContext {
  *
  * @param routes List of routes the router will serve.
  *
- * @returns {RoutingContext} Generated routing context.
+ * @returns Generated routing context.
  */
 function generateContext(routes: string[]): RoutingContext {
   const { location } = window;
@@ -69,25 +80,23 @@ function generateContext(routes: string[]): RoutingContext {
 /**
  * Initializes a diox module handling routing for the given configuration.
  *
- * @param {string[]} routes List of routes the router will serve.
+ * @param routes List of routes the router will serve.
  *
- * @return {Module<RoutingContext>} Initialized diox routing module.
+ * @return Initialized diox routing module.
  */
 export default function router(routes: string[]): Module<RoutingContext> {
-  let initialized = false;
   return <Module<RoutingContext>>{
     state: generateContext(routes),
+    setup: ({ id, mutate }) => {
+      window.addEventListener('popstate', () => mutate(id, 'POP_STATE'));
+    },
     mutations: {
       // Triggered when user goes back and forth through browser's history.
       POP_STATE() {
         return generateContext(routes);
       },
       // Triggers a new navigation to the given page.
-      NAVIGATE({ state, mutate, hash }, page: string) {
-        if (initialized === false) {
-          window.addEventListener('popstate', () => mutate(hash, 'POP_STATE'));
-          initialized = true;
-        }
+      NAVIGATE({ state }, page: string) {
         if (typeof window !== 'undefined' && state.path !== page) {
           window.history.pushState({}, '', page);
         }

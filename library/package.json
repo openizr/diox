@@ -1,12 +1,12 @@
 {
   "name": "diox",
-  "version": "TRAVIS_TAG",
+  "version": "PACKAGE_VERSION",
   "description": "Complete state management for both front and back ends",
   "repository": "https://github.com/openizr/diox",
   "bugs": "https://github.com/openizr/diox/issues",
   "type": "module",
   "main": "./main.js",
-  "types": "./main.d.ts",
+  "types": "./types.d.ts",
   "contributors": [
     {
       "name": "Matthieu Jabbour",
@@ -33,22 +33,85 @@
   "license": "MIT",
   "devDependencies": {
     "@types/path-to-regexp": "^1.7.0",
-    "@types/react": "^18.0.11",
+    "@types/react": "^18.0.31",
     "coveralls": "^3.1.1",
-    "typescript-dev-kit": "^5.1.1"
+    "typescript-dev-kit": "^6.0.4"
   },
   "eslintConfig": {
     "extends": [
-      "./node_modules/typescript-dev-kit/main.js"
+      "./node_modules/typescript-dev-kit/main.cjs"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "src/scripts/index.d.ts",
+          "src/scripts/types.d.ts",
+          "src/scripts/connectors/react.ts",
+          "src/scripts/connectors/react.d.ts",
+          "src/scripts/connectors/vue.ts",
+          "src/scripts/connectors/vue.d.ts",
+          "src/scripts/connectors/svelte.ts",
+          "src/scripts/connectors/svelte.d.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      },
+      {
+        "files": [
+          "src/scripts/connectors/vue.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      },
+      {
+        "files": [
+          "src/scripts/connectors/svelte.ts",
+          "src/scripts/connectors/__tests__/svelte.test.ts"
+        ],
+        "rules": {
+          "import/extensions": "off"
+        }
+      },
+      {
+        "files": [
+          "src/scripts/connectors/react.d.ts",
+          "src/scripts/connectors/vue.d.ts",
+          "src/scripts/connectors/svelte.d.ts"
+        ],
+        "rules": {
+          "import/order": "off",
+          "import/no-cycle": "off",
+          "import/no-self-import": "off",
+          "import/no-unresolved": "off",
+          "import/no-duplicates": "off",
+          "import/no-named-as-default": "off",
+          "import/no-relative-packages": "off",
+          "import/no-named-as-default-member": "off",
+          "import/no-extraneous-dependencies": "off"
+        }
+      }
     ]
   },
   "dependencies": {
     "path-to-regexp": "^6.2.1"
   },
   "peerDependencies": {
-    "react": "^18.1.0",
-    "svelte": "^3.48.0",
-    "vue": "^3.2.36"
+    "react": "^18.2.0",
+    "svelte": "3.55.1",
+    "vue": "^3.2.47"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
   },
   "tsDevKitConfig": {
     "target": "node",
@@ -61,24 +124,19 @@
     },
     "srcPath": "src",
     "distPath": "dist",
-    "banner": "/*!\n * Copyright (c) Matthieu Jabbour. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */",
-    "env": {
-      "development": {},
-      "production": {}
-    }
+    "banner": "/*!\n * Copyright (c) Openizr. All Rights Reserved.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */"
   },
   "engines": {
     "node": ">= 14.0.0",
     "npm": ">= 7.0.0"
   },
   "scripts": {
-    "init": "node_modules/typescript-dev-kit/scripts/init.sh",
+    "init": "node_modules/typescript-dev-kit/scripts/init",
+    "test": "cd node_modules/typescript-dev-kit/ && scripts/test",
     "dev": "cd node_modules/typescript-dev-kit/ && node scripts/dev",
-    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cd ../../ && yarn run types",
-    "test": "cd node_modules/typescript-dev-kit/ && node scripts/test",
     "check": "cd node_modules/typescript-dev-kit/ && node scripts/check",
-    "types": "rsync -a --prune-empty-dirs --include '*/' --include '*.d.ts' --exclude '*' --exclude 'index.d.ts' src/scripts/ dist/ && rm dist/index.d.ts",
-    "doc": "typedoc --out ../docs/ --exclude \"**/__+(tests|mocks)__/**\" src/scripts/main.ts src/scripts/extensions/router.ts src/scripts/connectors/vue.ts src/scripts/connectors/react.ts src/scripts/connectors/svelte.ts",
-    "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue svelte"
+    "build": "cd node_modules/typescript-dev-kit/ && node scripts/build && cd ../../ && yarn run types",
+    "types": "rsync -a --prune-empty-dirs --include '*/' --include '*.d.ts' --exclude '*' src/scripts/ dist/ && rm dist/index.d.ts",
+    "postinstall": "rm -f node_modules/.eslintcache && test -n \"$POSTINSTALLED\" || POSTINSTALLED=1 yarn add --peer react vue svelte@3.55.1"
   }
 }
