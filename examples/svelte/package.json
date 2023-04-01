@@ -1,8 +1,6 @@
 {
   "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "typescript-dev-kit": "^6.0.2"
+    "typescript-dev-kit": "^6.0.7"
   },
   "eslintConfig": {
     "extends": [
@@ -11,10 +9,8 @@
   },
   "dependencies": {
     "basx": "^2.0.1",
-    "diox": "file:/library/dist",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "svelte": "^3.57.0"
+    "diox": "file:../../../../library/dist",
+    "svelte": "^3.58.0"
   },
   "tsDevKitConfig": {
     "target": "web",
