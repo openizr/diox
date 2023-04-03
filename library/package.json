@@ -67,6 +67,14 @@
       },
       {
         "files": [
+          "src/scripts/connectors/react.ts"
+        ],
+        "rules": {
+          "react-hooks/exhaustive-deps": "off"
+        }
+      },
+      {
+        "files": [
           "src/scripts/connectors/svelte.ts",
           "src/scripts/connectors/__tests__/svelte.test.ts"
         ],
