@@ -20,7 +20,7 @@ declare module 'diox/connectors/svelte' {
    *
    * @returns Reduced state.
    */
-  type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Readable<T>;
+  export type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Readable<T>;
 
   /**
    * Initializes a Svelte connection to `store`.

@@ -55,10 +55,10 @@ declare module 'diox' {
     setup?: (api: ActionApi) => void;
 
     /** List of module's mutations. */
-    mutations: { [name: string]: <T2>(api: MutationApi<T>, data?: T2) => T };
+    mutations: { [name: string]: (api: MutationApi<T>, data?: unknown) => T };
 
     /** List of module's actions. */
-    actions?: { [name: string]: <T2>(api: ActionApi, data?: T2) => void };
+    actions?: { [name: string]: (api: ActionApi, data?: unknown) => void };
   }
 
   /**

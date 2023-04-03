@@ -20,7 +20,7 @@ declare module 'diox/connectors/vue' {
    *
    * @returns Reduced state.
    */
-  type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Ref<UnwrapRef<T>>;
+  export type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => Ref<UnwrapRef<T>>;
 
   /**
    * Initializes a Vue connection to `store`.
