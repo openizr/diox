@@ -19,7 +19,7 @@ declare module 'diox/connectors/react' {
    *
    * @returns Reduced state.
    */
-  type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => T;
+  export type UseSubscription = <T>(id: string, reducer?: (state: any) => T) => T;
 
   /**
    * Initializes a React connection to `store`.
