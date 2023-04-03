@@ -53,7 +53,7 @@ export default function connect(store: Store): UseSubscription {
         return (): void => {
           store.unsubscribe(id, subscriptionId);
         };
-      });
+      }, []);
       return state;
     }
     throw new Error(`Could not subscribe to module with id "${id}": module does not exist.`);
