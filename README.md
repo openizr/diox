@@ -1,4 +1,4 @@
-# ⚠️ Please use [@perseid/dev-kit](https://www.npmjs.com/package/@perseid/store) instead
+# ⚠️ Please use [@perseid/store](https://www.npmjs.com/package/@perseid/store) instead
 
 This NPM package is deprecated and no longer maintained.
 [@perseid/store](https://github.com/openizr/perseid/tree/main/store) is the new official repository.
